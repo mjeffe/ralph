@@ -47,18 +47,16 @@ while true; do
     fi
 
     # Run Ralph iteration with selected prompt
-    # -p: Headless mode (non-interactive, reads from stdin)
-    # --dangerously-skip-permissions: Auto-approve all tool calls (YOLO mode)
-    # --output-format=stream-json: Structured output for logging/monitoring
-    # --model opus: Primary agent uses Opus for complex reasoning (task selection, prioritization)
+    # --yolo: Non-interactive mode (auto-approve all tool calls)
+    # --output-format=json: Structured output for logging/monitoring
+    # --model gpt-4o: Primary agent uses GPT-4o for complex reasoning (task selection, prioritization)
     #               Can use 'sonnet' in build mode for speed if plan is clear and tasks well-defined
     # --verbose: Detailed execution logging
-    # FIXME (mjeffe): modify to use cline cli
-    cat "$PROMPT_FILE" | claude -p \
-        --dangerously-skip-permissions \
-        --output-format=stream-json \
-        --model opus \
-        --verbose
+    cline --yolo \
+        --output-format=json \
+        --model gpt-4o \
+        --verbose \
+        "$(cat "$PROMPT_FILE")"
 
     # Push changes after each iteration
     git push origin "$CURRENT_BRANCH" || {
