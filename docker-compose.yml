@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  ubuntu-dev:
+    build: .
+    container_name: ubuntu-dev-container
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null
