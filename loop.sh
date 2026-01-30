@@ -7,9 +7,6 @@
 #   ./loop.sh plan 5       # Plan mode, max 5 tasks
 
 # options
-PLAN_MODEL='qwen/qwen3-coder-30b-a3b-instruct'
-ACT_MODEL=${PLAN_MODEL}
-#ACT_MODEL=gpt-4o
 
 # Parse arguments
 if [ "$1" = "plan" ]; then
@@ -54,18 +51,15 @@ while true; do
     # Run Ralph iteration with selected prompt
     # --yolo: Non-interactive mode (auto-approve all tool calls)
     # --output-format=json: Structured output for logging/monitoring
-    # --model gpt-4o: Primary agent uses GPT-4o for complex reasoning (task selection, prioritization)
-    #               Can use 'sonnet' in build mode for speed if plan is clear and tasks well-defined
     # --verbose: Detailed execution logging
     # NOTE! I might (probably) be able to run the cline instance outside of the loop
-    cline instance new --default
-    cline task new \
+    #cline instance new --default
+    cline \
         --yolo \
         --output-format=json \
-        --model gpt-4o \
         --verbose \
         "$(cat "$PROMPT_FILE")"
-    cline instance kill -a
+    #cline instance kill -a
 
     # Push changes after each iteration
     git push origin "$CURRENT_BRANCH" || {
