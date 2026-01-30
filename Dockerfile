@@ -41,5 +41,27 @@ WORKDIR /home/ralph
 # Install cline CLI using npm
 RUN npm install -g cline
 
+# Create startup script for automatic cline configuration
+RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+# Check if .env file exists\n\
+if [ -f "/home/ralph/.env" ]; then\n\
+  echo "Loading environment variables from /home/ralph/.env"\n\
+  export $(grep -v "^#" /home/ralph/.env | xargs)\n\
+fi\n\
+\n\
+# Configure cline automatically if environment variables are set\n\
+if [ -n "$PROVIDER" ] && [ -n "$APIKEY" ] && [ -n "$MODEL" ]; then\n\
+  echo "Configuring cline with environment variables..."\n\
+  cline auth --provider "$PROVIDER" --apikey "$APIKEY" --model "$MODEL"\n\
+else\n\
+  echo "Environment variables not fully configured. Please set PROVIDER, APIKEY, and MODEL."\n\
+fi\n\
+\n\
+# Start bash\n\
+exec "$@"\n\
+' > /home/ralph/startup.sh && chmod +x /home/ralph/startup.sh
+
 # Default command
-CMD ["/bin/bash"]
+CMD ["/home/ralph/startup.sh", "/bin/bash"]
