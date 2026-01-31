@@ -25,6 +25,9 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
+# Install cline CLI using npm (RUN THIS AS ROOT BEFORE SWITCHING USERS)
+RUN npm install -g cline
+
 # Create a non-root user for better security
 RUN useradd -m -s /bin/bash ralph
 
@@ -37,9 +40,6 @@ WORKDIR /app
 # Switch to the non-root user
 USER ralph
 WORKDIR /home/ralph
-
-# Install cline CLI using npm
-RUN npm install -g cline
 
 # Create startup script for automatic cline configuration
 RUN echo '#!/bin/bash\n\
