@@ -34,34 +34,35 @@ RUN useradd -m -s /bin/bash ralph
 # Grant sudo privileges without password
 RUN echo "ralph ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-# Set working directory
-WORKDIR /app
+# Ensure /app directory exists with correct permissions
+RUN mkdir -p /app && chown -R ralph:ralph /app
 
-# Switch to the non-root user
+# Switch to the non-root user and set working directory to /app
 USER ralph
-WORKDIR /home/ralph
+WORKDIR /app
 
 # Create startup script for automatic cline configuration
 RUN echo '#!/bin/bash\n\
 set -e\n\
 \n\
-# Check if .env file exists\n\
-if [ -f "/home/ralph/.env" ]; then\n\
-  echo "Loading environment variables from /home/ralph/.env"\n\
-  export $(grep -v "^#" /home/ralph/.env | xargs)\n\
+# Check if .env file exists at /app\n\
+if [ -f "/app/.env" ]; then\n\
+  echo "Loading environment variables from /app/.env"\n\
+  export $(grep -v "^#" /app/.env | xargs)\n\
 fi\n\
 \n\
 # Configure cline automatically if environment variables are set\n\
 if [ -n "$PROVIDER" ] && [ -n "$APIKEY" ] && [ -n "$MODEL" ]; then\n\
   echo "Configuring cline with environment variables..."\n\
   cline auth --provider "$PROVIDER" --apikey "$APIKEY" --model "$MODEL"\n\
+  echo "Cline authentication complete. You can now run: cline"\n\
 else\n\
-  echo "Environment variables not fully configured. Please set PROVIDER, APIKEY, and MODEL."\n\
+  echo "Environment variables not fully configured. Please set PROVIDER, APIKEY, and MODEL in /app/.env"\n\
 fi\n\
 \n\
-# Start bash\n\
+# Execute any additional commands passed to the script\n\
 exec "$@"\n\
 ' > /home/ralph/startup.sh && chmod +x /home/ralph/startup.sh
 
-# Default command
-CMD ["/home/ralph/startup.sh", "/bin/bash"]
+# Default command - run startup script with tail to keep container alive
+CMD ["/home/ralph/startup.sh", "tail", "-f", "/dev/null"]
