@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     git \
     jq \
+    vim \
     sudo \
     && rm -rf /var/lib/apt/lists/*
 
@@ -54,7 +55,7 @@ fi\n\
 # Configure cline automatically if environment variables are set\n\
 if [ -n "$PROVIDER" ] && [ -n "$APIKEY" ] && [ -n "$MODEL" ]; then\n\
   echo "Configuring cline with environment variables..."\n\
-  cline auth --provider "$PROVIDER" --apikey "$APIKEY" --model "$MODEL"\n\
+  cline auth --provider "$PROVIDER" --apikey "$APIKEY" --modelid "$MODEL"\n\
   echo "Cline authentication complete. You can now run: cline"\n\
 else\n\
   echo "Environment variables not fully configured. Please set PROVIDER, APIKEY, and MODEL in /app/.env"\n\
