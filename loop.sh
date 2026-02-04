@@ -57,7 +57,6 @@ while true; do
     cline \
         --yolo \
         --output-format=json \
-        --verbose \
         "$(cat "$PROMPT_FILE")"
     #cline instance kill -a
 

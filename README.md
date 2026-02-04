@@ -3,8 +3,9 @@ My sandbox for learning the Ralph Wiggum approach to using an LLM coding agent
 
 ## Reference
 
-- This project is based on this [Playbook](https://github.com/ClaytonFarr/ralph-playbook/tree/main?tab=readme-ov-file#loop-mechanics)
 - The original [Ralph post](https://ghuntley.com/ralph/)
+- [Ralph Playbook](https://github.com/ClaytonFarr/ralph-playbook/tree/main?tab=readme-ov-file#loop-mechanics)
+- [Accountability project](https://github.com/mikearnaldi/accountability)
 - [Helpful summary](https://thetrav.substack.com/p/the-real-ralph-wiggum-loop-what-everyone)
 
 An interesting project to follow
