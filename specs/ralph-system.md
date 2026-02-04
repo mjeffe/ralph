@@ -44,18 +44,21 @@ The system maintains state through files that are read fresh each iteration:
 
 ### Two Operating Modes
 
-**Plan Mode**
-- Analyzes specifications
-- Reviews existing code
-- Creates or updates IMPLEMENTATION_PLAN.md
+**Plan Mode** (Interactive Session)
+- Single interactive session for requirements gathering
+- Agent asks clarifying questions, human provides answers
+- Helps write or refine specification documents in specs/
+- Output: A spec file (e.g., specs/feature-name.md)
+- Does NOT create IMPLEMENTATION_PLAN.md (that's for agents in build mode)
 - Does NOT implement functionality
-- Can be run repeatedly to refine plans
+- Completion: Human decides when spec is satisfactory and ends session
 
-**Build Mode**
-- Executes tasks from IMPLEMENTATION_PLAN.md
+**Build Mode** (Autonomous Loop)
+- First iteration: If IMPLEMENTATION_PLAN.md doesn't exist, create it from specs/, commit, exit
+- Subsequent iterations: Executes tasks from IMPLEMENTATION_PLAN.md
 - Implements functionality
 - Runs tests and validation
-- Updates documentation
+- Updates IMPLEMENTATION_PLAN.md and PROGRESS.md
 - Makes git commits
 - Loops until completion or max iterations
 
@@ -69,11 +72,13 @@ The system maintains state through files that are read fresh each iteration:
 project-root/
 ├── ralph                          # Entry point wrapper script
 ├── specs/                         # Requirements & specifications (human-authored)
-│   ├── feature-1.md
+│   ├── README.md                  # Index of specs with status tracking
+│   ├── feature-1.md               # Individual feature specs
 │   ├── feature-2.md
-│   └── ralph-system.md           # This document
+│   ├── ralph-system.md            # This document
+│   └── archive/                   # Obsolete specs (optional)
 ├── IMPLEMENTATION_PLAN.md         # Remaining work (agent-maintained)
-├── PROGRESS.md                    # Completed work (agent-maintained)
+├── PROGRESS.md                    # Completed tasks log (agent-maintained)
 ├── .ralph/                        # Ralph tooling (hidden)
 │   ├── loop.sh                    # Core loop implementation
 │   ├── prompts/                   
@@ -95,15 +100,17 @@ project-root/
 **Usage:**
 ```bash
 ./ralph                    # Build mode, unlimited iterations
-./ralph 20                 # Build mode, max 20 tasks
-./ralph plan               # Plan mode, unlimited iterations  
-./ralph plan 5             # Plan mode, max 5 planning cycles
+./ralph 20                 # Build mode, max 20 iterations
+./ralph plan [spec-name]   # Plan mode, interactive session to write/refine specs
 ```
 
 **Responsibilities:**
 - Parse command-line arguments
-- Delegate to `.ralph/loop.sh` with appropriate configuration
+- For build mode: Delegate to `.ralph/loop.sh` with appropriate configuration
+- For plan mode: Start interactive session with planning prompt
 - Provide friendly error messages
+
+**Note:** Plan mode is not a loop - it's a single interactive session where the agent helps write specification documents with human collaboration. Session ends when human is satisfied.
 
 #### `.ralph/loop.sh` - Core Loop
 
@@ -144,33 +151,41 @@ git push origin <current-branch>
 
 #### `.ralph/prompts/PROMPT_plan.md` - Plan Mode Instructions
 
-**Purpose:** Guide agent in analysis and planning activities
+**Purpose:** Guide agent in interactive requirements gathering and spec writing
 
 **Key Instructions:**
-- Study specs/ to understand requirements
-- Review existing IMPLEMENTATION_PLAN.md (if present)
-- Analyze source code in src/
-- Search for TODOs, placeholders, incomplete implementations
-- Create or update IMPLEMENTATION_PLAN.md with prioritized task list
-- **Do NOT implement functionality** - planning only
-- If IMPLEMENTATION_PLAN.md doesn't exist, create it as first task
+- Engage in conversation with human to understand the feature/requirement
+- Ask clarifying questions about use cases, edge cases, and constraints
+- Review existing specs/ to understand project context
+- Analyze existing code if relevant to the new spec
+- Help structure and write a specification document in specs/
+- Output: A well-structured spec file (e.g., specs/feature-name.md)
+- **Do NOT create IMPLEMENTATION_PLAN.md** - that's for build mode
+- **Do NOT implement functionality** - spec writing only
+- Session ends when human is satisfied with the spec document
 
 #### `.ralph/prompts/PROMPT_build.md` - Build Mode Instructions
 
 **Purpose:** Guide agent in implementation activities
 
 **Key Instructions:**
-- Study specs/ to understand requirements
-- Follow IMPLEMENTATION_PLAN.md - choose highest priority task
-- Search codebase before implementing (don't duplicate)
-- Implement the task completely (no placeholders)
-- Run tests for affected code
-- Update IMPLEMENTATION_PLAN.md:
-  - Move completed task to PROGRESS.md
-  - Document any discovered issues
-  - Add new tasks if gaps found
-- Commit changes with descriptive message
-- Exit when task complete
+- **First iteration check:** If IMPLEMENTATION_PLAN.md doesn't exist:
+  - Read all specs in specs/ (especially specs/README.md for guidance)
+  - Analyze existing codebase
+  - Generate prioritized task list in IMPLEMENTATION_PLAN.md
+  - Commit and exit (next iteration will start implementing)
+- **Subsequent iterations:**
+  - Study specs/ to understand requirements
+  - Follow IMPLEMENTATION_PLAN.md - choose highest priority task
+  - Search codebase before implementing (don't duplicate)
+  - Implement the task completely (no placeholders)
+  - Run tests for affected code
+  - Update IMPLEMENTATION_PLAN.md:
+    - Move completed task to PROGRESS.md
+    - Document any discovered issues
+    - Add new tasks if gaps found
+  - Commit changes with descriptive message
+  - Exit when task complete
 
 **Important Behaviors:**
 - Use subagents for parallel reads/searches
@@ -178,6 +193,7 @@ git push origin <current-branch>
 - Clean IMPLEMENTATION_PLAN.md periodically (move completed items to PROGRESS.md)
 - Document bugs even if unrelated to current task
 - Update specs/ if inconsistencies found
+- When all specs implemented, update specs/README.md to mark them as "Implemented"
 
 #### `.ralph/validate.sh` - Optional Validation Hook
 
@@ -231,10 +247,11 @@ PROJECT_COMPLETE
 - **PROJECT_COMPLETE marker** when all work done
 
 **Maintenance:**
+- Created by agents in build mode (first iteration if it doesn't exist)
 - Agents remove completed items (move to PROGRESS.md)
 - Agents add discovered issues/gaps
 - Agents re-prioritize as needed
-- Plan mode can rebuild from specs/
+- Can be regenerated from specs/ by deleting it and starting build mode
 
 ### PROGRESS.md
 
@@ -276,15 +293,45 @@ PROJECT_COMPLETE
 
 **Purpose:** Human-authored source of truth for what to build
 
+**Directory Structure:**
+```
+specs/
+├── README.md              # Index of all specs with status tracking
+├── feature-1.md           # Individual feature specifications
+├── feature-2.md
+└── ralph-system.md        # This document
+```
+
 **Guidelines:**
 - One spec file per major feature/component
 - Capture the "why" not just the "what"
 - Include examples, use cases, edge cases
 - Update when requirements change or clarifications needed
 - Agents may update specs if inconsistencies found (requires Opus-level reasoning)
+- Add metadata headers to each spec for machine-readability
 
-**Example structure:**
+**Spec Metadata Headers:**
+Each spec should include frontmatter for tracking:
 ```markdown
+---
+status: active | implemented | obsolete | superseded-by
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+tags: [tag1, tag2]
+dependencies: [other-spec.md]
+supersedes: old-spec.md
+---
+```
+
+**Example Spec Structure:**
+```markdown
+---
+status: active
+created: 2026-02-01
+updated: 2026-02-04
+tags: [authentication, security, backend]
+---
+
 # Feature: User Authentication
 
 ## Overview
@@ -304,6 +351,61 @@ How to know it's done
 ## Open Questions
 Things to resolve
 ```
+
+### specs/README.md - Specification Index
+
+**Purpose:** Index of all specifications with status tracking (strategic overview)
+
+**This is DIFFERENT from PROGRESS.md:**
+- **specs/README.md** = Feature-level requirement status ("which features are done?")
+- **PROGRESS.md** = Task-level work log ("what tasks were completed today?")
+
+**Format:**
+```markdown
+# Specification Index
+
+This document tracks the status of all feature specifications. Agents should consult this file to understand which specs are currently relevant.
+
+## Active Specifications
+
+### User Authentication (auth-system.md)
+- **Status:** Active
+- **Priority:** High
+- **Dependencies:** database-schema.md
+- **Last Updated:** 2026-02-04
+- **Summary:** OAuth2 + JWT authentication with session management
+
+### User Profiles (user-profiles.md)
+- **Status:** Active
+- **Priority:** Medium
+- **Dependencies:** auth-system.md
+- **Last Updated:** 2026-02-03
+- **Summary:** User profile management with avatar upload
+
+## Implemented Specifications
+
+### Database Schema (database-schema.md)
+- **Status:** Implemented
+- **Completed:** 2026-02-01
+- **Summary:** PostgreSQL schema for users, sessions, and profiles
+
+## Superseded Specifications
+
+### Authentication v1 (auth-v1.md)
+- **Status:** Superseded by auth-system.md
+- **Reason:** OAuth2 replaced basic auth
+- **Date:** 2026-01-15
+
+## Archive
+
+Obsolete specs moved to specs/archive/ for historical reference.
+```
+
+**Maintenance:**
+- Agents update status when specs are fully implemented
+- Agents add new specs to the index when created
+- Agents mark specs as superseded when replaced
+- Human reviews and approves major status changes
 
 ---
 
