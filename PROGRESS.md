@@ -3,6 +3,19 @@
 ## Completed Tasks
 
 ### 2026-02-05
+- [x] Update README.md with Ralph usage instructions
+  - Commit: (pending)
+  - Added comprehensive usage documentation for build and plan modes
+  - Documented file structure and key files (specs/, IMPLEMENTATION_PLAN.md, PROGRESS.md)
+  - Added workflow example showing complete iteration cycle
+  - Included monitoring progress section with log viewing commands
+  - Added validation hooks documentation
+  - Created troubleshooting section with common issues and solutions
+  - Documented configuration options (environment variables)
+  - Added advanced usage section (rollback, blocked tasks, multiple specs)
+  - Preserved Docker environment setup section
+  - All requirements from specs/ralph-system.md "Bootstrap and Setup" section covered
+
 - [x] Enhance loop.sh with health checks and logging
   - Commit: cd76ad3
   - Added health check functions: disk space, git repo, specs readable, agent available
