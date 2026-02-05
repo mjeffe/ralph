@@ -3,6 +3,16 @@
 ## Completed Tasks
 
 ### 2026-02-05
+- [x] Update documentation for calculator
+  - Commit: (pending)
+  - Added calculator module to README.md file structure section
+  - Created "Example: Calculator Module" section with comprehensive documentation
+  - Documented how to run tests with expected output
+  - Added usage examples showing basic operations and error handling
+  - Documented calculator features: operations, validation, error handling, test coverage
+  - All 18 tests passing
+  - Task 14 complete - calculator fully documented
+
 - [x] Create comprehensive test suite for calculator
   - Commit: fa80ff8
   - Created src/lib/calculator.test.js with 18 comprehensive tests

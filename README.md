@@ -101,6 +101,9 @@ project-root/
 │   │   └── YYYY-MM-DD_NNN.log
 │   └── validate.sh                # Optional validation hook
 ├── src/                           # Your project source code
+│   └── lib/
+│       ├── calculator.js          # Example: Simple calculator module
+│       └── calculator.test.js     # Example: Calculator tests
 └── .git/                          # Version control
 ```
 
@@ -416,6 +419,74 @@ Track multiple features in `specs/README.md`:
 - **Status:** Implemented
 - **Completed:** 2026-02-01
 ```
+
+## Example: Calculator Module
+
+The project includes a simple calculator module as a test implementation to validate the Ralph system functionality.
+
+### Running Calculator Tests
+
+```bash
+node src/lib/calculator.test.js
+```
+
+Expected output:
+```
+✓ add: positive numbers
+✓ add: negative numbers
+✓ add: with zero
+✓ subtract: positive numbers
+✓ subtract: negative numbers
+✓ subtract: with zero
+✓ multiply: positive numbers
+✓ multiply: negative numbers
+✓ multiply: by zero
+✓ multiply: by one
+✓ divide: positive numbers
+✓ divide: negative numbers
+✓ divide: by one
+✓ divide: by zero throws error
+✓ add: invalid input throws TypeError
+✓ subtract: invalid input throws TypeError
+✓ multiply: invalid input throws TypeError
+✓ divide: invalid input throws TypeError
+
+All tests passed! (18/18)
+```
+
+### Calculator Usage
+
+```javascript
+const { add, subtract, multiply, divide } = require('./src/lib/calculator');
+
+// Basic operations
+console.log(add(5, 3));        // 8
+console.log(subtract(10, 4));  // 6
+console.log(multiply(3, 7));   // 21
+console.log(divide(15, 3));    // 5
+
+// Error handling
+try {
+    divide(10, 0);  // Throws: "Cannot divide by zero"
+} catch (e) {
+    console.error(e.message);
+}
+
+try {
+    add('5', 3);  // Throws TypeError: "Both arguments must be numbers"
+} catch (e) {
+    console.error(e.message);
+}
+```
+
+### Calculator Features
+
+- **Basic Operations:** add, subtract, multiply, divide
+- **Input Validation:** All functions validate that inputs are numbers
+- **Error Handling:** 
+  - Division by zero throws Error
+  - Non-numeric inputs throw TypeError
+- **Test Coverage:** 18 comprehensive tests covering all operations and edge cases
 
 ## Docker Environment Setup
 
