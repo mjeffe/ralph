@@ -207,6 +207,4 @@ You may update specs if:
 
 ---
 
-**For comprehensive details:** See `specs/ralph-system-initial-implementation.md`
-
 **Quick start:** Run `./ralph` from project root to begin build mode loop.
