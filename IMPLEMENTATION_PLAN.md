@@ -2,7 +2,7 @@
 
 ## Overview
 
-This plan implements the Ralph Wiggum Loop system as specified in `specs/ralph-system.md`. The Docker environment is already configured and working. The remaining work focuses on creating the core Ralph loop infrastructure and tooling.
+This plan implements the Ralph Wiggum Loop system as specified in `specs/ralph-system-initial-implementation.md`. The Docker environment is already configured and working. The remaining work focuses on creating the core Ralph loop infrastructure and tooling.
 
 ## Remaining Tasks
 
@@ -36,7 +36,7 @@ This plan implements the Ralph Wiggum Loop system as specified in `specs/ralph-s
 - Core infrastructure complete
 
 ### Implementation Strategy
-- Follow the specification in specs/ralph-system.md closely
+- Follow the specification in specs/ralph-system-initial-implementation.md closely
 - Implement core infrastructure first (tasks 1-4)
 - Test thoroughly before moving to enhancements
 - Keep solutions simple and maintainable

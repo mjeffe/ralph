@@ -117,7 +117,7 @@ Human-authored specifications that define what to build:
 - Capture the "why" not just the "what"
 - Include examples, use cases, edge cases
 - Update when requirements change
-- See `specs/ralph-system.md` for the Ralph system specification
+- See `specs/ralph-system-initial-implementation.md` for the Ralph system specification
 
 ### IMPLEMENTATION_PLAN.md - Remaining Work
 
@@ -519,7 +519,7 @@ This project supports automatic .env file configuration for cline CLI in Docker 
 
 ## Full Documentation
 
-For complete system specification, architecture details, and implementation notes, see `specs/ralph-system.md`.
+For complete system specification, architecture details, and implementation notes, see `specs/ralph-system-initial-implementation.md`.
 
 ## License
 

@@ -88,7 +88,6 @@ Modes:
                Helps create specs in specs/ directory with human collaboration
                Not a loop - single session that ends when human is satisfied
 
-For more information, see specs/ralph-system.md
 EOF
     exit 0
 }

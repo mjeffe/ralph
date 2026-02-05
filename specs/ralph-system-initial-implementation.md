@@ -75,7 +75,7 @@ project-root/
 │   ├── README.md                  # Index of specs with status tracking
 │   ├── feature-1.md               # Individual feature specs
 │   ├── feature-2.md
-│   ├── ralph-system.md            # This document
+│   ├── ralph-system-initial-implementation.md            # This document
 │   └── archive/                   # Obsolete specs (optional)
 ├── IMPLEMENTATION_PLAN.md         # Remaining work (agent-maintained)
 ├── PROGRESS.md                    # Completed tasks log (agent-maintained)
@@ -382,7 +382,7 @@ specs/
 ├── README.md              # Index of all specs with status tracking
 ├── feature-1.md           # Individual feature specifications
 ├── feature-2.md
-└── ralph-system.md        # This document
+└── ralph-system-initial-implementation.md        # This document
 ```
 
 **Guidelines:**
@@ -1366,7 +1366,7 @@ The following failure scenarios should be validated through testing:
 
 To build Ralph itself using Ralph:
 
-1. Create `specs/ralph-system.md` (this document)
+1. Create `specs/ralph-system-initial-implementation.md` (this document)
 2. Run initial plan mode manually or with basic loop
 3. Agent creates IMPLEMENTATION_PLAN.md
 4. Iterate in build mode to implement components

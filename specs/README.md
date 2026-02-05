@@ -4,7 +4,7 @@ This document tracks the status of all feature specifications. Agents should con
 
 ## Active Specifications
 
-### Ralph System (ralph-system.md)
+### Ralph System (ralph-system-initial-implementation.md)
 - **Status:** Implemented
 - **Completed:** 2026-02-05
 - **Priority:** High

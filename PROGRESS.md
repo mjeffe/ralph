@@ -65,7 +65,7 @@
   - Task was already completed in previous README.md update
   - README.md contains comprehensive bootstrap documentation covering all requirements
   - Includes: prerequisites, step-by-step setup guide, directory structure, quick start
-  - All requirements from specs/ralph-system.md "Bootstrap and Setup" section covered
+  - All requirements from specs/ralph-system-initial-implementation.md "Bootstrap and Setup" section covered
   - Moved from IMPLEMENTATION_PLAN.md to PROGRESS.md for proper tracking
 
 - [x] Update README.md with Ralph usage instructions
@@ -79,7 +79,7 @@
   - Documented configuration options (environment variables)
   - Added advanced usage section (rollback, blocked tasks, multiple specs)
   - Preserved Docker environment setup section
-  - All requirements from specs/ralph-system.md "Bootstrap and Setup" section covered
+  - All requirements from specs/ralph-system-initial-implementation.md "Bootstrap and Setup" section covered
 
 - [x] Enhance loop.sh with health checks and logging
   - Commit: cd76ad3
@@ -92,7 +92,7 @@
   - Created `.ralph/validate.sh.example` template with documentation
   - Logs include: iteration number, timestamps, duration, commit hash, exit code
   - Health checks: warnings for low disk space, fatal errors for missing prerequisites
-  - All features per specs/ralph-system.md specification
+  - All features per specs/ralph-system-initial-implementation.md specification
   - Tested: help output works correctly
 
 - [x] Create .ralph/ directory structure
@@ -104,7 +104,7 @@
   - Updated `ralph` script to reference `.ralph/loop.sh`
   - Updated `.ralph/loop.sh` to reference `.ralph/prompts/` for prompt files
   - Tested: `./ralph --help` works correctly
-  - Directory structure now matches specification in specs/ralph-system.md
+  - Directory structure now matches specification in specs/ralph-system-initial-implementation.md
 
 - [x] Create ralph entry point script
   - Commit: 338c6b8
