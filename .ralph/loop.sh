@@ -257,46 +257,72 @@ while true; do
         break
     fi
     
-    # Run health checks
-    debug "Running health checks..."
-    check_health
+    # Run health checks (build mode only)
+    if [ "$MODE" = "build" ]; then
+        debug "Running health checks..."
+        check_health
+    fi
     
-    # Create log file for this iteration
-    LOG_FILE=$(create_log_file)
+    # Create log file for this iteration (build mode only)
+    if [ "$MODE" = "build" ]; then
+        LOG_FILE=$(create_log_file)
+    fi
+    
     ITERATION=$((ITERATION + 1))
     
-    # Log iteration header
-    {
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo "Iteration: $ITERATION"
-        echo "Mode: $MODE"
-        echo "Branch: $CURRENT_BRANCH"
-        echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo ""
-    } | tee -a "$LOG_FILE"
-    
-    info "Starting iteration $ITERATION..."
-    debug "Logging to: $LOG_FILE"
+    # Log iteration header (build mode only)
+    if [ "$MODE" = "build" ]; then
+        {
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Iteration: $ITERATION"
+            echo "Mode: $MODE"
+            echo "Branch: $CURRENT_BRANCH"
+            echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+        } | tee -a "$LOG_FILE"
+        
+        info "Starting iteration $ITERATION..."
+        debug "Logging to: $LOG_FILE"
+    else
+        info "Starting plan mode session..."
+    fi
     
     # Record start time
     START_TIME=$(date +%s)
     
-    # Determine agent flags based on configuration
-    AGENT_FLAGS="--yolo"
-    if [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
-        AGENT_FLAGS="$AGENT_FLAGS --json"
-    else
-        AGENT_FLAGS="$AGENT_FLAGS --verbose"
-    fi
-    
     # Run agent with timeout
     AGENT_EXIT_CODE=0
     if [ "$MODE" = "plan" ]; then
-        # Plan mode: interactive session, no timeout
-        cat "$PROMPT_FILE" | $AGENT_COMMAND $AGENT_FLAGS 2>&1 | tee -a "$LOG_FILE" || AGENT_EXIT_CODE=$?
+        # Plan mode: interactive session, no timeout, no logging
+        # Read prompt content into variable
+        PROMPT_CONTENT="$(cat "$PROMPT_FILE")"
+        
+        # If spec name hint provided, append it to the prompt
+        if [ -n "$SPEC_NAME" ]; then
+            PROMPT_CONTENT="${PROMPT_CONTENT}
+
+---
+
+## Initial Task
+
+The user wants to create a specification for: **${SPEC_NAME}**
+
+Please engage with the user to understand their requirements and help them create this specification."
+        fi
+        
+        # Invoke cline in interactive plan mode (no --yolo, no --json)
+        $AGENT_COMMAND --plan "$PROMPT_CONTENT" || AGENT_EXIT_CODE=$?
     else
-        # Build mode: autonomous with timeout
+        # Build mode: autonomous with timeout and logging
+        # Determine agent flags based on configuration
+        AGENT_FLAGS="--yolo"
+        if [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
+            AGENT_FLAGS="$AGENT_FLAGS --json"
+        else
+            AGENT_FLAGS="$AGENT_FLAGS --verbose"
+        fi
+        
         timeout ${ITERATION_TIMEOUT}s bash -c "cat '$PROMPT_FILE' | $AGENT_COMMAND $AGENT_FLAGS" 2>&1 | tee -a "$LOG_FILE" || AGENT_EXIT_CODE=$?
         
         # Check if timeout occurred (exit code 124)
@@ -311,35 +337,37 @@ while true; do
         fi
     fi
     
-    # Parse metrics from agent output if JSON output is enabled
-    if [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
+    # Parse metrics from agent output if JSON output is enabled (build mode only)
+    if [ "$MODE" = "build" ] && [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
         debug "Parsing metrics from agent output..."
         parse_metrics "$LOG_FILE"
     fi
     
-    # Record end time and calculate duration
-    END_TIME=$(date +%s)
-    DURATION=$((END_TIME - START_TIME))
-    DURATION_MIN=$((DURATION / 60))
-    DURATION_SEC=$((DURATION % 60))
-    
-    # Get commit hash if changes were committed
-    COMMIT_HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "none")
-    
-    # Log iteration footer
-    {
-        echo ""
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo "Completed: $(date '+%Y-%m-%d %H:%M:%S')"
-        echo "Duration: ${DURATION_MIN}m ${DURATION_SEC}s"
-        echo "Commit: $COMMIT_HASH"
-        echo "Exit Code: $AGENT_EXIT_CODE"
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    } | tee -a "$LOG_FILE"
-    
-    # Check if agent exited with error
-    if [ $AGENT_EXIT_CODE -ne 0 ] && [ $AGENT_EXIT_CODE -ne 124 ]; then
-        warn "Agent exited with code $AGENT_EXIT_CODE"
+    # Log iteration footer (build mode only)
+    if [ "$MODE" = "build" ]; then
+        # Record end time and calculate duration
+        END_TIME=$(date +%s)
+        DURATION=$((END_TIME - START_TIME))
+        DURATION_MIN=$((DURATION / 60))
+        DURATION_SEC=$((DURATION % 60))
+        
+        # Get commit hash if changes were committed
+        COMMIT_HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "none")
+        
+        {
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Completed: $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "Duration: ${DURATION_MIN}m ${DURATION_SEC}s"
+            echo "Commit: $COMMIT_HASH"
+            echo "Exit Code: $AGENT_EXIT_CODE"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        } | tee -a "$LOG_FILE"
+        
+        # Check if agent exited with error
+        if [ $AGENT_EXIT_CODE -ne 0 ] && [ $AGENT_EXIT_CODE -ne 124 ]; then
+            warn "Agent exited with code $AGENT_EXIT_CODE"
+        fi
     fi
     
     # Run validation hook (build mode only)
@@ -361,6 +389,33 @@ while true; do
     # Plan mode is a single session, not a loop
     if [ "$MODE" = "plan" ]; then
         info "Plan mode session complete"
+        
+        # Check if any changes were made to specs/
+        if git diff --quiet specs/ 2>/dev/null && \
+           git diff --cached --quiet specs/ 2>/dev/null; then
+            debug "No changes detected in specs/"
+        else
+            # Stage changes in specs/
+            git add specs/
+            
+            # Generate appropriate commit message
+            if [ -n "$SPEC_NAME" ]; then
+                COMMIT_MSG="ralph plan: Add ${SPEC_NAME} specification"
+            else
+                COMMIT_MSG="ralph plan: Update specifications"
+            fi
+            
+            git commit -m "$COMMIT_MSG"
+            info "✓ Changes committed"
+            
+            # Push to remote (warn on failure, don't fail fatally)
+            if git push origin "$CURRENT_BRANCH" 2>&1; then
+                info "✓ Push successful"
+            else
+                warn "Push failed - you may need to push manually"
+            fi
+        fi
+        
         break
     fi
     
