@@ -295,24 +295,18 @@ while true; do
     AGENT_EXIT_CODE=0
     if [ "$MODE" = "plan" ]; then
         # Plan mode: interactive session, no timeout, no logging
-        # Read prompt content into variable
-        PROMPT_CONTENT="$(cat "$PROMPT_FILE")"
+        # Build task prompt that references the guidance file
+        TASK_PROMPT="Study \`.ralph/prompts/PROMPT_plan.md\` for detailed guidance on your role. "
         
-        # If spec name hint provided, append it to the prompt
+        # If spec name hint provided, include it in the task
         if [ -n "$SPEC_NAME" ]; then
-            PROMPT_CONTENT="${PROMPT_CONTENT}
-
----
-
-## Initial Task
-
-The user wants to create a specification for: **${SPEC_NAME}**
-
-Please engage with the user to understand their requirements and help them create this specification."
+            TASK_PROMPT="${TASK_PROMPT}The user wants to create a specification for: **${SPEC_NAME}**. "
         fi
         
+        TASK_PROMPT="${TASK_PROMPT}Follow the guidance to help create a well-structured specification."
+        
         # Invoke cline in interactive plan mode (no --yolo, no --json)
-        $AGENT_COMMAND --plan "$PROMPT_CONTENT" || AGENT_EXIT_CODE=$?
+        $AGENT_COMMAND --plan "$TASK_PROMPT" || AGENT_EXIT_CODE=$?
     else
         # Build mode: autonomous with timeout and logging
         # Determine agent flags based on configuration
