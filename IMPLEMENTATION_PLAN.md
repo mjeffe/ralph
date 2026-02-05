@@ -8,15 +8,7 @@ This plan implements the Ralph Wiggum Loop system as specified in `specs/ralph-s
 
 ### High Priority - Core Infrastructure
 
-1. **Create ralph entry point script**
-   - Create executable `ralph` script in project root
-   - Parse command-line arguments (build mode, plan mode, max iterations)
-   - Delegate to loop.sh with appropriate configuration
-   - Provide friendly error messages
-   - Dependencies: None
-   - Spec: specs/ralph-system.md - "ralph - Entry Point Script"
-
-2. **Create .ralph/ directory structure**
+1. **Create .ralph/ directory structure**
    - Create `.ralph/` directory
    - Move `loop.sh` to `.ralph/loop.sh`
    - Move `prompts/` to `.ralph/prompts/`
@@ -97,8 +89,8 @@ This plan implements the Ralph Wiggum Loop system as specified in `specs/ralph-s
 - Docker environment is fully configured and working
 - Basic loop.sh exists but needs enhancements per specification
 - Prompt files exist in prompts/ directory
+- **ralph entry point script created and tested** ✓
 - No .ralph/ directory structure yet
-- No ralph entry point script yet
 - No logging infrastructure yet
 - No validation hooks yet
 
