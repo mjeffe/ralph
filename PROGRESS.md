@@ -4,7 +4,7 @@
 
 ### 2026-02-05
 - [x] Create ralph entry point script
-  - Commit: (pending)
+  - Commit: 338c6b8
   - Created executable `ralph` script in project root
   - Parses command-line arguments for build/plan mode and max iterations
   - Includes comprehensive prerequisite checks (git repo, loop.sh, cline, specs/)
