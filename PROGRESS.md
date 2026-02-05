@@ -4,7 +4,7 @@
 
 ### 2026-02-05
 - [x] Create .ralph/ directory structure
-  - Commit: (pending)
+  - Commit: 1b9bf60
   - Created `.ralph/` directory with `prompts/` and `logs/` subdirectories
   - Moved `loop.sh` to `.ralph/loop.sh`
   - Moved `prompts/PROMPT_build.md` and `prompts/PROMPT_plan.md` to `.ralph/prompts/`
