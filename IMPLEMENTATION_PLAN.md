@@ -37,13 +37,6 @@ This plan implements the Ralph Wiggum Loop system as specified in `specs/ralph-s
    - Dependencies: Task 4
    - Spec: specs/ralph-system.md - "Validation Hooks"
 
-10. **Update specs/README.md to mark Docker specs as implemented**
-    - Mark docker-env-implementation-plan.md as "Implemented"
-    - Mark docker-configuration-fix-plan.md as "Implemented"
-    - Add completion dates
-    - Dependencies: None (can be done anytime)
-    - Spec: specs/README.md - "Implemented Specifications"
-
 ## Notes
 
 ### Current State
