@@ -1,5 +1,5 @@
 ---
-status: active
+status: implemented
 created: 2026-02-05
 updated: 2026-02-05
 tags: [plan-mode, loop.sh, cline, interactive, git]
