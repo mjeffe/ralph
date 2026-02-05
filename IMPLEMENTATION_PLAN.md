@@ -8,16 +8,7 @@ This plan implements the Ralph Wiggum Loop system as specified in `specs/ralph-s
 
 ### High Priority - Core Infrastructure
 
-1. **Create .ralph/ directory structure**
-   - Create `.ralph/` directory
-   - Move `loop.sh` to `.ralph/loop.sh`
-   - Move `prompts/` to `.ralph/prompts/`
-   - Create `.ralph/logs/` directory for execution logs
-   - Update ralph entry point to reference new paths
-   - Dependencies: Task 1
-   - Spec: specs/ralph-system.md - "Directory Structure"
-
-3. **Enhance loop.sh with health checks and logging**
+1. **Enhance loop.sh with health checks and logging**
    - Add health check functions (disk space, git repo, specs readable, agent available)
    - Add iteration timeout (default 30 minutes)
    - Add comprehensive logging to `.ralph/logs/YYYY-MM-DD_NNN.log`
@@ -88,9 +79,10 @@ This plan implements the Ralph Wiggum Loop system as specified in `specs/ralph-s
 ### Current State
 - Docker environment is fully configured and working
 - Basic loop.sh exists but needs enhancements per specification
-- Prompt files exist in prompts/ directory
+- **.ralph/ directory structure created** ✓
+- **Prompt files moved to .ralph/prompts/** ✓
 - **ralph entry point script created and tested** ✓
-- No .ralph/ directory structure yet
+- **loop.sh moved to .ralph/loop.sh** ✓
 - No logging infrastructure yet
 - No validation hooks yet
 

@@ -3,6 +3,17 @@
 ## Completed Tasks
 
 ### 2026-02-05
+- [x] Create .ralph/ directory structure
+  - Commit: (pending)
+  - Created `.ralph/` directory with `prompts/` and `logs/` subdirectories
+  - Moved `loop.sh` to `.ralph/loop.sh`
+  - Moved `prompts/PROMPT_build.md` and `prompts/PROMPT_plan.md` to `.ralph/prompts/`
+  - Removed old `prompts/` directory
+  - Updated `ralph` script to reference `.ralph/loop.sh`
+  - Updated `.ralph/loop.sh` to reference `.ralph/prompts/` for prompt files
+  - Tested: `./ralph --help` works correctly
+  - Directory structure now matches specification in specs/ralph-system.md
+
 - [x] Create ralph entry point script
   - Commit: 338c6b8
   - Created executable `ralph` script in project root

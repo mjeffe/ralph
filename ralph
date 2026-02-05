@@ -37,14 +37,14 @@ check_prerequisites() {
     fi
 
     # Check if loop.sh exists
-    if [ ! -f "loop.sh" ]; then
-        error "loop.sh not found in current directory"
+    if [ ! -f ".ralph/loop.sh" ]; then
+        error ".ralph/loop.sh not found"
     fi
 
     # Check if loop.sh is executable
-    if [ ! -x "loop.sh" ]; then
-        warn "loop.sh is not executable, making it executable..."
-        chmod +x loop.sh
+    if [ ! -x ".ralph/loop.sh" ]; then
+        warn ".ralph/loop.sh is not executable, making it executable..."
+        chmod +x .ralph/loop.sh
     fi
 
     # Check if cline is available
@@ -134,14 +134,14 @@ echo ""
 # Delegate to loop.sh
 if [ "$MODE" = "plan" ]; then
     if [ -n "$SPEC_NAME" ]; then
-        exec ./loop.sh plan "$SPEC_NAME"
+        exec ./.ralph/loop.sh plan "$SPEC_NAME"
     else
-        exec ./loop.sh plan
+        exec ./.ralph/loop.sh plan
     fi
 else
     if [ $MAX_ITERATIONS -gt 0 ]; then
-        exec ./loop.sh "$MAX_ITERATIONS"
+        exec ./.ralph/loop.sh "$MAX_ITERATIONS"
     else
-        exec ./loop.sh
+        exec ./.ralph/loop.sh
     fi
 fi
