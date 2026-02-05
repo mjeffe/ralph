@@ -159,10 +159,7 @@ Configuration can be adjusted based on project needs.
 **Agent Invocation:**
 ```bash
 # Example for cline agent
-cline \
-    --yolo \
-    --output-format=json \
-    "$(cat "$PROMPT_FILE")"
+cat "$PROMPT_FILE" | cline --yolo
 ```
 
 **Logging:**
@@ -650,7 +647,7 @@ RALPH_AGENT=${RALPH_AGENT:-cline}
 
 case "$RALPH_AGENT" in
     cline)
-        $RALPH_AGENT --yolo --output-format=json "$(cat $PROMPT_FILE)"
+        cat $PROMPT_FILE | $RALPH_AGENT --yolo
         ;;
     other-agent)
         $RALPH_AGENT --auto-approve --prompt-file="$PROMPT_FILE"

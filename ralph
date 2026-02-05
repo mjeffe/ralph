@@ -1,0 +1,147 @@
+#!/bin/bash
+# Ralph Wiggum Loop - Entry Point Script
+# 
+# Usage:
+#   ./ralph              # Build mode, unlimited iterations
+#   ./ralph 20           # Build mode, max 20 iterations
+#   ./ralph plan         # Plan mode, interactive session
+#   ./ralph plan feature # Plan mode with spec name hint
+
+set -e
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Helper functions
+error() {
+    echo -e "${RED}Error: $1${NC}" >&2
+    exit 1
+}
+
+warn() {
+    echo -e "${YELLOW}Warning: $1${NC}" >&2
+}
+
+info() {
+    echo -e "${GREEN}$1${NC}"
+}
+
+# Check prerequisites
+check_prerequisites() {
+    # Check if we're in a git repository
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        error "Not a git repository. Run 'git init' first."
+    fi
+
+    # Check if loop.sh exists
+    if [ ! -f ".ralph/loop.sh" ]; then
+        error ".ralph/loop.sh not found"
+    fi
+
+    # Check if loop.sh is executable
+    if [ ! -x ".ralph/loop.sh" ]; then
+        warn ".ralph/loop.sh is not executable, making it executable..."
+        chmod +x .ralph/loop.sh
+    fi
+
+    # Check if cline is available
+    if ! command -v cline &> /dev/null; then
+        error "cline command not found. Please install cline CLI."
+    fi
+
+    # Check if specs/ directory exists
+    if [ ! -d "specs" ]; then
+        error "specs/ directory not found. Create it and add at least one specification."
+    fi
+
+    # Check if specs/ has any files
+    if [ -z "$(ls -A specs/*.md 2>/dev/null)" ]; then
+        error "No specification files found in specs/. Add at least one .md file."
+    fi
+}
+
+# Show usage information
+show_usage() {
+    cat << EOF
+Ralph Wiggum Loop - Iterative Development System
+
+Usage:
+  ./ralph              Build mode, unlimited iterations
+  ./ralph <N>          Build mode, max N iterations
+  ./ralph plan         Plan mode, interactive session to write specs
+  ./ralph plan <name>  Plan mode with spec name hint
+
+Examples:
+  ./ralph              Run build loop until PROJECT_COMPLETE
+  ./ralph 10           Run build loop for max 10 iterations
+  ./ralph plan         Start interactive planning session
+  ./ralph plan auth    Plan mode with 'auth' as spec name hint
+
+Modes:
+  Build Mode - Autonomous loop that implements tasks from IMPLEMENTATION_PLAN.md
+               First iteration creates IMPLEMENTATION_PLAN.md if it doesn't exist
+               
+  Plan Mode  - Interactive session to write/refine specification documents
+               Helps create specs in specs/ directory with human collaboration
+               Not a loop - single session that ends when human is satisfied
+
+For more information, see specs/ralph-system.md
+EOF
+    exit 0
+}
+
+# Parse arguments
+MODE="build"
+MAX_ITERATIONS=0
+SPEC_NAME=""
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    show_usage
+fi
+
+if [ "$1" = "plan" ]; then
+    MODE="plan"
+    SPEC_NAME="${2:-}"
+elif [[ "$1" =~ ^[0-9]+$ ]]; then
+    MODE="build"
+    MAX_ITERATIONS=$1
+elif [ -n "$1" ]; then
+    error "Invalid argument: $1\nUse './ralph --help' for usage information"
+fi
+
+# Run prerequisite checks
+check_prerequisites
+
+# Display startup information
+echo ""
+info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+info "Ralph Wiggum Loop"
+info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Mode: $MODE"
+if [ "$MODE" = "plan" ] && [ -n "$SPEC_NAME" ]; then
+    echo "Spec: $SPEC_NAME"
+fi
+if [ "$MODE" = "build" ] && [ $MAX_ITERATIONS -gt 0 ]; then
+    echo "Max iterations: $MAX_ITERATIONS"
+fi
+echo "Branch: $(git branch --show-current)"
+info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Delegate to loop.sh
+if [ "$MODE" = "plan" ]; then
+    if [ -n "$SPEC_NAME" ]; then
+        exec ./.ralph/loop.sh plan "$SPEC_NAME"
+    else
+        exec ./.ralph/loop.sh plan
+    fi
+else
+    if [ $MAX_ITERATIONS -gt 0 ]; then
+        exec ./.ralph/loop.sh "$MAX_ITERATIONS"
+    else
+        exec ./.ralph/loop.sh
+    fi
+fi
