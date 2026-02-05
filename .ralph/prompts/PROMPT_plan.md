@@ -117,10 +117,7 @@ If `specs/README.md` exists, add an entry for the new spec:
 
 ### Session Complete
 
-The human will end this session when satisfied. The spec is now ready for Build Mode, where agents will:
-1. Read the spec
-2. Create an implementation plan
-3. Build the feature according to the spec
+The human will end this session when satisfied, after asking you to write out the spec file.
 
 ---
 

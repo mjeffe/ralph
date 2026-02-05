@@ -5,10 +5,12 @@ This document tracks the status of all feature specifications. Agents should con
 ## Active Specifications
 
 ### PROJECT_COMPLETE Reset Fix (project-complete-reset.md)
-- **Status:** Active
+- **Status:** Implemented
+- **Completed:** 2026-02-05
 - **Priority:** High
 - **Dependencies:** None
-- **Last Updated:** 2026-02-05
+- **Verification:** Modified loop.sh to automatically reset IMPLEMENTATION_PLAN.md when PROJECT_COMPLETE is detected. Reset file is committed and pushed, enabling seamless transition between build cycles.
+- **Tests:** Code review confirms correct implementation - uses heredoc for template, leverages push_with_retry(), preserves PROGRESS.md
 - **Summary:** Fix bug where PROJECT_COMPLETE marker prevents starting new build cycles. When PROJECT_COMPLETE is detected, automatically reset IMPLEMENTATION_PLAN.md to minimal template, commit the change, and exit cleanly. Next cycle regenerates plan from specs/ without manual intervention.
 
 ### Ralph System (ralph-system-initial-implementation.md)
