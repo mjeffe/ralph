@@ -3,6 +3,20 @@
 ## Completed Tasks
 
 ### 2026-02-05
+- [x] Enhance loop.sh with health checks and logging
+  - Commit: (pending)
+  - Added health check functions: disk space, git repo, specs readable, agent available
+  - Implemented iteration timeout (default 30 minutes, configurable via RALPH_ITERATION_TIMEOUT)
+  - Added comprehensive logging to `.ralph/logs/YYYY-MM-DD_NNN.log` with iteration headers/footers
+  - Added PROJECT_COMPLETE detection to stop loop when all tasks done
+  - Implemented git push retry logic (3 attempts with 5s delays)
+  - Added validation hook support (runs `.ralph/validate.sh` if present and executable)
+  - Created `.ralph/validate.sh.example` template with documentation
+  - Logs include: iteration number, timestamps, duration, commit hash, exit code
+  - Health checks: warnings for low disk space, fatal errors for missing prerequisites
+  - All features per specs/ralph-system.md specification
+  - Tested: help output works correctly
+
 - [x] Create .ralph/ directory structure
   - Commit: 1b9bf60
   - Created `.ralph/` directory with `prompts/` and `logs/` subdirectories

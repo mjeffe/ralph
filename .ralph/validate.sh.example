@@ -1,0 +1,45 @@
+#!/bin/bash
+# Ralph Validation Hook - Example Template
+#
+# This is an optional validation script that runs after each iteration
+# in build mode. Copy this file to .ralph/validate.sh and customize it
+# for your project's needs.
+#
+# Exit code 0 = validation passed, loop continues
+# Exit code non-zero = FATAL error, loop stops immediately
+#
+# Note: The agent is responsible for running and fixing its own tests
+# during implementation. This validation is a final quality gate before
+# continuing to the next iteration.
+
+set -e  # Exit on any error
+
+echo "Running project validation..."
+
+# Example: Run test suite
+# Uncomment and modify for your project
+# echo "Running tests..."
+# npm test
+# or: python -m pytest
+# or: go test ./...
+# or: cargo test
+
+# Example: Run linter
+# echo "Running linter..."
+# npm run lint
+# or: pylint src/
+# or: golangci-lint run
+# or: cargo clippy
+
+# Example: Check build
+# echo "Checking build..."
+# npm run build
+# or: make build
+# or: cargo build
+
+# Example: Custom checks
+# echo "Checking documentation..."
+# [ -f "README.md" ] || { echo "README.md missing"; exit 1; }
+
+echo "✓ All validation passed!"
+exit 0
