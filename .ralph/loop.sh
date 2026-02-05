@@ -52,7 +52,8 @@ while true; do
     # NOTE! I might (probably) be able to run the cline instance outside of the loop
     #cline instance new --default
     cat "$PROMPT_FILE" | cline \
-        --yolo
+        --yolo \
+        --verbose
     #cline instance kill -a
 
     # Push changes after each iteration
