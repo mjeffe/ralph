@@ -1,12 +1,3 @@
----
-status: implemented
-created: 2026-02-05
-updated: 2026-02-05
-tags: [plan-mode, loop.sh, cline, interactive, git]
-dependencies: []
-supersedes: 
----
-
 # Plan Mode Interactive Session Fix
 
 ## Overview

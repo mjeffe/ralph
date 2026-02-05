@@ -1,9 +1,3 @@
----
-status: active
-created: 2026-02-05
-tags: [test, validation, calculator]
----
-
 # Test Specification: Simple Calculator
 
 ## Overview

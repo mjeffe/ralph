@@ -4,7 +4,12 @@ This document tracks the status of all feature specifications. Agents should con
 
 ## Active Specifications
 
-None - all specifications have been implemented.
+### PROJECT_COMPLETE Reset Fix (project-complete-reset.md)
+- **Status:** Active
+- **Priority:** High
+- **Dependencies:** None
+- **Last Updated:** 2026-02-05
+- **Summary:** Fix bug where PROJECT_COMPLETE marker prevents starting new build cycles. When PROJECT_COMPLETE is detected, automatically reset IMPLEMENTATION_PLAN.md to minimal template, commit the change, and exit cleanly. Next cycle regenerates plan from specs/ without manual intervention.
 
 ### Ralph System (ralph-system-initial-implementation.md)
 - **Status:** Implemented
