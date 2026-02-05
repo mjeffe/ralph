@@ -3,8 +3,18 @@
 ## Completed Tasks
 
 ### 2026-02-05
-- [x] Update specs/README.md to mark Docker specs as implemented
+- [x] Create test specification for Ralph loop validation
   - Commit: (pending)
+  - Created specs/test-simple-calculator.md with simple calculator requirements
+  - Defines calculator module with basic operations (add, subtract, multiply, divide)
+  - Includes input validation and comprehensive test requirements
+  - Updated specs/README.md to track new specification
+  - Test spec will be used to validate Ralph loop functionality
+  - Verifies IMPLEMENTATION_PLAN.md creation, task execution, PROGRESS.md updates, git integration
+  - Task 7 complete - ready for Ralph to implement calculator in autonomous mode
+
+- [x] Update specs/README.md to mark Docker specs as implemented
+  - Commit: 0cd5024
   - Added verification details and test status for both Docker specifications
   - Marked docker-env-implementation-plan.md as "Implemented" with completion date
   - Marked docker-configuration-fix-plan.md as "Implemented" with completion date

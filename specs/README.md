@@ -11,6 +11,13 @@ This document tracks the status of all feature specifications. Agents should con
 - **Last Updated:** 2026-02-05
 - **Summary:** Core specification for the Ralph Wiggum Loop iterative development system. Defines architecture, components, workflows, and operating modes for enabling LLM agents to work on large projects through fresh context per iteration.
 
+### Simple Calculator Test (test-simple-calculator.md)
+- **Status:** Active
+- **Priority:** High
+- **Dependencies:** None
+- **Last Updated:** 2026-02-05
+- **Summary:** Test specification to validate Ralph loop functionality. Defines a simple calculator module with basic operations, input validation, and comprehensive tests. Used to verify IMPLEMENTATION_PLAN.md creation, task execution, PROGRESS.md updates, and git integration.
+
 ## Implemented Specifications
 
 ### Docker Environment Configuration (docker-env-implementation-plan.md)
