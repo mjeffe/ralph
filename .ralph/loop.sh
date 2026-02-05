@@ -13,6 +13,7 @@ set -e
 ITERATION_TIMEOUT=${RALPH_ITERATION_TIMEOUT:-1800}  # 30 minutes default
 AGENT_COMMAND=${RALPH_AGENT:-cline}
 MIN_DISK_SPACE_MB=1024  # 1GB minimum
+ENABLE_JSON_OUTPUT=${RALPH_JSON_OUTPUT:-true}  # Enable JSON output for metrics parsing
 
 # Color codes for output
 RED='\033[0;31m'
@@ -139,6 +140,51 @@ check_project_complete() {
     return 1
 }
 
+# Parse metrics from agent JSON output
+parse_metrics() {
+    local log_file="$1"
+    local metrics_file="${log_file}.metrics"
+    
+    # Check if jq is available for JSON parsing
+    if ! command -v jq > /dev/null 2>&1; then
+        return 0
+    fi
+    
+    # Extract metrics from JSON output
+    # Look for api_req_started and completion_result messages
+    local api_requests=0
+    local model_info=""
+    local total_messages=0
+    
+    # Count API requests and extract model information
+    api_requests=$(grep -c '"say":"api_req_started"' "$log_file" 2>/dev/null || echo "0")
+    total_messages=$(grep -c '"type":"say"' "$log_file" 2>/dev/null || echo "0")
+    
+    # Extract model info from first message (if available)
+    model_info=$(grep -m 1 '"modelInfo"' "$log_file" 2>/dev/null | \
+        jq -r '.modelInfo | "\(.providerId)/\(.modelId)"' 2>/dev/null || echo "unknown")
+    
+    # Write metrics to file
+    {
+        echo "# Agent Metrics"
+        echo "API Requests: $api_requests"
+        echo "Total Messages: $total_messages"
+        echo "Model: $model_info"
+        echo ""
+        echo "# Note: Token counts and costs not available in current cline output"
+        echo "# Future enhancement: Parse usage data when cline provides it"
+    } > "$metrics_file"
+    
+    # Append metrics summary to log file
+    {
+        echo ""
+        echo "# Metrics Summary"
+        echo "API Requests: $api_requests"
+        echo "Total Messages: $total_messages"
+        echo "Model: $model_info"
+    } >> "$log_file"
+}
+
 # Run optional validation hook
 run_validation() {
     if [ -x ".ralph/validate.sh" ]; then
@@ -236,14 +282,22 @@ while true; do
     # Record start time
     START_TIME=$(date +%s)
     
+    # Determine agent flags based on configuration
+    AGENT_FLAGS="--yolo"
+    if [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
+        AGENT_FLAGS="$AGENT_FLAGS --json"
+    else
+        AGENT_FLAGS="$AGENT_FLAGS --verbose"
+    fi
+    
     # Run agent with timeout
     AGENT_EXIT_CODE=0
     if [ "$MODE" = "plan" ]; then
         # Plan mode: interactive session, no timeout
-        cat "$PROMPT_FILE" | $AGENT_COMMAND --yolo --verbose 2>&1 | tee -a "$LOG_FILE" || AGENT_EXIT_CODE=$?
+        cat "$PROMPT_FILE" | $AGENT_COMMAND $AGENT_FLAGS 2>&1 | tee -a "$LOG_FILE" || AGENT_EXIT_CODE=$?
     else
         # Build mode: autonomous with timeout
-        timeout ${ITERATION_TIMEOUT}s bash -c "cat '$PROMPT_FILE' | $AGENT_COMMAND --yolo --verbose" 2>&1 | tee -a "$LOG_FILE" || AGENT_EXIT_CODE=$?
+        timeout ${ITERATION_TIMEOUT}s bash -c "cat '$PROMPT_FILE' | $AGENT_COMMAND $AGENT_FLAGS" 2>&1 | tee -a "$LOG_FILE" || AGENT_EXIT_CODE=$?
         
         # Check if timeout occurred (exit code 124)
         if [ $AGENT_EXIT_CODE -eq 124 ]; then
@@ -255,6 +309,12 @@ while true; do
             } | tee -a "$LOG_FILE"
             fatal "Agent exceeded iteration timeout (${ITERATION_TIMEOUT}s)"
         fi
+    fi
+    
+    # Parse metrics from agent output if JSON output is enabled
+    if [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
+        debug "Parsing metrics from agent output..."
+        parse_metrics "$LOG_FILE"
     fi
     
     # Record end time and calculate duration

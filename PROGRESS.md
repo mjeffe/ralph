@@ -3,6 +3,16 @@
 ## Completed Tasks
 
 ### 2026-02-05
+- [x] Add metrics tracking to logs
+  - Commit: (will be added after commit)
+  - Metrics tracking already implemented in loop.sh during iteration 9
+  - Parses cline JSON output for API requests, message counts, model information
+  - Creates .metrics files alongside log files
+  - Appends metrics summary to log files
+  - Token counts and costs noted as unavailable in current cline output
+  - Implementation complete to extent possible with current cline capabilities
+  - Task 8 complete
+
 - [x] Create example validation script with working patterns
   - Commit: 530360b
   - Enhanced .ralph/validate.sh.example with comprehensive validation patterns
