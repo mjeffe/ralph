@@ -14,6 +14,35 @@ This plan implements the Ralph Wiggum Loop system as specified in `specs/ralph-s
 
 (No remaining medium priority tasks - all complete!)
 
+### Medium Priority - Test Validation
+
+11. **Implement calculator module with basic operations**
+   - Create src/lib/calculator.js
+   - Implement add, subtract, multiply, divide functions
+   - Use CommonJS module.exports format
+   - Spec: specs/test-simple-calculator.md - "Calculator Module"
+
+12. **Add input validation and error handling to calculator**
+   - Validate inputs are numbers (throw TypeError if not)
+   - Handle division by zero (throw error)
+   - Dependencies: Task 11
+   - Spec: specs/test-simple-calculator.md - "Input Validation"
+
+13. **Create comprehensive test suite for calculator**
+   - Create src/lib/calculator.test.js
+   - Use Node.js built-in assert module
+   - Test all operations with various inputs
+   - Test error cases (division by zero, invalid inputs)
+   - Dependencies: Task 12
+   - Spec: specs/test-simple-calculator.md - "Tests"
+
+14. **Update documentation for calculator**
+   - Add calculator to README.md project structure
+   - Document how to run tests
+   - Add usage examples
+   - Dependencies: Task 13
+   - Spec: specs/test-simple-calculator.md - "Documentation"
+
 ### Low Priority - Enhancements
 
 8. **Add metrics tracking to logs**
