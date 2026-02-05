@@ -25,7 +25,7 @@
 
 ### 1. Read Current State
 
-a. Study `specs/*` with parallel Sonnet subagents to understand requirements
+a. Study `specs/*` with parallel subagents to understand requirements
 b. Study `IMPLEMENTATION_PLAN.md` to see remaining tasks and priorities
 c. Study `PROGRESS.md` to understand what has been completed
 d. Review application source code in `src/*` for context
@@ -57,16 +57,16 @@ Select the task to work on using these criteria:
 ### 3. Search Before Implementing
 
 **CRITICAL:** Before implementing ANY feature:
-- Search the codebase thoroughly using parallel Sonnet subagents
+- Search the codebase thoroughly using parallel subagents
 - **Do NOT assume** something isn't already implemented
 - Check for existing patterns and conventions to follow
 - Avoid duplicating functionality
 
 ### 4. Implement the Task
 
-- Use parallel Sonnet subagents for searches and reads (scale as needed)
-- Use **ONE** Sonnet subagent for builds and tests (avoid parallel execution issues)
-- Use Opus subagents when complex reasoning is needed (debugging, architectural decisions)
+- Use parallel subagents for searches and reads (scale as needed)
+- Use **ONE** subagent for builds and tests (avoid parallel execution issues)
+- Use subagents when complex reasoning is needed (debugging, architectural decisions)
 - **Implement functionality COMPLETELY** - no placeholders, no stubs, no TODOs
 - Follow existing patterns and conventions in the codebase
 - Use Ultrathink for complex decisions
@@ -86,7 +86,7 @@ Select the task to work on using these criteria:
 - Tests unrelated to your work that are failing MUST be fixed as part of this iteration
 
 **If you find inconsistencies in specs/:**
-- Use an Opus 4.5 subagent with 'ultrathink' to update the specs
+- Use an subagent with 'ultrathink' to update the specs
 - Document the change in your commit message
 
 ---
@@ -207,9 +207,9 @@ git push
 
 ## Subagent Strategy
 
-- **Parallel Sonnet subagents:** For reading and searching files (scale as needed for efficiency)
-- **Single Sonnet subagent:** For builds and tests (avoid parallel execution conflicts)
-- **Opus subagents:** For complex reasoning tasks (debugging, architectural decisions, spec updates)
+- **Parallel subagents:** For reading and searching files (scale as needed for efficiency)
+- **Single subagent:** For builds and tests (avoid parallel execution conflicts)
+- **Subagents:** For complex reasoning tasks (debugging, architectural decisions, spec updates)
 - **Background subagents:** Update `IMPLEMENTATION_PLAN.md` with a subagent to keep it current
 
 ---
