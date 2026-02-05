@@ -4,6 +4,8 @@ This document tracks the status of all feature specifications. Agents should con
 
 ## Active Specifications
 
+None - all specifications have been implemented.
+
 ### Ralph System (ralph-system-initial-implementation.md)
 - **Status:** Implemented
 - **Completed:** 2026-02-05
@@ -21,6 +23,13 @@ This document tracks the status of all feature specifications. Agents should con
 - **Summary:** Test specification to validate Ralph loop functionality. Defines a simple calculator module with basic operations, input validation, and comprehensive tests. Used to verify IMPLEMENTATION_PLAN.md creation, task execution, PROGRESS.md updates, and git integration.
 
 ## Implemented Specifications
+
+### Plan Mode Interactive Session Fix (plan-mode-fix.md)
+- **Status:** Implemented
+- **Completed:** 2026-02-05
+- **Verification:** All requirements met - cline invocation changed from piping stdin to passing prompt as argument, using --plan flag instead of --yolo/--json, spec name hint integration working, automatic git commit after sessions, simplified execution path (no logging, health checks, validation hooks, or metrics in plan mode)
+- **Tests:** Plan mode now properly launches interactive cline sessions, git auto-commit works correctly, spec name hints are appended to prompts
+- **Summary:** Fixed critical bug preventing interactive planning sessions. Changed cline invocation method, integrated spec name hints, added automatic git commit after sessions, and simplified plan mode execution by removing build-mode features (logging, health checks, validation hooks, metrics parsing).
 
 ### Docker Environment Configuration (docker-env-implementation-plan.md)
 - **Status:** Implemented
