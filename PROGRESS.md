@@ -4,7 +4,7 @@
 
 ### 2026-02-05
 - [x] Enhance loop.sh with health checks and logging
-  - Commit: (pending)
+  - Commit: cd76ad3
   - Added health check functions: disk space, git repo, specs readable, agent available
   - Implemented iteration timeout (default 30 minutes, configurable via RALPH_ITERATION_TIMEOUT)
   - Added comprehensive logging to `.ralph/logs/YYYY-MM-DD_NNN.log` with iteration headers/footers
