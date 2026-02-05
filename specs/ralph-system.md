@@ -118,19 +118,52 @@ project-root/
 
 **Responsibilities:**
 1. Load appropriate prompt (plan or build mode)
-2. Invoke agent with prompt
-3. Capture full output to log file with timestamp
-4. Check for PROJECT_COMPLETE marker
-5. Execute optional validation hook
-6. Perform git commit with descriptive message
-7. Push to remote branch
-8. Repeat until max iterations or PROJECT_COMPLETE
+2. Run health checks before iteration
+3. Invoke agent with prompt (with timeout)
+4. Capture full output to log file with timestamp
+5. Check for PROJECT_COMPLETE marker
+6. Execute optional validation hook
+7. Perform git commit with descriptive message
+8. Push to remote branch (with retry logic)
+9. Repeat until max iterations or PROJECT_COMPLETE
 
 **Loop Control:**
 - Exit conditions: Max iterations reached OR "PROJECT_COMPLETE" detected in IMPLEMENTATION_PLAN.md
 - Iteration counter displayed between cycles
 - Current git branch displayed at start
 - Can be terminated via Ctrl-C at any time
+
+**Health Checks:**
+Before each iteration, run lightweight checks (isolated in functions):
+```bash
+check_health() {
+    check_disk_space || warn "Low disk space (< 1GB available)"
+    check_git_repo || fatal "Not a git repository"
+    check_specs_readable || fatal "Cannot read specs/ directory"
+    check_agent_available || fatal "Agent binary not found"
+}
+```
+Warnings are logged but don't stop loop. Fatal errors exit immediately.
+
+**Iteration Timeout:**
+Each iteration has a maximum duration (default: 30 minutes):
+```bash
+# Kill agent if it exceeds timeout
+timeout 30m $AGENT_COMMAND || {
+    echo "FATAL: Agent exceeded iteration timeout"
+    exit 1
+}
+```
+Configuration can be adjusted based on project needs.
+
+**Agent Invocation:**
+```bash
+# Example for cline agent
+cline \
+    --yolo \
+    --output-format=json \
+    "$(cat "$PROMPT_FILE")"
+```
 
 **Logging:**
 - All output tee'd to `.ralph/logs/YYYY-MM-DD_NNN.log`
@@ -146,7 +179,9 @@ project-root/
 # After each successful iteration
 git add -A
 git commit -m "ralph: <description of completed task>"
-git push origin <current-branch>
+
+# Push with retry logic
+push_with_retry || exit 1
 ```
 
 #### `.ralph/prompts/PROMPT_plan.md` - Plan Mode Instructions
@@ -187,6 +222,15 @@ git push origin <current-branch>
   - Commit changes with descriptive message
   - Exit when task complete
 
+**Task Selection Criteria:**
+When choosing which task to work on from IMPLEMENTATION_PLAN.md:
+- Select the highest priority task you can complete
+- Read IMPLEMENTATION_PLAN.md carefully for dependencies and notes
+- Prefer tasks that unblock other work
+- If a task seems unclear or too large, break it down first (update plan)
+- Document your reasoning for task choice in commit message
+- If you fail to complete a task after multiple attempts, mark it [BLOCKED] and document the blocking issue, then move to next task
+
 **Important Behaviors:**
 - Use subagents for parallel reads/searches
 - Keep AGENTS.md operational only (no status bloat)
@@ -202,8 +246,10 @@ git push origin <current-branch>
 **Behavior:**
 - If file exists and is executable, run it after each iteration
 - If file doesn't exist, skip validation
-- Exit code 0 = success, continue loop
-- Exit code non-zero = failure (implementation TBD: stop or log and continue?)
+- Exit code 0 = validation passed, continue loop
+- Exit code non-zero = FATAL, stop loop immediately
+- Agent is responsible for running and fixing its own tests during implementation
+- This validation is a final quality gate before continuing to next iteration
 
 **Example validation checks:**
 - Run test suite
@@ -211,6 +257,25 @@ git push origin <current-branch>
 - Check build success
 - Verify documentation updated
 - Custom project-specific checks
+
+**Example validation script:**
+```bash
+#!/bin/bash
+# .ralph/validate.sh
+
+set -e
+
+echo "Running tests..."
+npm test
+
+echo "Running linter..."
+npm run lint
+
+echo "Checking build..."
+npm run build
+
+echo "✓ All validation passed!"
+```
 
 ---
 
@@ -252,6 +317,27 @@ PROJECT_COMPLETE
 - Agents add discovered issues/gaps
 - Agents re-prioritize as needed
 - Can be regenerated from specs/ by deleting it and starting build mode
+
+**Handling Stuck Tasks:**
+If agent repeatedly fails same task:
+- Track attempt count implicitly via git history review
+- After ~3 iterations on same task with no progress:
+  - Agent should add [BLOCKED] tag to task
+  - Document blocking issue in Notes section
+  - Move to next task
+- Human intervention required to unblock
+
+**Example with blocked task:**
+```markdown
+## Remaining Tasks
+
+1. [BLOCKED] Fix authentication bug in login handler
+   - Blocked by: Unclear requirements for password special char handling
+   - Needs: Clarification from human or update to specs/
+   
+2. [HIGH PRIORITY] Add user profile API endpoint
+   (Agent should work on this next)
+```
 
 ### PROGRESS.md
 
@@ -402,10 +488,18 @@ Obsolete specs moved to specs/archive/ for historical reference.
 ```
 
 **Maintenance:**
-- Agents update status when specs are fully implemented
+- Agents update status when ALL TASKS for a spec are fully implemented
+  - Check IMPLEMENTATION_PLAN.md - are all tasks for this spec completed?
+  - Run tests - do they all pass?
+  - If yes, mark spec as "Implemented" with completion date
 - Agents add new specs to the index when created
 - Agents mark specs as superseded when replaced
 - Human reviews and approves major status changes
+
+**Relationship to IMPLEMENTATION_PLAN.md:**
+- specs/README.md = Feature-level status ("User Auth spec is implemented")
+- IMPLEMENTATION_PLAN.md = Task-level work ("Fix auth bug, add endpoint X")
+- A spec may have many tasks; spec is "Implemented" only when ALL tasks complete
 
 ---
 
@@ -446,20 +540,29 @@ fi
 
 ### Error Categories
 
-**Recoverable Errors** (document and continue)
-- Test failures
-- Build warnings
-- Incomplete implementations discovered
-- Integration issues
-- Performance problems
+The following examples illustrate fatal vs recoverable errors. This is not an exhaustive list, but provides guidance for categorization.
 
-**Action:** Agent documents in IMPLEMENTATION_PLAN.md for next iteration
+**Recoverable Errors** (document and continue)
+
+Examples include:
+- Test failures during implementation (agent should fix)
+- Build warnings
+- Linting issues
+- Network timeouts (with retry logic)
+- API rate limits (with backoff)
+- Performance problems discovered
+
+**Action:** Agent documents in IMPLEMENTATION_PLAN.md for current or future iteration
 
 **Fatal Errors** (stop the loop)
+
+Examples include:
 - Git push failures (after retries)
-- Agent crashes
-- Validation script failures (TBD)
-- File system errors
+- Agent process crashes
+- External validation script (.ralph/validate.sh) failures
+- File system full/permissions errors
+- Unable to read specs/ directory
+- Iteration timeout exceeded
 
 **Action:** Loop exits with error message, human intervention required
 
@@ -607,6 +710,479 @@ git reset --hard HEAD~N
 git reset --hard <commit-hash>
 ```
 
+#### When to Rollback
+
+Consider rolling back iterations when:
+- Tests that were passing now fail
+- Agent introduced obvious bugs or security issues
+- Agent misunderstood requirements (check against specs/)
+- Unnecessary refactoring or scope creep
+- Agent got stuck in an unproductive direction
+
+```bash
+# After rollback, force push to update remote
+git push --force origin $(git branch --show-current)
+```
+
+⚠️ **Warning:** Force push required after rollback. Ensure coordination if multiple people are working on the branch.
+
+### Git Push with Retry Logic
+
+```bash
+push_with_retry() {
+    local max_attempts=3
+    local attempt=1
+    
+    while [ $attempt -le $max_attempts ]; do
+        if git push origin $(git branch --show-current); then
+            echo "✓ Push successful"
+            return 0
+        fi
+        echo "Push failed (attempt $attempt/$max_attempts), retrying in 5s..."
+        sleep 5
+        attempt=$((attempt + 1))
+    done
+    
+    echo "FATAL: Git push failed after $max_attempts attempts"
+    return 1
+}
+```
+
+If push fails after retries:
+- Check network connectivity
+- Verify remote branch permissions
+- Check for remote conflicts
+- Review `.git/config` for correct remote URL
+
+---
+
+## Example: Building a User Profile Feature
+
+This example demonstrates how the Ralph system works through several iterations of implementing a user profile feature.
+
+### Initial State
+
+**Project structure:**
+```
+project/
+├── specs/
+│   ├── README.md (lists user-profiles.md as "Active")
+│   └── user-profiles.md (defines requirements)
+├── src/
+│   └── lib/
+└── .git/
+```
+
+**specs/user-profiles.md** (human-written):
+```markdown
+---
+status: active
+created: 2026-02-04
+tags: [user, profile, backend]
+---
+
+# User Profiles
+
+## Requirements
+- User model with profile fields (name, bio, avatar_url)
+- GET /api/users/:id endpoint
+- PUT /api/users/:id endpoint for updates
+- Input validation (name required, bio max 500 chars)
+- Unit tests for model
+- Integration tests for API
+```
+
+**IMPLEMENTATION_PLAN.md:** Does not exist yet
+
+### Iteration 1: Planning
+
+**Agent actions:**
+1. Reads specs/user-profiles.md
+2. Analyzes existing codebase structure
+3. Creates IMPLEMENTATION_PLAN.md
+4. Commits and exits
+
+**IMPLEMENTATION_PLAN.md** (created):
+```markdown
+# Implementation Plan
+
+## Remaining Tasks
+
+1. Create User model with profile fields (name, bio, avatar_url)
+2. Add GET /api/users/:id endpoint
+3. Add PUT /api/users/:id endpoint with input validation
+4. Add unit tests for User model
+5. Add integration tests for user API endpoints
+
+## Notes
+
+- Follow existing patterns in src/lib for models
+- Use project's validation library for input checks
+- Ensure all tests pass before marking task complete
+```
+
+**Git commit:**
+```
+ralph: create implementation plan for user profiles
+
+- Analyzed specs/user-profiles.md
+- Created prioritized task list
+- 5 tasks identified
+```
+
+### Iteration 2: User Model
+
+**Agent actions:**
+1. Reads IMPLEMENTATION_PLAN.md, selects task #1
+2. Creates `src/lib/models/User.js`
+3. Updates IMPLEMENTATION_PLAN.md
+4. Updates PROGRESS.md
+5. Commits and exits
+
+**src/lib/models/User.js** (created):
+```javascript
+class User {
+  constructor(id, name, bio = '', avatar_url = null) {
+    this.id = id;
+    this.name = name;
+    this.bio = bio;
+    this.avatar_url = avatar_url;
+  }
+  
+  validate() {
+    if (!this.name) throw new Error('Name is required');
+    if (this.bio.length > 500) throw new Error('Bio max 500 characters');
+    return true;
+  }
+}
+
+module.exports = User;
+```
+
+**IMPLEMENTATION_PLAN.md** (updated):
+```markdown
+# Implementation Plan
+
+## Remaining Tasks
+
+1. Add GET /api/users/:id endpoint
+2. Add PUT /api/users/:id endpoint with input validation
+3. Add unit tests for User model
+4. Add integration tests for user API endpoints
+
+## Notes
+
+- Follow existing patterns in src/lib for models
+- Use project's validation library for input checks
+- Ensure all tests pass before marking task complete
+```
+
+**PROGRESS.md** (created):
+```markdown
+# Progress Log
+
+## Completed Tasks
+
+### 2026-02-04
+- [x] Create User model with profile fields (name, bio, avatar_url)
+  - Commit: a1b2c3d
+  - Created src/lib/models/User.js
+  - Includes validation method
+```
+
+**Git commit:**
+```
+ralph: implement User model with profile fields
+
+- Created User model class
+- Added validation for name (required) and bio (max 500 chars)
+- Located in src/lib/models/User.js
+- Task 1 of 5 complete
+```
+
+### Iteration 3: GET Endpoint
+
+**Agent actions:**
+1. Reads IMPLEMENTATION_PLAN.md, selects task #1 (now GET endpoint)
+2. Creates `src/routes/users.js` with GET handler
+3. Discovers missing database integration - adds new task
+4. Updates documentation
+5. Commits and exits
+
+**src/routes/users.js** (created):
+```javascript
+const express = require('express');
+const User = require('../lib/models/User');
+const router = express.Router();
+
+router.get('/:id', async (req, res) => {
+  // TODO: Replace with actual DB query
+  const user = new User(req.params.id, 'John Doe', 'Sample bio');
+  res.json(user);
+});
+
+module.exports = router;
+```
+
+**IMPLEMENTATION_PLAN.md** (updated):
+```markdown
+# Implementation Plan
+
+## Remaining Tasks
+
+1. [HIGH PRIORITY] Add database integration for User model
+2. Add PUT /api/users/:id endpoint with input validation
+3. Add unit tests for User model
+4. Add integration tests for user API endpoints
+5. Update GET endpoint to use database
+
+## Notes
+
+- Follow existing patterns in src/lib for models
+- Use project's validation library for input checks
+- Ensure all tests pass before marking task complete
+- Database integration needed before completing API endpoints
+```
+
+**PROGRESS.md** (updated):
+```markdown
+# Progress Log
+
+## Completed Tasks
+
+### 2026-02-04
+- [x] Add GET /api/users/:id endpoint
+  - Commit: e4f5g6h
+  - Created basic route handler
+  - Discovered need for database integration (added to plan)
+
+- [x] Create User model with profile fields (name, bio, avatar_url)
+  - Commit: a1b2c3d
+  - Created src/lib/models/User.js
+  - Includes validation method
+```
+
+**Git commit:**
+```
+ralph: add GET /api/users/:id endpoint (stub implementation)
+
+- Created users router with GET handler
+- Using stub data until DB integration added
+- Discovered missing DB layer, added high-priority task
+- Task 2 of 5 complete (task list expanded to 6)
+```
+
+### Iteration 4: Database Integration (Blocked)
+
+**Agent actions:**
+1. Reads IMPLEMENTATION_PLAN.md, selects high-priority DB task
+2. Searches codebase for database patterns - finds none
+3. Checks specs/ for database requirements - unclear which DB to use
+4. Marks task as BLOCKED
+5. Moves to next task (PUT endpoint)
+6. Implements PUT endpoint
+7. Updates plan and exits
+
+**IMPLEMENTATION_PLAN.md** (updated):
+```markdown
+# Implementation Plan
+
+## Remaining Tasks
+
+1. [BLOCKED] Add database integration for User model
+   - Blocked by: specs/ don't specify which database system to use
+   - Needs: Clarification on database choice (PostgreSQL? MySQL? MongoDB?)
+   - No existing database patterns found in codebase
+   
+2. Add unit tests for User model
+3. Add integration tests for user API endpoints
+4. Update GET endpoint to use database (depends on task 1)
+5. Update PUT endpoint to use database (depends on task 1)
+
+## Notes
+
+- Database integration is blocking API completion
+- Human intervention needed to specify database requirements
+- Implemented PUT endpoint with stub data for now
+```
+
+**Git commit:**
+```
+ralph: add PUT /api/users/:id endpoint, block database task
+
+- Implemented PUT handler with validation
+- Marked database integration as BLOCKED
+- Needs specs clarification on database choice
+- Task 3 of 6 complete, 1 blocked
+```
+
+### Final State Summary
+
+After 4 iterations:
+- ✅ User model created
+- ✅ GET endpoint created (stub)
+- ✅ PUT endpoint created (stub)
+- ⚠️ Database integration blocked (needs human input)
+- ⏳ Tests pending
+- ⏳ Database integration for endpoints pending
+
+**Human intervention required:** Clarify database requirements in specs/, then restart loop.
+
+---
+
+## Bootstrap and Setup
+
+### Prerequisites
+
+- Git repository initialized (`git init`)
+- Agent (cline) installed and available in PATH
+- At least one specification document in specs/
+
+### Setting Up Ralph in a New Project
+
+**Step 1: Create Directory Structure**
+
+```bash
+# Create Ralph directories
+mkdir -p .ralph/{prompts,logs}
+
+# Create specs directory if it doesn't exist
+mkdir -p specs
+```
+
+**Step 2: Add Entry Point Script**
+
+Create `ralph` in project root:
+```bash
+#!/bin/bash
+# Delegates to .ralph/loop.sh with appropriate arguments
+exec .ralph/loop.sh "$@"
+```
+
+Make it executable:
+```bash
+chmod +x ralph
+```
+
+**Step 3: Create loop.sh**
+
+Create `.ralph/loop.sh` (see Component Specifications section for implementation details).
+
+Make it executable:
+```bash
+chmod +x .ralph/loop.sh
+```
+
+**Step 4: Write Initial Specification**
+
+Either manually create a spec file:
+```bash
+# Create first spec
+touch specs/my-feature.md
+# Edit with your requirements
+```
+
+Or use plan mode (requires prompts to be created first):
+```bash
+./ralph plan my-feature
+```
+
+**Step 5: Create Prompt Files**
+
+Create `.ralph/prompts/PROMPT_build.md` and `.ralph/prompts/PROMPT_plan.md` (see Future Work - prompt files will be created in separate spec/implementation).
+
+**Step 6: Optional Validation**
+
+Create `.ralph/validate.sh` if you want automated validation:
+```bash
+#!/bin/bash
+set -e
+npm test
+npm run lint
+```
+
+Make it executable:
+```bash
+chmod +x .ralph/validate.sh
+```
+
+**Step 7: Start Building**
+
+```bash
+# First iteration will create IMPLEMENTATION_PLAN.md
+./ralph
+
+# Or with max iterations
+./ralph 10
+```
+
+### Operational Constraints
+
+While the loop is running:
+- **DO NOT** manually edit IMPLEMENTATION_PLAN.md or PROGRESS.md
+- **DO NOT** make git commits manually
+- **DO NOT** delete or move files the agent might access
+- **YOU CAN:** View files, tail logs, prepare next spec in specs/
+
+To make manual changes: Press Ctrl-C to stop the loop, make your changes, then restart the loop.
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**Loop exits immediately after starting**
+- **Check:** Is `PROJECT_COMPLETE` marker in IMPLEMENTATION_PLAN.md?
+  - Solution: Remove marker if work remains
+- **Check:** Did validation script fail?
+  - Solution: Review latest log in `.ralph/logs/`, fix validation issues
+- **Check:** Did health checks fail?
+  - Solution: Review error messages, fix prerequisites
+
+**Agent not following IMPLEMENTATION_PLAN.md tasks**
+- **Check:** Are tasks well-defined and actionable?
+  - Solution: Break down vague tasks into specific steps
+- **Check:** Is PROMPT_build.md clear about task selection?
+  - Solution: Review and enhance prompt instructions
+- **Try:** Delete IMPLEMENTATION_PLAN.md and let agent regenerate it
+
+**Git push failures**
+- **Check:** Network connectivity to git remote
+  - Solution: Verify with `git remote -v` and test network
+- **Check:** Branch exists on remote and you have push permissions
+  - Solution: Manually push once to create branch
+- **Check:** Conflicts with remote branch
+  - Solution: Resolve conflicts manually, restart loop
+
+**High costs per iteration**
+- **Review:** Are tasks too large or vague?
+  - Solution: Break large tasks into smaller, focused chunks
+- **Check:** Is agent reading too many files?
+  - Solution: Review specs/ to ensure clear scope boundaries
+- **Consider:** Add more specific guidance in PROMPT_build.md
+
+**Agent modifying unrelated files**
+- **Review:** Are specs/ clear about scope and boundaries?
+  - Solution: Add explicit "out of scope" section to specs
+- **Check:** Is AGENTS.md too broad in its guidance?
+  - Solution: Make AGENTS.md more specific to project conventions
+
+**Agent keeps failing same task**
+- **Check:** Has agent marked task as [BLOCKED]?
+  - Solution: Review blocking issue, update specs/ or provide clarification
+- **Check:** Are requirements clear in specs/?
+  - Solution: Enhance spec with examples and edge cases
+- **Try:** Manually implement part of the task to unblock agent
+
+**Tests keep failing across iterations**
+- **Check:** Are tests overly strict or flaky?
+  - Solution: Review test quality, fix flaky tests
+- **Check:** Did agent misunderstand requirements?
+  - Solution: Clarify specs/, possibly rollback and restart
+- **Check:** Is validation script misconfigured?
+  - Solution: Test validation script manually
+
 ---
 
 ## Validation Hooks
@@ -694,37 +1270,96 @@ echo "All validation passed!"
 
 ---
 
+## Failure Mode Testing
+
+The following failure scenarios should be validated through testing:
+
+### Tested Scenarios
+
+**1. Agent crashes mid-iteration**
+- **Expected:** Dirty working directory, uncommitted changes
+- **Recovery:** Next iteration detects dirty state, loop exits with error
+- **Human action:** Review changes, commit manually or reset, restart loop
+
+**2. Git push fails (network down)**
+- **Expected:** Retry 3 times with 5s delays, then fatal exit
+- **Recovery:** Loop exits, changes committed locally
+- **Human action:** Fix network, run `git push` manually, restart loop
+
+**3. Tests fail during iteration**
+- **Expected:** Agent should fix tests and retry until passing
+- **Recovery:** If unable to fix after multiple attempts, agent marks task as [BLOCKED]
+- **Human action:** Review blocked task, clarify requirements
+
+**4. External validation script fails**
+- **Expected:** Loop exits immediately with fatal error
+- **Recovery:** Loop stops, changes committed locally
+- **Human action:** Review log, fix validation issues, restart loop
+
+**5. Iteration timeout exceeded**
+- **Expected:** Agent process killed, loop exits with fatal error
+- **Recovery:** No commit made, working directory may be dirty
+- **Human action:** Review task complexity, break into smaller tasks, restart
+
+**6. IMPLEMENTATION_PLAN.md deleted mid-loop**
+- **Expected:** Next iteration recreates it from specs/
+- **Recovery:** Fresh plan generated, existing PROGRESS.md preserved
+- **Human action:** None required, loop continues
+
+**7. Disk space full**
+- **Expected:** Health check warning on low space, fatal error when full
+- **Recovery:** Loop exits before iteration starts (if caught by health check)
+- **Human action:** Free disk space, restart loop
+
+**8. specs/ directory becomes unreadable**
+- **Expected:** Health check fails, loop exits immediately
+- **Recovery:** Loop cannot continue without specs
+- **Human action:** Fix permissions, restore specs/, restart loop
+
+---
+
 ## Future Enhancements
 
 ### Potential improvements (not in initial scope):
 
-1. **Parallel execution** - Run multiple agents on different tasks simultaneously
-2. **Cost optimization** - Use cheaper models for simple tasks
-3. **Smart validation** - Learn which validations to run based on changed files
-4. **Progress dashboard** - Web UI showing current status, metrics, history
-5. **Agent learning** - Share successful patterns across projects
-6. **Dependency tracking** - Understand task dependencies, optimize order
-7. **Rollback automation** - Automatic rollback on validation failure
-8. **Multi-repository** - Coordinate changes across multiple repos
-9. **Human review points** - Optional gates requiring approval
-10. **Template projects** - Starter templates for common project types
+1. **Configuration file** - `.ralph/config` for iteration timeout, cost limits, validation behavior
+2. **File locking** - Prevent concurrent modifications if multiple agents supported
+3. **PROGRESS.md archiving** - Auto-archive old entries after N days to separate files
+4. **Cost tracking** - Per-iteration and cumulative cost limits with warnings
+5. **Parallel execution** - Run multiple agents on different tasks simultaneously (requires file locking)
+6. **Cost optimization** - Use cheaper models for simple tasks
+7. **Smart validation** - Learn which validations to run based on changed files
+8. **Progress dashboard** - Web UI showing current status, metrics, history
+9. **Agent learning** - Share successful patterns across projects
+10. **Dependency tracking** - Understand task dependencies, optimize order
+11. **Rollback automation** - Automatic rollback on validation failure
+12. **Multi-repository** - Coordinate changes across multiple repos
+13. **Human review points** - Optional gates requiring approval
+14. **Template projects** - Starter templates for common project types
 
 ---
 
-## Open Questions
+## Open Questions (Resolved)
 
-1. **Validation failure handling:** Should loop stop or continue after validation failure?
-   - Option A: Stop immediately (safe, may be annoying)
-   - Option B: Log and continue (efficient, may accumulate problems)
-   - Option C: Configurable via `.ralph/config`
+~~1. **Validation failure handling:** Should loop stop or continue after validation failure?~~
 
-2. **Error categorization:** Need concrete list of fatal vs recoverable errors
+**RESOLVED:** External validation script (`.ralph/validate.sh`) failures are FATAL and stop the loop immediately. Exit code non-zero requires human intervention. Agent's own test execution during implementation is separate - build prompt instructs agents to fix test failures and continue until passing.
 
-3. **PROGRESS.md growth:** Should there be automatic archiving after N entries?
+~~2. **Error categorization:** Need concrete list of fatal vs recoverable errors~~
 
-4. **Multiple agents:** If supporting multiple agents, how to handle agent-specific features?
+**RESOLVED:** Provide examples per category rather than exhaustive lists. See Error Handling section for examples of each type.
 
-5. **Cost tracking:** Should there be cost limits/warnings?
+~~3. **PROGRESS.md growth:** Should there be automatic archiving after N entries?~~
+
+**DEFERRED:** Future enhancement. Git history provides sufficient fallback for now. Manual pruning acceptable for v1.
+
+~~4. **Multiple agents:** If supporting multiple agents, how to handle agent-specific features?~~
+
+**RESOLVED:** Single agent only for v1. File locking and concurrent modifications noted in Future Enhancements section for potential multi-agent support.
+
+~~5. **Cost tracking:** Should there be cost limits/warnings?~~
+
+**DEFERRED:** Future enhancement. Manual monitoring sufficient for v1. Configuration file could add this in future.
 
 ---
 
