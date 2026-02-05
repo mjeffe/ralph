@@ -3,8 +3,17 @@
 ## Completed Tasks
 
 ### 2026-02-05
+- [x] Create example validation script with working patterns
+  - Commit: [pending]
+  - Enhanced .ralph/validate.sh.example with comprehensive validation patterns
+  - Added 8 validation patterns for common project types: Node.js, Python, Go, Rust, PHP/Laravel, Shell scripts, Documentation, Git repository
+  - Included working example for Ralph project validation
+  - Validates required files, directories, runs calculator tests, checks permissions, verifies specs
+  - Tested successfully - all validation checks pass
+  - Task 9 complete - validation hook template now production-ready
+
 - [x] Update documentation for calculator
-  - Commit: (pending)
+  - Commit: 8ad9e70
   - Added calculator module to README.md file structure section
   - Created "Example: Calculator Module" section with comprehensive documentation
   - Documented how to run tests with expected output

@@ -23,12 +23,6 @@ This plan implements the Ralph Wiggum Loop system as specified in `specs/ralph-s
    - Dependencies: Task 3
    - Spec: specs/ralph-system.md - "Logging and Metrics"
 
-9. **Create example validation script**
-   - Create working example for common project types
-   - Document validation patterns
-   - Dependencies: Task 4
-   - Spec: specs/ralph-system.md - "Validation Hooks"
-
 ## Notes
 
 ### Current State

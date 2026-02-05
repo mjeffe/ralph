@@ -14,32 +14,333 @@
 
 set -e  # Exit on any error
 
-echo "Running project validation..."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Running Project Validation"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 
-# Example: Run test suite
-# Uncomment and modify for your project
-# echo "Running tests..."
-# npm test
-# or: python -m pytest
-# or: go test ./...
-# or: cargo test
+# =============================================================================
+# VALIDATION PATTERNS FOR COMMON PROJECT TYPES
+# =============================================================================
+#
+# Uncomment and customize the sections relevant to your project type.
+# You can mix and match patterns as needed.
 
-# Example: Run linter
-# echo "Running linter..."
-# npm run lint
-# or: pylint src/
-# or: golangci-lint run
-# or: cargo clippy
+# -----------------------------------------------------------------------------
+# Pattern 1: Node.js / JavaScript Projects
+# -----------------------------------------------------------------------------
+# Validates: package.json exists, dependencies installed, tests pass, linting
+#
+# if [ -f "package.json" ]; then
+#     echo "📦 Node.js project detected"
+#     
+#     # Check dependencies are installed
+#     if [ ! -d "node_modules" ]; then
+#         echo "Installing dependencies..."
+#         npm install
+#     fi
+#     
+#     # Run tests
+#     echo "Running tests..."
+#     npm test
+#     
+#     # Run linter (if configured)
+#     if grep -q '"lint"' package.json; then
+#         echo "Running linter..."
+#         npm run lint
+#     fi
+#     
+#     # Check build (if configured)
+#     if grep -q '"build"' package.json; then
+#         echo "Checking build..."
+#         npm run build
+#     fi
+# fi
 
-# Example: Check build
-# echo "Checking build..."
-# npm run build
-# or: make build
-# or: cargo build
+# -----------------------------------------------------------------------------
+# Pattern 2: Python Projects
+# -----------------------------------------------------------------------------
+# Validates: requirements installed, tests pass, code formatting
+#
+# if [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then
+#     echo "🐍 Python project detected"
+#     
+#     # Check virtual environment
+#     if [ ! -d "venv" ] && [ ! -d ".venv" ]; then
+#         echo "Warning: No virtual environment found"
+#     fi
+#     
+#     # Run tests with pytest
+#     if command -v pytest &> /dev/null; then
+#         echo "Running pytest..."
+#         pytest
+#     fi
+#     
+#     # Run tests with unittest
+#     if [ -d "tests" ]; then
+#         echo "Running unittest..."
+#         python -m unittest discover tests
+#     fi
+#     
+#     # Check code formatting with black
+#     if command -v black &> /dev/null; then
+#         echo "Checking code formatting..."
+#         black --check .
+#     fi
+#     
+#     # Run linter with pylint
+#     if command -v pylint &> /dev/null && [ -d "src" ]; then
+#         echo "Running pylint..."
+#         pylint src/
+#     fi
+# fi
 
-# Example: Custom checks
-# echo "Checking documentation..."
-# [ -f "README.md" ] || { echo "README.md missing"; exit 1; }
+# -----------------------------------------------------------------------------
+# Pattern 3: Go Projects
+# -----------------------------------------------------------------------------
+# Validates: dependencies tidy, tests pass, code formatted, linting
+#
+# if [ -f "go.mod" ]; then
+#     echo "🐹 Go project detected"
+#     
+#     # Verify dependencies
+#     echo "Verifying dependencies..."
+#     go mod verify
+#     
+#     # Run tests
+#     echo "Running tests..."
+#     go test ./...
+#     
+#     # Check formatting
+#     echo "Checking code formatting..."
+#     if [ -n "$(gofmt -l .)" ]; then
+#         echo "Code is not formatted. Run: gofmt -w ."
+#         exit 1
+#     fi
+#     
+#     # Run linter (if golangci-lint is installed)
+#     if command -v golangci-lint &> /dev/null; then
+#         echo "Running linter..."
+#         golangci-lint run
+#     fi
+# fi
 
-echo "✓ All validation passed!"
+# -----------------------------------------------------------------------------
+# Pattern 4: Rust Projects
+# -----------------------------------------------------------------------------
+# Validates: builds successfully, tests pass, linting with clippy
+#
+# if [ -f "Cargo.toml" ]; then
+#     echo "🦀 Rust project detected"
+#     
+#     # Check build
+#     echo "Checking build..."
+#     cargo build
+#     
+#     # Run tests
+#     echo "Running tests..."
+#     cargo test
+#     
+#     # Run clippy linter
+#     echo "Running clippy..."
+#     cargo clippy -- -D warnings
+#     
+#     # Check formatting
+#     echo "Checking code formatting..."
+#     cargo fmt -- --check
+# fi
+
+# -----------------------------------------------------------------------------
+# Pattern 5: PHP / Laravel Projects
+# -----------------------------------------------------------------------------
+# Validates: composer dependencies, tests pass, code standards
+#
+# if [ -f "composer.json" ]; then
+#     echo "🐘 PHP project detected"
+#     
+#     # Check dependencies
+#     if [ ! -d "vendor" ]; then
+#         echo "Installing dependencies..."
+#         composer install
+#     fi
+#     
+#     # Run PHPUnit tests
+#     if [ -f "phpunit.xml" ]; then
+#         echo "Running PHPUnit tests..."
+#         ./vendor/bin/phpunit
+#     fi
+#     
+#     # Run Laravel tests (if Laravel project)
+#     if [ -f "artisan" ]; then
+#         echo "Running Laravel tests..."
+#         php artisan test
+#     fi
+#     
+#     # Check code standards with PHP_CodeSniffer
+#     if [ -f "phpcs.xml" ]; then
+#         echo "Checking code standards..."
+#         ./vendor/bin/phpcs
+#     fi
+# fi
+
+# -----------------------------------------------------------------------------
+# Pattern 6: Generic Shell Script Projects
+# -----------------------------------------------------------------------------
+# Validates: shell scripts are executable, pass shellcheck
+#
+# echo "🔧 Checking shell scripts..."
+# 
+# # Find all shell scripts
+# SHELL_SCRIPTS=$(find . -type f -name "*.sh" ! -path "./node_modules/*" ! -path "./.git/*")
+# 
+# if [ -n "$SHELL_SCRIPTS" ]; then
+#     # Check if scripts are executable
+#     for script in $SHELL_SCRIPTS; do
+#         if [ ! -x "$script" ]; then
+#             echo "Warning: $script is not executable"
+#         fi
+#     done
+#     
+#     # Run shellcheck if available
+#     if command -v shellcheck &> /dev/null; then
+#         echo "Running shellcheck..."
+#         echo "$SHELL_SCRIPTS" | xargs shellcheck
+#     fi
+# fi
+
+# -----------------------------------------------------------------------------
+# Pattern 7: Documentation Validation
+# -----------------------------------------------------------------------------
+# Validates: required documentation files exist and are not empty
+#
+# echo "📚 Checking documentation..."
+# 
+# REQUIRED_DOCS=("README.md" "IMPLEMENTATION_PLAN.md" "PROGRESS.md")
+# 
+# for doc in "${REQUIRED_DOCS[@]}"; do
+#     if [ ! -f "$doc" ]; then
+#         echo "Error: Required documentation file missing: $doc"
+#         exit 1
+#     fi
+#     
+#     if [ ! -s "$doc" ]; then
+#         echo "Error: Documentation file is empty: $doc"
+#         exit 1
+#     fi
+# done
+
+# -----------------------------------------------------------------------------
+# Pattern 8: Git Repository Validation
+# -----------------------------------------------------------------------------
+# Validates: no uncommitted changes, branch is clean
+#
+# echo "🔍 Checking git repository..."
+# 
+# # Check for uncommitted changes
+# if [ -n "$(git status --porcelain)" ]; then
+#     echo "Error: Uncommitted changes detected"
+#     git status --short
+#     exit 1
+# fi
+# 
+# # Check if branch is ahead of remote
+# LOCAL=$(git rev-parse @)
+# REMOTE=$(git rev-parse @{u} 2>/dev/null || echo "")
+# 
+# if [ -n "$REMOTE" ] && [ "$LOCAL" != "$REMOTE" ]; then
+#     echo "Warning: Local branch differs from remote"
+# fi
+
+# =============================================================================
+# EXAMPLE: Ralph Project Validation (Working Example)
+# =============================================================================
+#
+# This is a concrete working example for the Ralph project itself.
+# It demonstrates how to validate a project with custom test files.
+
+echo "🔍 Ralph Project Validation"
+echo ""
+
+# Check required files exist
+echo "Checking required files..."
+REQUIRED_FILES=(
+    "ralph"
+    ".ralph/loop.sh"
+    ".ralph/prompts/PROMPT_build.md"
+    ".ralph/prompts/PROMPT_plan.md"
+    "specs/README.md"
+    "IMPLEMENTATION_PLAN.md"
+    "PROGRESS.md"
+)
+
+for file in "${REQUIRED_FILES[@]}"; do
+    if [ ! -f "$file" ]; then
+        echo "❌ Error: Required file missing: $file"
+        exit 1
+    fi
+    echo "  ✓ $file"
+done
+
+# Check required directories exist
+echo ""
+echo "Checking required directories..."
+REQUIRED_DIRS=(
+    "specs"
+    ".ralph/logs"
+    "src/lib"
+)
+
+for dir in "${REQUIRED_DIRS[@]}"; do
+    if [ ! -d "$dir" ]; then
+        echo "❌ Error: Required directory missing: $dir"
+        exit 1
+    fi
+    echo "  ✓ $dir/"
+done
+
+# Run calculator tests if they exist
+echo ""
+if [ -f "src/lib/calculator.test.js" ]; then
+    echo "Running calculator tests..."
+    if node src/lib/calculator.test.js; then
+        echo "  ✓ Calculator tests passed"
+    else
+        echo "❌ Error: Calculator tests failed"
+        exit 1
+    fi
+else
+    echo "  ℹ No calculator tests found (skipping)"
+fi
+
+# Check that scripts are executable
+echo ""
+echo "Checking script permissions..."
+SCRIPTS=("ralph" ".ralph/loop.sh")
+
+for script in "${SCRIPTS[@]}"; do
+    if [ ! -x "$script" ]; then
+        echo "❌ Error: Script is not executable: $script"
+        exit 1
+    fi
+    echo "  ✓ $script is executable"
+done
+
+# Verify specs directory is not empty
+echo ""
+echo "Checking specifications..."
+SPEC_COUNT=$(find specs -name "*.md" -type f | wc -l)
+if [ "$SPEC_COUNT" -eq 0 ]; then
+    echo "❌ Error: No specification files found in specs/"
+    exit 1
+fi
+echo "  ✓ Found $SPEC_COUNT specification file(s)"
+
+# =============================================================================
+# VALIDATION COMPLETE
+# =============================================================================
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✅ All validation checks passed!"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 exit 0
