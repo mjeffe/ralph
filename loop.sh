@@ -49,15 +49,10 @@ while true; do
     fi
 
     # Run Ralph iteration with selected prompt
-    # --yolo: Non-interactive mode (auto-approve all tool calls)
-    # --output-format=json: Structured output for logging/monitoring
-    # --verbose: Detailed execution logging
     # NOTE! I might (probably) be able to run the cline instance outside of the loop
     #cline instance new --default
-    cline \
-        --yolo \
-        --output-format=json \
-        "$(cat "$PROMPT_FILE")"
+    cat "$PROMPT_FILE" | cline \
+        --yolo
     #cline instance kill -a
 
     # Push changes after each iteration
