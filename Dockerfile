@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     git \
     jq \
+    vim \
     sudo \
     && rm -rf /var/lib/apt/lists/*
 
@@ -25,21 +26,44 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
+# Install cline CLI using npm (RUN THIS AS ROOT BEFORE SWITCHING USERS)
+RUN npm install -g cline
+
 # Create a non-root user for better security
 RUN useradd -m -s /bin/bash ralph
 
 # Grant sudo privileges without password
 RUN echo "ralph ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-# Set working directory
+# Ensure /app directory exists with correct permissions
+RUN mkdir -p /app && chown -R ralph:ralph /app
+
+# Switch to the non-root user and set working directory to /app
+USER ralph
 WORKDIR /app
 
-# Switch to the non-root user
-USER ralph
-WORKDIR /home/ralph
+# Create startup script for automatic cline configuration
+RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+# Check if .env file exists at /app\n\
+if [ -f "/app/.env" ]; then\n\
+  echo "Loading environment variables from /app/.env"\n\
+  export $(grep -v "^#" /app/.env | xargs)\n\
+fi\n\
+\n\
+# Configure cline automatically if environment variables are set\n\
+if [ -n "$PROVIDER" ] && [ -n "$APIKEY" ] && [ -n "$MODEL" ]; then\n\
+  echo "Configuring cline with environment variables..."\n\
+  cline auth --provider "$PROVIDER" --apikey "$APIKEY" --modelid "$MODEL"\n\
+  echo "Cline authentication complete. You can now run: cline"\n\
+else\n\
+  echo "Environment variables not fully configured. Please set PROVIDER, APIKEY, and MODEL in /app/.env"\n\
+fi\n\
+\n\
+# Execute any additional commands passed to the script\n\
+exec "$@"\n\
+' > /home/ralph/startup.sh && chmod +x /home/ralph/startup.sh
 
-# Install cline CLI using npm
-RUN npm install -g cline
-
-# Default command
-CMD ["/bin/bash"]
+# Default command - run startup script with tail to keep container alive
+CMD ["/home/ralph/startup.sh", "tail", "-f", "/dev/null"]
