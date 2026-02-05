@@ -3,6 +3,16 @@
 ## Completed Tasks
 
 ### 2026-02-05
+- [x] Create comprehensive test suite for calculator
+  - Commit: fa80ff8
+  - Created src/lib/calculator.test.js with 18 comprehensive tests
+  - Uses Node.js built-in assert module (no external dependencies)
+  - Tests all operations: add, subtract, multiply, divide
+  - Tests error cases: division by zero, invalid inputs (TypeError)
+  - Simple test runner executable with: node src/lib/calculator.test.js
+  - All 18 tests passing
+  - Task 13 complete
+
 - [x] Create test specification for Ralph loop validation
   - Commit: 820ada1
   - Created specs/test-simple-calculator.md with simple calculator requirements
