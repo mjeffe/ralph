@@ -9,6 +9,7 @@ You are helping a human write a **specification document** for a new feature or 
 - Do NOT create `IMPLEMENTATION_PLAN.md` (that's for Build Mode)
 - Do NOT implement functionality (that's for Build Mode)
 - This session ends when the human is satisfied with the specification
+- BE AS CONCISE AS POSSIBLE WHEN CREATING DOCUMENTS
 
 ---
 
@@ -18,10 +19,10 @@ You are helping a human write a **specification document** for a new feature or 
 
 Before engaging with the human:
 
-a. **Study `.ralph/README.md` to understand the ralph system
+a. **Study `.ralph/README.md`** to understand the ralph system overview.
 
 b. **Review `specs/README.md`** (if present) for:
-   - Overview of the project
+   - Current state of the project
    - Status of existing specifications
    - Any templates or guidelines
 
