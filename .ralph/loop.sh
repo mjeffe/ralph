@@ -294,6 +294,10 @@ while true; do
     # Run agent with timeout
     AGENT_EXIT_CODE=0
     if [ "$MODE" = "plan" ]; then
+        # This is CLINE specific!!! The interactive "plan" mode expects a task description. The full
+        # plan mode prompt confused the cline UI into thinking it should switch to act mode, caused
+        # some React errors, etc.
+        # 
         # Plan mode: interactive session, no timeout, no logging
         # Build task prompt that references the guidance file
         TASK_PROMPT="Study \`.ralph/prompts/PROMPT_plan.md\` for detailed guidance on your role. "
