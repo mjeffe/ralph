@@ -3,8 +3,16 @@
 ## Completed Tasks
 
 ### 2026-02-05
+- [x] Create bootstrap documentation
+  - Commit: 6da4ae4
+  - Task was already completed in previous README.md update
+  - README.md contains comprehensive bootstrap documentation covering all requirements
+  - Includes: prerequisites, step-by-step setup guide, directory structure, quick start
+  - All requirements from specs/ralph-system.md "Bootstrap and Setup" section covered
+  - Moved from IMPLEMENTATION_PLAN.md to PROGRESS.md for proper tracking
+
 - [x] Update README.md with Ralph usage instructions
-  - Commit: (pending)
+  - Commit: 6da4ae4
   - Added comprehensive usage documentation for build and plan modes
   - Documented file structure and key files (specs/, IMPLEMENTATION_PLAN.md, PROGRESS.md)
   - Added workflow example showing complete iteration cycle

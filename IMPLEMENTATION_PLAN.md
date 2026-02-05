@@ -12,13 +12,6 @@ This plan implements the Ralph Wiggum Loop system as specified in `specs/ralph-s
 
 ### Medium Priority - Documentation and Testing
 
-6. **Create bootstrap documentation**
-   - Document how to set up Ralph in a new project
-   - Create step-by-step setup guide
-   - Document prerequisites
-   - Dependencies: Tasks 1-4
-   - Spec: specs/ralph-system.md - "Bootstrap and Setup"
-
 7. **Test Ralph loop with simple project**
    - Create test specification in specs/
    - Run Ralph loop in build mode
