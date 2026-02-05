@@ -253,7 +253,25 @@ while true; do
     if [ "$MODE" = "build" ] && check_project_complete; then
         info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         info "PROJECT COMPLETE! All tasks finished."
+        info "Resetting implementation plan for next cycle..."
         info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        
+        # Reset implementation plan to minimal template
+        cat > IMPLEMENTATION_PLAN.md << 'EOF'
+# Implementation Plan
+
+## Remaining Tasks
+
+(This file will be regenerated from specs/ on next build cycle)
+EOF
+        
+        # Commit the reset
+        git add IMPLEMENTATION_PLAN.md
+        git commit -m "ralph: reset implementation plan after project completion"
+        
+        # Push with retry logic
+        push_with_retry
+        
         break
     fi
     
