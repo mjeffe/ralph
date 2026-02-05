@@ -4,7 +4,7 @@
 
 ### 2026-02-05
 - [x] Fix plan mode interactive session
-  - Commit: (will be added after commit)
+  - Commit: 06d4581
   - Changed cline invocation from piping stdin to passing prompt as argument
   - Using --plan flag instead of --yolo and --json for interactive mode
   - Integrated spec name hint functionality - appends hint to prompt when provided
