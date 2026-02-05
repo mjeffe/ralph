@@ -4,6 +4,13 @@ This document tracks the status of all feature specifications. Agents should con
 
 ## Active Specifications
 
+### Plan Mode Interactive Session Fix (plan-mode-fix.md)
+- **Status:** Active
+- **Priority:** High
+- **Dependencies:** None
+- **Last Updated:** 2026-02-05
+- **Summary:** Fix critical bug in Plan Mode that prevents interactive sessions. Changes cline invocation from piping stdin to passing prompt as argument, uses --plan flag instead of --yolo, integrates spec name hints, adds automatic git commit after session, and removes unnecessary logging.
+
 ### Ralph System (ralph-system-initial-implementation.md)
 - **Status:** Implemented
 - **Completed:** 2026-02-05
