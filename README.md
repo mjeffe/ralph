@@ -1,8 +1,15 @@
 # Ralph Wiggum Loop
 
-An iterative development system that enables LLM coding agents to work on large projects by breaking work into discrete, manageable chunks with fresh context per iteration.
+> [!CAUTION]
+> **This is my sandbox for learning the Ralph Wiggum approach to using an LLM coding agent. It is a research project. DO NOT USE.**
+>
+> This software is experimental, unstable, and under active development. There is no support, no documentation guarantees, and no warranty of any kind. Use at your own risk.
 
 ## Overview
+
+The Ralph Wiggum Loop is an iterative development system that enables LLM coding
+agents to work on large projects by breaking work into discrete, manageable
+chunks with fresh context per iteration.
 
 The Ralph Wiggum Loop addresses the context window limitations of Large Language Models by:
 
@@ -12,6 +19,21 @@ The Ralph Wiggum Loop addresses the context window limitations of Large Language
 - **Self-Documenting** - All decisions and progress tracked in version control
 
 This enables agents to work on projects of arbitrary size while maintaining coherence through persistent documentation.
+
+## Coding Agents
+
+I have invested several months in working with Cline in VSCode and I'd like to stick with it if possible.
+However, I have done a bit of searching and found this list of possible free/OSS alternatives to Claude Code.
+- [Cline](https://docs.cline.bot/introduction/welcome)
+- [Roo](https://github.com/RooCodeInc/Roo-Code?ref=ghuntley.com) - a fork of Cline
+- [Crush](https://github.com/charmbracelet/crush)
+- [Qwen Code](https://github.com/QwenLM/qwen-code)
+- []()
+
+I should probably just pay the price and go with the 800lb Gorilla
+- [Claude Code](https://claude.com/product/claude-code)
+
+---
 
 ## Quick Start
 
@@ -29,58 +51,6 @@ echo "# My Feature" > specs/my-feature.md
 ```
 
 The first iteration will create `IMPLEMENTATION_PLAN.md` from your specifications, then subsequent iterations will implement the tasks.
-
-## Usage
-
-### Build Mode (Autonomous Loop)
-
-Build mode runs autonomously, implementing tasks from `IMPLEMENTATION_PLAN.md`:
-
-```bash
-./ralph              # Run until PROJECT_COMPLETE
-./ralph 20           # Run for max 20 iterations
-```
-
-**First Iteration Behavior:**
-- If `IMPLEMENTATION_PLAN.md` doesn't exist, the agent creates it from `specs/`
-- Analyzes existing codebase structure
-- Generates prioritized task list
-- Commits and exits
-- Next iteration begins implementing tasks
-
-**Subsequent Iterations:**
-- Agent reads `specs/` and `IMPLEMENTATION_PLAN.md` with fresh context
-- Selects highest priority task
-- Implements the task completely (no placeholders)
-- Runs tests for affected code
-- Updates `IMPLEMENTATION_PLAN.md` and `PROGRESS.md`
-- Commits changes with descriptive message
-- Exits (context discarded, loop continues)
-
-**Loop Stops When:**
-- `PROJECT_COMPLETE` marker detected in `IMPLEMENTATION_PLAN.md`
-- Maximum iterations reached
-- Fatal error occurs (git push failure, validation failure, etc.)
-- User presses Ctrl-C
-
-### Plan Mode (Interactive Session)
-
-Plan mode is a single interactive session for writing specifications:
-
-```bash
-./ralph plan              # Start planning session
-./ralph plan auth         # Planning session with 'auth' hint
-```
-
-**Plan Mode Behavior:**
-- Agent engages in conversation to understand requirements
-- Asks clarifying questions about use cases and edge cases
-- Reviews existing `specs/` for context
-- Helps structure and write a specification document
-- Output: A well-structured spec file in `specs/`
-- Does NOT create `IMPLEMENTATION_PLAN.md` (that's for build mode)
-- Does NOT implement functionality
-- Session ends when you're satisfied with the spec
 
 ## File Structure
 
@@ -137,129 +107,6 @@ Historical record of completed work:
 - Grouped by date
 - Includes commit hash for traceability
 - Brief notes on implementation details
-
-## Workflow Example
-
-### 1. Write Specification
-
-Create `specs/user-auth.md`:
-
-```markdown
-# User Authentication
-
-## Requirements
-- JWT-based authentication
-- Login endpoint: POST /api/auth/login
-- Logout endpoint: POST /api/auth/logout
-- Password validation: min 8 chars, special char required
-
-## Success Criteria
-- All endpoints return proper status codes
-- Tests cover happy path and error cases
-- Passwords are hashed with bcrypt
-```
-
-### 2. Start Build Loop
-
-```bash
-./ralph 10
-```
-
-**Iteration 1:** Agent creates `IMPLEMENTATION_PLAN.md`:
-```markdown
-# Implementation Plan
-
-## Remaining Tasks
-
-1. Create User model with password hashing
-2. Add login endpoint with JWT generation
-3. Add logout endpoint
-4. Add password validation
-5. Add authentication tests
-```
-
-**Iteration 2:** Agent implements User model, updates docs, commits
-
-**Iteration 3:** Agent implements login endpoint, updates docs, commits
-
-**Iterations 4-5:** Agent completes remaining tasks
-
-**Final Iteration:** Agent adds `PROJECT_COMPLETE` marker, loop stops
-
-### 3. Review Results
-
-```bash
-# View progress
-cat PROGRESS.md
-
-# View logs
-ls -la .ralph/logs/
-
-# Review commits
-git log --oneline
-```
-
-## Monitoring Progress
-
-### View Logs
-
-Logs are stored in `.ralph/logs/YYYY-MM-DD_NNN.log`:
-
-```bash
-# View latest log
-ls -t .ralph/logs/*.log | head -1 | xargs cat
-
-# Tail current iteration
-ls -t .ralph/logs/*.log | head -1 | xargs tail -f
-```
-
-Each log includes:
-- Iteration number and timestamps
-- Full agent output
-- Duration and commit hash
-- Exit code
-
-### Check Status
-
-```bash
-# View remaining tasks
-cat IMPLEMENTATION_PLAN.md
-
-# View completed tasks
-cat PROGRESS.md
-
-# View recent commits
-git log --oneline -10
-```
-
-## Validation Hooks
-
-Create `.ralph/validate.sh` for custom quality checks:
-
-```bash
-#!/bin/bash
-set -e
-
-echo "Running tests..."
-npm test
-
-echo "Running linter..."
-npm run lint
-
-echo "✓ All validation passed!"
-```
-
-Make it executable:
-```bash
-chmod +x .ralph/validate.sh
-```
-
-**Behavior:**
-- Runs after each iteration (if file exists and is executable)
-- Exit code 0 = validation passed, continue loop
-- Exit code non-zero = FATAL, stop loop immediately
-- Agent runs its own tests during implementation
-- This is a final quality gate before continuing
 
 ## Troubleshooting
 
@@ -328,18 +175,6 @@ git reset --hard HEAD~1  # Undo last iteration
 git push --force origin $(git branch --show-current)
 ```
 
-## Configuration
-
-### Environment Variables
-
-```bash
-# Iteration timeout (default: 1800 seconds = 30 minutes)
-export RALPH_ITERATION_TIMEOUT=3600
-
-# Agent command (default: cline)
-export RALPH_AGENT=cline
-```
-
 ### Stopping the Loop
 
 Press `Ctrl-C` at any time to stop the loop gracefully.
@@ -352,26 +187,6 @@ Press `Ctrl-C` at any time to stop the loop gracefully.
 - Review uncommitted changes: `git status`
 - Commit manually if needed: `git add -A && git commit -m "..."`
 - Or discard: `git reset --hard HEAD`
-
-## Advanced Usage
-
-### Rollback Iterations
-
-Each iteration creates a commit, making rollback straightforward:
-
-```bash
-# Undo last iteration
-git reset --hard HEAD~1
-
-# Undo last N iterations
-git reset --hard HEAD~N
-
-# Return to specific commit
-git reset --hard <commit-hash>
-
-# Update remote (requires force push)
-git push --force origin $(git branch --show-current)
-```
 
 ### Blocked Tasks
 
@@ -420,74 +235,6 @@ Track multiple features in `specs/README.md`:
 - **Completed:** 2026-02-01
 ```
 
-## Example: Calculator Module
-
-The project includes a simple calculator module as a test implementation to validate the Ralph system functionality.
-
-### Running Calculator Tests
-
-```bash
-node src/lib/calculator.test.js
-```
-
-Expected output:
-```
-✓ add: positive numbers
-✓ add: negative numbers
-✓ add: with zero
-✓ subtract: positive numbers
-✓ subtract: negative numbers
-✓ subtract: with zero
-✓ multiply: positive numbers
-✓ multiply: negative numbers
-✓ multiply: by zero
-✓ multiply: by one
-✓ divide: positive numbers
-✓ divide: negative numbers
-✓ divide: by one
-✓ divide: by zero throws error
-✓ add: invalid input throws TypeError
-✓ subtract: invalid input throws TypeError
-✓ multiply: invalid input throws TypeError
-✓ divide: invalid input throws TypeError
-
-All tests passed! (18/18)
-```
-
-### Calculator Usage
-
-```javascript
-const { add, subtract, multiply, divide } = require('./src/lib/calculator');
-
-// Basic operations
-console.log(add(5, 3));        // 8
-console.log(subtract(10, 4));  // 6
-console.log(multiply(3, 7));   // 21
-console.log(divide(15, 3));    // 5
-
-// Error handling
-try {
-    divide(10, 0);  // Throws: "Cannot divide by zero"
-} catch (e) {
-    console.error(e.message);
-}
-
-try {
-    add('5', 3);  // Throws TypeError: "Both arguments must be numbers"
-} catch (e) {
-    console.error(e.message);
-}
-```
-
-### Calculator Features
-
-- **Basic Operations:** add, subtract, multiply, divide
-- **Input Validation:** All functions validate that inputs are numbers
-- **Error Handling:** 
-  - Division by zero throws Error
-  - Non-numeric inputs throw TypeError
-- **Test Coverage:** 18 comprehensive tests covering all operations and edge cases
-
 ## Docker Environment Setup
 
 This project supports automatic .env file configuration for cline CLI in Docker containers.
@@ -513,6 +260,7 @@ This project supports automatic .env file configuration for cline CLI in Docker 
 ## References
 
 - [Original Ralph post](https://ghuntley.com/ralph/)
+- [Geoffrey Huntley's Loom project](https://github.com/ghuntley/loom/)
 - [Ralph Playbook](https://github.com/ClaytonFarr/ralph-playbook)
 - [Accountability project](https://github.com/mikearnaldi/accountability)
 - [The Real Ralph Wiggum Loop](https://thetrav.substack.com/p/the-real-ralph-wiggum-loop-what-everyone)
