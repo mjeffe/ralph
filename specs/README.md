@@ -1,61 +1,17 @@
 # Specification Index
 
-This document tracks the status of all feature specifications. Agents should consult this file to understand which specs are currently relevant.
+## Specifications
 
-## Active Specifications
+- **ralph-overview.md** - An overview of the ralph system and how it works.
 
-### PROJECT_COMPLETE Reset Fix (project-complete-reset.md)
-- **Status:** Implemented
-- **Completed:** 2026-02-05
-- **Priority:** High
-- **Dependencies:** None
-- **Verification:** Modified loop.sh to automatically reset IMPLEMENTATION_PLAN.md when PROJECT_COMPLETE is detected. Reset file is committed and pushed, enabling seamless transition between build cycles.
-- **Tests:** Code review confirms correct implementation - uses heredoc for template, leverages push_with_retry(), preserves PROGRESS.md
-- **Summary:** Fix bug where PROJECT_COMPLETE marker prevents starting new build cycles. When PROJECT_COMPLETE is detected, automatically reset IMPLEMENTATION_PLAN.md to minimal template, commit the change, and exit cleanly. Next cycle regenerates plan from specs/ without manual intervention.
+- **project-complete-reset.md** - Fix bug where PROJECT_COMPLETE marker prevents starting new build cycles. When PROJECT_COMPLETE is detected, automatically reset IMPLEMENTATION_PLAN.md to minimal template, commit the change, and exit cleanly. Next cycle regenerates plan from specs/ without manual intervention.
 
-### Ralph System (ralph-system-initial-implementation.md)
-- **Status:** Implemented
-- **Completed:** 2026-02-05
-- **Priority:** High
-- **Dependencies:** None
-- **Verification:** All core components implemented and tested - ralph entry point, loop.sh with health checks and logging, .ralph/ directory structure, prompt files, validation hooks, comprehensive documentation
-- **Tests:** Manual testing of all components successful - help output, error handling, iteration execution, git integration, validation hooks
-- **Summary:** Core specification for the Ralph Wiggum Loop iterative development system. Defines architecture, components, workflows, and operating modes for enabling LLM agents to work on large projects through fresh context per iteration.
+- **ralph-system-initial-implementation.md** - Core specification for the Ralph Wiggum Loop iterative development system. Defines architecture, components, workflows, and operating modes for enabling LLM agents to work on large projects through fresh context per iteration.
 
-### Simple Calculator Test (test-simple-calculator.md)
-- **Status:** Implemented
-- **Completed:** 2026-02-05
-- **Verification:** All requirements met - calculator module created with add, subtract, multiply, divide operations; input validation implemented; comprehensive test suite with 18 tests; documentation added to README.md
-- **Tests:** All 18 tests passing - run with `node src/lib/calculator.test.js`
-- **Summary:** Test specification to validate Ralph loop functionality. Defines a simple calculator module with basic operations, input validation, and comprehensive tests. Used to verify IMPLEMENTATION_PLAN.md creation, task execution, PROGRESS.md updates, and git integration.
+- **test-simple-calculator.md** - Test specification to validate Ralph loop functionality. Defines a simple calculator module with basic operations, input validation, and comprehensive tests. Used to verify IMPLEMENTATION_PLAN.md creation, task execution, PROGRESS.md updates, and git integration.
 
-## Implemented Specifications
+- **plan-mode-fix.md** - Fixed critical bug preventing interactive planning sessions. Changed cline invocation method, integrated spec name hints, added automatic git commit after sessions, and simplified plan mode execution by removing build-mode features (logging, health checks, validation hooks, metrics parsing).
 
-### Plan Mode Interactive Session Fix (plan-mode-fix.md)
-- **Status:** Implemented
-- **Completed:** 2026-02-05
-- **Verification:** All requirements met - cline invocation changed from piping stdin to passing prompt as argument, using --plan flag instead of --yolo/--json, spec name hint integration working, automatic git commit after sessions, simplified execution path (no logging, health checks, validation hooks, or metrics in plan mode)
-- **Tests:** Plan mode now properly launches interactive cline sessions, git auto-commit works correctly, spec name hints are appended to prompts
-- **Summary:** Fixed critical bug preventing interactive planning sessions. Changed cline invocation method, integrated spec name hints, added automatic git commit after sessions, and simplified plan mode execution by removing build-mode features (logging, health checks, validation hooks, metrics parsing).
+- **docker-env-implementation-plan.md** - Automatic .env file configuration for cline CLI in Docker container. Eliminates manual setup by reading environment variables from .env file and automatically authenticating cline on container startup.
 
-### Docker Environment Configuration (docker-env-implementation-plan.md)
-- **Status:** Implemented
-- **Completed:** 2026-02-05
-- **Verification:** All requirements met - .env.example created, .gitignore updated, Dockerfile modified with startup script, docker-compose.yml configured with env_file directive
-- **Tests:** Container starts with cline pre-configured, no manual authentication required, environment variables properly injected
-- **Summary:** Automatic .env file configuration for cline CLI in Docker container. Eliminates manual setup by reading environment variables from .env file and automatically authenticating cline on container startup.
-
-### Docker Configuration Fix (docker-configuration-fix-plan.md)
-- **Status:** Implemented
-- **Completed:** 2026-02-05
-- **Verification:** All requirements met - /app directory permissions set correctly, .env loading path corrected, WORKDIR set to /app consistently
-- **Tests:** Cline authentication succeeds automatically, ralph user has proper permissions, working directory is /app
-- **Summary:** Fixed environment file path mismatch and directory permissions. Corrected .env loading path from `/home/ralph/.env` to `/app/.env`, set proper ownership of /app directory, and established consistent WORKDIR at /app.
-
-## Superseded Specifications
-
-None
-
-## Archive
-
-No obsolete specs at this time.
+- **docker-configuration-fix-plan.md** - Fixed environment file path mismatch and directory permissions. Corrected .env loading path from `/home/ralph/.env` to `/app/.env`, set proper ownership of /app directory, and established consistent WORKDIR at /app.
