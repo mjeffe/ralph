@@ -2,6 +2,8 @@
 
 ## Specifications
 
+- **ralph-overview.md** - An overview of the ralph system and how it works.
+
 - **project-complete-reset.md** - Fix bug where PROJECT_COMPLETE marker prevents starting new build cycles. When PROJECT_COMPLETE is detected, automatically reset IMPLEMENTATION_PLAN.md to minimal template, commit the change, and exit cleanly. Next cycle regenerates plan from specs/ without manual intervention.
 
 - **ralph-system-initial-implementation.md** - Core specification for the Ralph Wiggum Loop iterative development system. Defines architecture, components, workflows, and operating modes for enabling LLM agents to work on large projects through fresh context per iteration.
