@@ -105,9 +105,7 @@ Good notes capture the "why" and important details:
 2. Commit all changes
 3. Get commit hash: `git rev-parse --short HEAD`
 4. Update PROGRESS.md with actual hash
-5. Amend commit or make a small follow-up commit
-
-**Alternative approach:** Add to PROGRESS.md with commit hash from previous commit, then this iteration's hash will be in the next entry.
+5. Make a small follow-up commit: `git commit -am "ralph: update progress with commit hash"`
 
 ### Example PROGRESS.md:
 
