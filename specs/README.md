@@ -10,8 +10,6 @@
 
 ## Feature Specifications
 
-- **project-complete-reset.md** - Fix bug where PROJECT_COMPLETE marker prevents starting new build cycles. When PROJECT_COMPLETE is detected, automatically reset IMPLEMENTATION_PLAN.md to minimal template, commit the change, and exit cleanly. Next cycle regenerates plan from specs/ without manual intervention.
-
 - **test-simple-calculator.md** - Test specification to validate Ralph loop functionality. Defines a simple calculator module with basic operations, input validation, and comprehensive tests. Used to verify IMPLEMENTATION_PLAN.md creation, task execution, PROGRESS.md updates, and git integration.
 
 - **docker-env-implementation-plan.md** - Automatic .env file configuration for cline CLI in Docker container. Eliminates manual setup by reading environment variables from .env file and automatically authenticating cline on container startup.
@@ -21,6 +19,8 @@
 ## Archived Specifications
 
 Obsolete or superseded specifications moved to `specs/archive/` for historical reference.
+
+- **project-complete-reset.md** - Fix bug where PROJECT_COMPLETE marker prevents starting new build cycles. When PROJECT_COMPLETE is detected, automatically reset IMPLEMENTATION_PLAN.md to minimal template, commit the change, and exit cleanly. Next cycle regenerates plan from specs/ without manual intervention.
 
 - **plan-mode-fix.md** (archived 2026-02-12) - Plan mode was removed from Ralph. The system now focuses solely on autonomous build loops. Specifications should be created manually or with any tool you prefer (cline CLI directly, ChatGPT, Claude, etc.).
 
