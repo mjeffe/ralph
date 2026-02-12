@@ -1,0 +1,4 @@
+# Ralph execution logs
+logs/
+*.log
+*.log.metrics

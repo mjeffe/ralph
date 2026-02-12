@@ -3,6 +3,13 @@
 ## Completed Tasks
 
 ### 2026-02-12
+- [x] Create .ralph/.gitignore file
+  - Commit: (will be added after commit)
+  - Created .ralph/.gitignore to ignore logs/ directory and *.log files
+  - Prevents need to modify host project's .gitignore
+  - Verified gitignore works correctly - only .ralph/.gitignore shows in git status
+  - Part of ralph-portable-integration.md portability improvements
+
 - [x] Add Ctrl-C signal handling to Ralph loop
   - Commit: 5b2f518
   - Implemented graceful interrupt handling for SIGINT and SIGTERM signals
