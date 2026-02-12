@@ -3,6 +3,15 @@
 ## Completed Tasks
 
 ### 2026-02-12
+- [x] Create .ralph/.ralph-version file
+  - Commit: (will be added after commit)
+  - Created version tracking file with RALPH_VERSION=1.0.0
+  - INSTALLED_DATE set to PLACEHOLDER (will be updated by install.sh)
+  - SOURCE points to GitHub repository
+  - Enables version tracking for installed Ralph instances
+  - Foundation for future `ralph update` command
+  - Part of ralph-portable-integration.md portability improvements
+
 - [x] Reorganize file structure for portability
   - Commit: 1f39140
   - Moved `ralph` script → `.ralph/ralph`

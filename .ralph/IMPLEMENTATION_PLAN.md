@@ -27,11 +27,6 @@ All other specifications have been fully implemented and tested.
    - Create `.ralph/PROGRESS.md` with template
    - Spec: specs/ralph-portable-integration.md - "Placeholder State Files"
 
-5. **Create .ralph/.ralph-version file**
-   - Track Ralph version and installation date
-   - Include source repository URL
-   - Spec: specs/ralph-portable-integration.md - "Version Tracking"
-
 6. **Create .ralph/AGENTS.md.template**
    - Include required ## Specifications section
    - Include example project sections (customizable)
