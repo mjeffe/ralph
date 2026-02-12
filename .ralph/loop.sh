@@ -223,7 +223,7 @@ if [[ "$1" =~ ^[0-9]+$ ]]; then
 fi
 
 # Set prompt file
-PROMPT_FILE=".ralph/prompts/PROMPT_build.md"
+PROMPT_FILE="$(dirname "$0")/prompts/PROMPT_build.md"
 
 # Verify prompt file exists
 if [ ! -f "$PROMPT_FILE" ]; then

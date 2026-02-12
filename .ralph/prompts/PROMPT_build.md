@@ -4,7 +4,7 @@
 
 **IMPORTANT:** You start each iteration with FRESH CONTEXT.
 - You do NOT remember previous iterations
-- All state persists in: `specs/`, `IMPLEMENTATION_PLAN.md`, `PROGRESS.md`, and git history
+- All state persists in: `specs/`, `.ralph/IMPLEMENTATION_PLAN.md`, `.ralph/PROGRESS.md`, and git history
 - Re-read these files every iteration to understand current state
 
 ---
@@ -13,7 +13,7 @@
 
 ### 0. First Iteration Check
 
-**If IMPLEMENTATION_PLAN.md does NOT exist:**
+**If .ralph/IMPLEMENTATION_PLAN.md does NOT exist:**
 1. Read all specifications in `specs/` (start with `specs/README.md` for guidance)
 2. Analyze existing codebase structure
 3. **SEARCH the codebase for each spec** to determine what's already implemented:
@@ -22,7 +22,7 @@
    - Search for key terms, feature names, and functionality described in specs
    - Don't rely on assumptions - verify implementation status with actual code
 4. **Read detailed planning instructions:** `.ralph/prompts/PROMPT_implementation_plan.md`
-5. Generate a prioritized task list in `IMPLEMENTATION_PLAN.md` with ONLY unimplemented features
+5. Generate a prioritized task list in `.ralph/IMPLEMENTATION_PLAN.md` with ONLY unimplemented features
    - Follow the format template, granularity guidelines, and prioritization criteria
    - **IMPORTANT:** Do NOT create the `.ralph/PROJECT_COMPLETE` file when first creating the plan
    - The completion file should only be created when ALL tasks are finished (see step 11)
@@ -30,31 +30,31 @@
 7. Push changes
 8. **EXIT** - Next iteration will begin implementing tasks
 
-**If IMPLEMENTATION_PLAN.md exists:** Continue to step 1 below.
+**If .ralph/IMPLEMENTATION_PLAN.md exists:** Continue to step 1 below.
 
 ### 1. Read Current State
 
 a. Study `specs/*` with parallel subagents to understand requirements
-b. Study `IMPLEMENTATION_PLAN.md` to see remaining tasks and priorities
-c. Study `PROGRESS.md` to understand what has been completed
+b. Study `.ralph/IMPLEMENTATION_PLAN.md` to see remaining tasks and priorities
+c. Study `.ralph/PROGRESS.md` to understand what has been completed
 d. Review application source code for context
 
 ---
 
 ## Task Selection
 
-### 2. Choose Task from IMPLEMENTATION_PLAN.md
+### 2. Choose Task from .ralph/IMPLEMENTATION_PLAN.md
 
 Select the task to work on using these criteria:
 - Choose the **HIGHEST PRIORITY** task you can complete
-- Read `IMPLEMENTATION_PLAN.md` carefully for dependencies and notes
+- Read `.ralph/IMPLEMENTATION_PLAN.md` carefully for dependencies and notes
 - Prefer tasks that **unblock other work**
 - If a task seems unclear or too large, **break it down first** (update the plan)
 - Document your reasoning for task choice in the commit message
 
 **Task Blocking Protocol:**
 - If you fail to complete a task after multiple attempts:
-  - Add `[BLOCKED]` tag to the task in `IMPLEMENTATION_PLAN.md`
+  - Add `[BLOCKED]` tag to the task in `.ralph/IMPLEMENTATION_PLAN.md`
   - Document the blocking issue in the Notes section
   - Move to the next unblocked task
   - Human intervention will be required to resolve the blockage
@@ -90,7 +90,7 @@ Select the task to work on using these criteria:
 ### 6. Handle Discovered Issues
 
 **If you discover bugs or issues (even if unrelated to current task):**
-- Document them in `IMPLEMENTATION_PLAN.md` using a subagent
+- Document them in `.ralph/IMPLEMENTATION_PLAN.md` using a subagent
 - If you can resolve them as part of current work, do so
 - Tests unrelated to your work that are failing MUST be fixed as part of this iteration
 
@@ -104,7 +104,7 @@ Select the task to work on using these criteria:
 
 **Read detailed documentation instructions:** `.ralph/prompts/PROMPT_documentation.md`
 
-### 7. Update IMPLEMENTATION_PLAN.md
+### 7. Update .ralph/IMPLEMENTATION_PLAN.md
 
 After completing your task:
 - Remove the completed task from Remaining Tasks section
@@ -112,7 +112,7 @@ After completing your task:
 - Update priorities if needed
 - Document blockers with `[BLOCKED]` tag if needed
 
-### 8. Update PROGRESS.md
+### 8. Update .ralph/PROGRESS.md
 
 Add completed task entry with:
 - Current date as section header (YYYY-MM-DD)
@@ -144,7 +144,7 @@ When authoring documentation:
 
 ### 11. Project Completion Check
 
-**If ALL tasks in IMPLEMENTATION_PLAN.md are complete:**
+**If ALL tasks in .ralph/IMPLEMENTATION_PLAN.md are complete:**
 1. Verify all `specs/` requirements are satisfied
 2. Ensure all tests are passing
 3. Confirm documentation is complete
@@ -203,7 +203,7 @@ git push
 
 ## Error Handling
 
-**Recoverable Errors** (document in IMPLEMENTATION_PLAN.md):
+**Recoverable Errors** (document in .ralph/IMPLEMENTATION_PLAN.md):
 - Test failures you can fix
 - Linting issues
 - Build warnings
@@ -222,7 +222,7 @@ git push
 - **Parallel subagents:** For reading and searching files (scale as needed for efficiency)
 - **Single subagent:** For builds and tests (avoid parallel execution conflicts)
 - **Subagents:** For complex reasoning tasks (debugging, architectural decisions, spec updates)
-- **Background subagents:** Update `IMPLEMENTATION_PLAN.md` with a subagent to keep it current
+- **Background subagents:** Update `.ralph/IMPLEMENTATION_PLAN.md` with a subagent to keep it current
 
 ---
 

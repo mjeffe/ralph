@@ -10,16 +10,7 @@ All other specifications have been fully implemented and tested.
 
 ### High Priority - Portability Refactoring
 
-1. **Reorganize file structure**
-   - Move `ralph` script → `.ralph/ralph`
-   - Move `IMPLEMENTATION_PLAN.md` → `.ralph/IMPLEMENTATION_PLAN.md`
-   - Move `PROGRESS.md` → `.ralph/PROGRESS.md`
-   - Move `docs/` → `.ralph/docs/`
-   - Keep `specs/` in project root (high visibility)
-   - Remove `src/` directory (example code, no longer needed)
-   - Spec: specs/ralph-portable-integration.md - "File Structure Reorganization"
-
-2. **Update all path references**
+1. **Update all path references**
    - Update `.ralph/ralph` to reference `.ralph/loop.sh`
    - Update `.ralph/loop.sh` paths for IMPLEMENTATION_PLAN.md, PROGRESS.md, prompts
    - Update `.ralph/prompts/PROMPT_build.md` to use `.ralph/` prefixed paths

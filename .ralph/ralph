@@ -119,7 +119,7 @@ echo ""
 
 # Delegate to loop.sh
 if [ $MAX_ITERATIONS -gt 0 ]; then
-    exec ./.ralph/loop.sh "$MAX_ITERATIONS"
+    exec "$(dirname "$0")/loop.sh" "$MAX_ITERATIONS"
 else
-    exec ./.ralph/loop.sh
+    exec "$(dirname "$0")/loop.sh"
 fi

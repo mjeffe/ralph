@@ -3,6 +3,21 @@
 ## Completed Tasks
 
 ### 2026-02-12
+- [x] Reorganize file structure for portability
+  - Commit: (will be added after commit)
+  - Moved `ralph` script → `.ralph/ralph`
+  - Moved `IMPLEMENTATION_PLAN.md` → `.ralph/IMPLEMENTATION_PLAN.md`
+  - Moved `PROGRESS.md` → `.ralph/PROGRESS.md`
+  - Moved `docs/` → `.ralph/docs/`
+  - Removed `src/` directory (obsolete example code)
+  - Updated all path references in `.ralph/ralph` to use relative paths
+  - Updated all path references in `.ralph/loop.sh` to use relative paths
+  - Updated all path references in `.ralph/prompts/PROMPT_build.md` to use `.ralph/` prefix
+  - Made `.ralph/ralph` executable
+  - Part of ralph-portable-integration.md - first major step toward portability
+  - All Ralph operational files now under .ralph/ (except specs/)
+  - Foundation laid for install.sh and ralph init commands
+
 - [x] Create .ralph/AGENTS.md.template
   - Commit: 207713d
   - Created template file with required ## Specifications section
