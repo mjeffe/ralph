@@ -4,7 +4,7 @@
 
 ### 2026-02-12
 - [x] Create .ralph/AGENTS.md.template
-  - Commit: (will be added after commit)
+  - Commit: 207713d
   - Created template file with required ## Specifications section
   - Added example sections for commit messages and code style
   - Included HTML comments distinguishing Ralph requirements from project customizations
