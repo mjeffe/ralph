@@ -151,14 +151,9 @@ create_log_file() {
     echo "$log_dir/${date_stamp}_$(printf '%03d' $log_num).log"
 }
 
-# Check for PROJECT_COMPLETE marker
+# Check for PROJECT_COMPLETE lock file
 check_project_complete() {
-    if [ -f "IMPLEMENTATION_PLAN.md" ]; then
-        if grep -q "PROJECT_COMPLETE" IMPLEMENTATION_PLAN.md; then
-            return 0
-        fi
-    fi
-    return 1
+    [ -f ".ralph/PROJECT_COMPLETE" ]
 }
 
 # Parse metrics from agent JSON output
@@ -267,25 +262,7 @@ while true; do
     if check_project_complete; then
         info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         info "PROJECT COMPLETE! All tasks finished."
-        info "Resetting implementation plan for next cycle..."
         info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        
-        # Reset implementation plan to minimal template
-        cat > IMPLEMENTATION_PLAN.md << 'EOF'
-# Implementation Plan
-
-## Remaining Tasks
-
-(This file will be regenerated from specs/ on next build cycle)
-EOF
-        
-        # Commit the reset
-        git add IMPLEMENTATION_PLAN.md
-        git commit -m "ralph: reset implementation plan after project completion"
-        
-        # Push with retry logic
-        push_with_retry
-        
         break
     fi
     

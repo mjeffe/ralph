@@ -22,8 +22,8 @@
    - Search for key terms, feature names, and functionality described in specs
    - Don't rely on assumptions - verify implementation status with actual code
 4. Generate a prioritized task list in `IMPLEMENTATION_PLAN.md` with ONLY unimplemented features
-   - **IMPORTANT:** Do NOT include `PROJECT_COMPLETE` marker when first creating the plan
-   - The PROJECT_COMPLETE marker should only be added when ALL tasks are finished (see step 11)
+   - **IMPORTANT:** Do NOT create the `.ralph/PROJECT_COMPLETE` file when first creating the plan
+   - The completion file should only be created when ALL tasks are finished (see step 11)
 5. Commit changes with message: "ralph: create implementation plan from specifications"
 6. Push changes
 7. **EXIT** - Next iteration will begin implementing tasks
@@ -154,8 +154,19 @@ When authoring documentation:
 1. Verify all `specs/` requirements are satisfied
 2. Ensure all tests are passing
 3. Confirm documentation is complete
-4. Add `PROJECT_COMPLETE` marker to `IMPLEMENTATION_PLAN.md`
-5. This marker will stop the Ralph loop
+4. Create `.ralph/PROJECT_COMPLETE` file with completion summary
+5. Commit with message: "ralph: mark project complete"
+6. The presence of this file will stop the Ralph loop
+
+**Format for `.ralph/PROJECT_COMPLETE`:**
+```
+Completed: YYYY-MM-DD HH:MM:SS
+Commit: <hash>
+
+Summary:
+All specifications implemented and tested.
+[Add any relevant completion notes]
+```
 
 ### 12. Git Commit and Push
 

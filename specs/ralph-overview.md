@@ -49,7 +49,7 @@ Ralph operates in a single mode: **Build Mode** - an autonomous loop that implem
 - Simple numbered list (top = highest priority)
 - Brief, actionable task descriptions
 - **Update every iteration:** Remove completed tasks, add discovered issues
-- **PROJECT_COMPLETE marker:** Add when all work finished
+- **When complete:** Create `.ralph/PROJECT_COMPLETE` file to signal completion
 
 Example format:
 ```markdown
@@ -66,8 +66,6 @@ Example format:
 - All tests must pass before marking task complete
 - Use existing patterns in src/lib
 ```
-
-**Note:** The `PROJECT_COMPLETE` marker should only be added when ALL tasks are finished, not when first creating the plan.
 
 ### `PROGRESS.md` (Agent-maintained)
 - Historical record of completed tasks
@@ -156,13 +154,18 @@ A task is complete when you exit the iteration. Indicators:
 - Agent exits normally
 
 ### Project Completion (Explicit)
-Project is complete when you add `PROJECT_COMPLETE` to IMPLEMENTATION_PLAN.md.
+Project is complete when you create the `.ralph/PROJECT_COMPLETE` file.
 
 Decision criteria:
 - IMPLEMENTATION_PLAN.md has no remaining tasks
 - All specs/ requirements satisfied
 - All tests passing
 - Documentation complete
+
+The `.ralph/PROJECT_COMPLETE` file should contain:
+- Completion timestamp
+- Commit hash
+- Brief summary of completed work
 
 ## Error Handling
 
