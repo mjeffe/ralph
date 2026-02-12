@@ -34,15 +34,6 @@ All other specifications have been fully implemented and tested.
    - Spec: specs/ralph-portable-integration.md - "AGENTS.md Template Management"
 
 
-9. **Update documentation**
-   - Move all docs to `.ralph/docs/`
-   - Create `.ralph/docs/README.md` (main documentation)
-   - Create `.ralph/docs/installation.md` (with AGENTS.md integration guide)
-   - Create `.ralph/docs/quickstart.md` (mention AGENTS.md setup)
-   - Create `.ralph/docs/writing-specs.md`
-   - Create `.ralph/docs/troubleshooting.md`
-   - Remove project-specific examples and assumptions
-   - Spec: specs/ralph-portable-integration.md - "Documentation Updates"
 
 10. **Update specs/ralph-overview.md**
     - Update all file paths to use `.ralph/` prefix
