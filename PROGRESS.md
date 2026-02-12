@@ -3,6 +3,14 @@
 ## Completed Tasks
 
 ### 2026-02-12
+- [x] Create .ralph/AGENTS.md.template
+  - Commit: (will be added after commit)
+  - Created template file with required ## Specifications section
+  - Added example sections for commit messages and code style
+  - Included HTML comments distinguishing Ralph requirements from project customizations
+  - Template will be used by 'ralph init' to create AGENTS.md in host projects
+  - Part of ralph-portable-integration.md portability improvements
+
 - [x] Create .ralph/.gitignore file
   - Commit: 632f2b1
   - Created .ralph/.gitignore to ignore logs/ directory and *.log files

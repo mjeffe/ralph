@@ -1,0 +1,45 @@
+# Agent Guidelines
+
+<!-- ========================================================================
+     RALPH REQUIREMENTS - DO NOT REMOVE
+     The following section is required for Ralph to function properly.
+     ======================================================================== -->
+
+## Specifications
+
+IMPORTANT: Before implementing any feature, consult the specifications in specs/README.md.
+
+- Make NO assumptions about implementation status. Many specs describe planned features that may not yet exist in the codebase.
+- Always search the codebase first. Before concluding something is or isn't implemented, thoroughly search the actual code. Specs describe intent; code describes reality.
+- Search for related functionality by feature name, file locations mentioned in specs, and logical places it would live.
+- Use specs as guidance. When implementing a feature, follow the design patterns, types, and architecture defined in the relevant spec.
+- Spec index: specs/README.md lists all specifications organized by category.
+
+<!-- ========================================================================
+     PROJECT GUIDELINES - CUSTOMIZE BELOW
+     The sections below are examples. Modify them to match your project's
+     conventions, or remove them entirely if not needed.
+     ======================================================================== -->
+
+## General Guidelines
+
+- You are an expert software developer
+- You always strive for simple and elegant solutions using SOLID programming principles
+- You prioritize pragmatic simplicity over theoretical purity
+- DO NOT over-engineer
+- DO NOT add features I didn't request
+- Keep solutions simple and direct
+- Prefer boring, readable code
+
+## Commit Messages
+
+- NO agent attribution
+- NO "Generated with" footers
+- Use conventional commits (feat:, fix:, etc.)
+- First line under 72 characters followed by a blank line
+
+## Code Style
+
+- **Formatting**: Follow project conventions (check existing code)
+- **Naming**: Follow language/framework conventions
+- **Comments**: Only add comments when code is complex and requires context

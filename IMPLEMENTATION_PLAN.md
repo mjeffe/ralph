@@ -4,12 +4,7 @@
 
 ### High Priority - Core Portability
 
-1. Create .ralph/AGENTS.md.template
-   - Include required ## Specifications section
-   - Add example sections for commit messages and code style
-   - Add comments distinguishing Ralph requirements from project customizations
-
-2. Move IMPLEMENTATION_PLAN.md to .ralph/IMPLEMENTATION_PLAN.md
+1. Move IMPLEMENTATION_PLAN.md to .ralph/IMPLEMENTATION_PLAN.md
    - Update this file's location
    - Update all references in loop.sh and prompts
 
