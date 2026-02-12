@@ -37,7 +37,7 @@
 a. Study `specs/*` with parallel subagents to understand requirements
 b. Study `IMPLEMENTATION_PLAN.md` to see remaining tasks and priorities
 c. Study `PROGRESS.md` to understand what has been completed
-d. Review application source code in `src/*` for context
+d. Review application source code for context
 
 ---
 
@@ -78,7 +78,7 @@ Select the task to work on using these criteria:
 - Use subagents when complex reasoning is needed (debugging, architectural decisions)
 - **Implement functionality COMPLETELY** - no placeholders, no stubs, no TODOs
 - Follow existing patterns and conventions in the codebase
-- Use Ultrathink for complex decisions
+- Think very hard (use ultrathink) for complex decisions
 
 ### 5. Run Tests
 
@@ -95,7 +95,7 @@ Select the task to work on using these criteria:
 - Tests unrelated to your work that are failing MUST be fixed as part of this iteration
 
 **If you find inconsistencies in specs/:**
-- Use an subagent with 'ultrathink' to update the specs
+- Use an subagent (with 'ultrathink') to update the specs
 - Document the change in your commit message
 
 ---
