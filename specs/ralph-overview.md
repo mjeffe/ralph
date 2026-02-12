@@ -97,11 +97,16 @@ Example format:
 
 ## Agent Workflow in Build Mode
 
+**Detailed instructions:** Agents receive instructions from `.ralph/prompts/PROMPT_build.md` which references:
+- `.ralph/prompts/PROMPT_implementation_plan.md` - Guidelines for creating implementation plans
+- `.ralph/prompts/PROMPT_documentation.md` - Guidelines for updating documentation
+
 ### First Iteration (If IMPLEMENTATION_PLAN.md doesn't exist)
 1. Read all specs in `specs/` directory
 2. Analyze existing codebase structure
-3. Generate prioritized task list in IMPLEMENTATION_PLAN.md
-4. Commit and exit (next iteration implements tasks)
+3. Read `.ralph/prompts/PROMPT_implementation_plan.md` for planning guidelines
+4. Generate prioritized task list in IMPLEMENTATION_PLAN.md following the format template
+5. Commit and exit (next iteration implements tasks)
 
 ### Subsequent Iterations
 1. **Read context:** Study specs/ and IMPLEMENTATION_PLAN.md

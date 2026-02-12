@@ -15,18 +15,20 @@
 
 **If IMPLEMENTATION_PLAN.md does NOT exist:**
 1. Read all specifications in `specs/` (start with `specs/README.md` for guidance)
-2. Analyze existing codebase structure in `src/`
+2. Analyze existing codebase structure
 3. **SEARCH the codebase for each spec** to determine what's already implemented:
    - Use search_files to look for feature-related code, functions, and patterns
    - Check files and locations explicitly mentioned in specs (e.g., line numbers, file paths)
    - Search for key terms, feature names, and functionality described in specs
    - Don't rely on assumptions - verify implementation status with actual code
-4. Generate a prioritized task list in `IMPLEMENTATION_PLAN.md` with ONLY unimplemented features
+4. **Read detailed planning instructions:** `.ralph/prompts/PROMPT_implementation_plan.md`
+5. Generate a prioritized task list in `IMPLEMENTATION_PLAN.md` with ONLY unimplemented features
+   - Follow the format template, granularity guidelines, and prioritization criteria
    - **IMPORTANT:** Do NOT create the `.ralph/PROJECT_COMPLETE` file when first creating the plan
    - The completion file should only be created when ALL tasks are finished (see step 11)
-5. Commit changes with message: "ralph: create implementation plan from specifications"
-6. Push changes
-7. **EXIT** - Next iteration will begin implementing tasks
+6. Commit changes with message: "ralph: create implementation plan from specifications"
+7. Push changes
+8. **EXIT** - Next iteration will begin implementing tasks
 
 **If IMPLEMENTATION_PLAN.md exists:** Continue to step 1 below.
 
@@ -100,35 +102,25 @@ Select the task to work on using these criteria:
 
 ## Documentation
 
+**Read detailed documentation instructions:** `.ralph/prompts/PROMPT_documentation.md`
+
 ### 7. Update IMPLEMENTATION_PLAN.md
 
 After completing your task:
-- **Move the completed task** from `IMPLEMENTATION_PLAN.md` to `PROGRESS.md`
-- Remove it from the Remaining Tasks section
+- Remove the completed task from Remaining Tasks section
 - Add any newly discovered tasks or issues
 - Update priorities if needed
-- Use a subagent to keep this file current - future iterations depend on accuracy
-
-**Periodic Cleanup:**
-When `IMPLEMENTATION_PLAN.md` becomes large, clean out completed items (they should be in `PROGRESS.md`)
+- Document blockers with `[BLOCKED]` tag if needed
 
 ### 8. Update PROGRESS.md
 
-Add the completed task to `PROGRESS.md` with:
+Add completed task entry with:
 - Current date as section header (YYYY-MM-DD)
 - Task description with `[x]` checkbox
-- Commit hash (you'll add this after committing)
-- Brief implementation notes
+- Commit hash (add after committing)
+- Implementation notes explaining what and why
+- Test status
 - Keep in **reverse chronological order** (newest first)
-
-**Format:**
-```markdown
-### YYYY-MM-DD
-- [x] Task description
-  - Commit: <hash>
-  - Implementation notes
-  - Test status
-```
 
 ### 9. Update specs/README.md (When Applicable)
 
@@ -141,8 +133,10 @@ Add the completed task to `PROGRESS.md` with:
 
 When authoring documentation:
 - Capture the **why**, not just the what
-- Explain the reasoning behind implementation decisions
-- Document test importance and coverage
+- Explain reasoning behind implementation decisions
+- Document important context for future iterations
+
+**See `.ralph/prompts/PROMPT_documentation.md` for detailed examples and patterns.**
 
 ---
 
