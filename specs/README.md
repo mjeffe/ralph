@@ -6,6 +6,8 @@
 
 - **ralph-overview.md** - Quick reference guide for agents working within Ralph. Condensed overview of the Ralph loop, file roles (specs/, IMPLEMENTATION_PLAN.md, PROGRESS.md), agent workflow, task selection criteria, completion signals, error handling, and working with specs. Essential reading before each iteration.
 
+- **ralph-portable-integration.md** - Transform Ralph into a portable development tool that can be easily integrated into any project. Reorganizes all Ralph files under .ralph/ (except specs/), creates curl-able installation script, adds ralph init command, removes project-specific assumptions, and makes Ralph completely project-agnostic. Major architectural change for portability.
+
 ## Feature Specifications
 
 - **project-complete-reset.md** - Fix bug where PROJECT_COMPLETE marker prevents starting new build cycles. When PROJECT_COMPLETE is detected, automatically reset IMPLEMENTATION_PLAN.md to minimal template, commit the change, and exit cleanly. Next cycle regenerates plan from specs/ without manual intervention.
