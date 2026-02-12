@@ -3,6 +3,25 @@
 ## Completed Tasks
 
 ### 2026-02-12
+- [x] Implement ralph init command
+  - Commit: (will be added after commit)
+  - Added `init` subcommand to `.ralph/ralph` script
+  - Creates `specs/` directory if missing
+  - Creates `specs/README.md` with starter template
+  - Handles AGENTS.md intelligently:
+    - If AGENTS.md doesn't exist: creates from `.ralph/AGENTS.md.template`
+    - If AGENTS.md exists: shows informational message about ## Specifications requirement
+  - Outputs helpful next steps and documentation references
+  - Updated help text to include `ralph init` usage
+  - Tested successfully in fresh project:
+    - Creates specs/ and specs/README.md correctly
+    - Creates AGENTS.md from template when missing
+    - Preserves existing AGENTS.md and shows helpful message
+    - All output formatting and colors work correctly
+  - Part of ralph-portable-integration.md portability improvements
+  - Task 8 complete
+
+### 2026-02-12
 - [x] Create install.sh script
   - Commit: 5070ab5
   - Created executable install.sh script in project root

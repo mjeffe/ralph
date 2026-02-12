@@ -63,6 +63,103 @@ check_prerequisites() {
     fi
 }
 
+# Initialize Ralph in a project
+ralph_init() {
+    echo ""
+    info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    info "Ralph Initialization"
+    info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    
+    # Check if we're in a git repository
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        error "Not a git repository. Run 'git init' first."
+    fi
+    
+    # Check if .ralph/ directory exists
+    if [ ! -d ".ralph" ]; then
+        error ".ralph/ directory not found. Ralph may not be installed.\nRun the installation script first."
+    fi
+    
+    # Create specs/ directory if it doesn't exist
+    if [ ! -d "specs" ]; then
+        mkdir -p specs
+        info "Created specs/ directory"
+    else
+        echo "✓ specs/ directory already exists"
+    fi
+    
+    # Create specs/README.md if it doesn't exist
+    if [ ! -f "specs/README.md" ]; then
+        cat > specs/README.md << 'EOF'
+# Specification Index
+
+## Active Specifications
+
+(No specifications yet - create your first spec)
+
+## How to Create Specs
+
+1. Create a new file: `specs/feature-name.md`
+2. Document requirements, use cases, and success criteria
+3. Run Ralph build loop: `.ralph/ralph`
+
+See `.ralph/docs/` for detailed guidance on writing specifications.
+EOF
+        info "Created specs/README.md"
+    else
+        echo "✓ specs/README.md already exists"
+    fi
+    
+    # Handle AGENTS.md
+    if [ ! -f "AGENTS.md" ]; then
+        # Create AGENTS.md from template
+        if [ -f ".ralph/AGENTS.md.template" ]; then
+            cp .ralph/AGENTS.md.template AGENTS.md
+            info "Created AGENTS.md from template"
+        else
+            warn "Template not found: .ralph/AGENTS.md.template"
+        fi
+    else
+        # AGENTS.md already exists - show informational message
+        echo ""
+        warn "Found existing AGENTS.md"
+        echo ""
+        echo "Ralph requires a \"## Specifications\" section in AGENTS.md for proper operation."
+        echo "This section tells agents to consult specs/README.md before implementing features."
+        echo ""
+        echo "Please add this section to your AGENTS.md if it's not already present."
+        echo "You can review the full template at: .ralph/AGENTS.md.template"
+        echo ""
+    fi
+    
+    # Display success message and next steps
+    echo ""
+    info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    info "Initialization complete!"
+    info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "Next steps:"
+    echo ""
+    echo "  1. (Optional) Create a convenience symlink:"
+    echo "     ln -s .ralph/ralph ralph"
+    echo "     Then you can run: ./ralph"
+    echo ""
+    echo "  2. Read the documentation:"
+    echo "     .ralph/docs/README.md"
+    echo ""
+    echo "  3. Create your first specification:"
+    echo "     Edit specs/my-feature.md with your requirements"
+    echo ""
+    echo "  4. Start the build loop:"
+    echo "     .ralph/ralph"
+    echo ""
+    echo "Documentation: .ralph/docs/"
+    echo ""
+    
+    exit 0
+}
+
 # Show usage information
 show_usage() {
     cat << EOF
@@ -71,10 +168,12 @@ Ralph Wiggum Loop - Iterative Development System
 Usage:
   ./ralph              Run build loop, unlimited iterations
   ./ralph <N>          Run build loop, max N iterations
+  ./ralph init         Initialize Ralph in current project
 
 Examples:
   ./ralph              Run build loop until PROJECT_COMPLETE
   ./ralph 10           Run build loop for max 10 iterations
+  ./ralph init         Set up specs/ and AGENTS.md
 
 Description:
   Ralph runs an autonomous loop that implements tasks from IMPLEMENTATION_PLAN.md
@@ -94,6 +193,10 @@ MAX_ITERATIONS=0
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     show_usage
+fi
+
+if [ "$1" = "init" ]; then
+    ralph_init
 fi
 
 if [[ "$1" =~ ^[0-9]+$ ]]; then

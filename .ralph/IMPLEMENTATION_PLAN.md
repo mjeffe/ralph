@@ -33,13 +33,6 @@ All other specifications have been fully implemented and tested.
    - Add clear comments distinguishing Ralph vs project sections
    - Spec: specs/ralph-portable-integration.md - "AGENTS.md Template Management"
 
-8. **Implement ralph init command**
-   - Add `init` subcommand to `.ralph/ralph`
-   - Create `specs/` directory if missing
-   - Create `specs/README.md` with starter template
-   - Handle AGENTS.md intelligently (create from template or show message)
-   - Output helpful instructions
-   - Spec: specs/ralph-portable-integration.md - "Ralph Init Command"
 
 9. **Update documentation**
    - Move all docs to `.ralph/docs/`
