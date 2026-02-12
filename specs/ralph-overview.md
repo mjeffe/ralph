@@ -15,23 +15,21 @@ This enables agents to work on projects of arbitrary size by breaking work into 
 
 ```
 while not PROJECT_COMPLETE and not max_iterations:
-    1. Agent reads specs/ and IMPLEMENTATION_PLAN.md (fresh context)
+    1. Agent reads specs/ and .ralph/IMPLEMENTATION_PLAN.md (fresh context)
     2. Agent picks highest priority task
     3. Agent implements the task
-    4. Agent updates IMPLEMENTATION_PLAN.md and/or PROGRESS.md
+    4. Agent updates .ralph/IMPLEMENTATION_PLAN.md and/or .ralph/PROGRESS.md
     5. Agent commits changes to git
     6. Agent exits (context discarded)
     → Loop continues with fresh agent instance
 ```
 
-## The Ralph Loop
-
 Ralph operates in a single mode: **Build Mode** - an autonomous loop that implements features defined in specifications.
 
-- **Purpose:** Implement features defined in specs
-- **First iteration:** If IMPLEMENTATION_PLAN.md doesn't exist, create it from specs/, commit, exit
-- **Subsequent iterations:** Execute tasks from IMPLEMENTATION_PLAN.md
-- **Exit conditions:** PROJECT_COMPLETE marker OR max iterations reached
+- **Purpose:** Implement features defined in specs/
+- **First iteration:** If .ralph/IMPLEMENTATION_PLAN.md doesn't exist, create it from specs/, commit, exit
+- **Subsequent iterations:** Execute tasks from .ralph/IMPLEMENTATION_PLAN.md
+- **Exit conditions:** .ralph/PROJECT_COMPLETE marker OR max iterations reached
 
 **Note:** Specifications should be created outside of Ralph using any tool you prefer (manual editing, cline CLI directly, ChatGPT, Claude, etc.).
 
@@ -43,8 +41,9 @@ Ralph operates in a single mode: **Build Mode** - an autonomous loop that implem
 - Includes use cases, edge cases, acceptance criteria
 - **Agent responsibility:** Read and understand, implement to spec
 - May update if you find inconsistencies (requires high confidence)
+- **Location:** Project root (high visibility)
 
-### `IMPLEMENTATION_PLAN.md` (Agent-maintained)
+### `.ralph/IMPLEMENTATION_PLAN.md` (Agent-maintained)
 - Prioritized ordered list of remaining tasks
 - Simple numbered list (top = highest priority)
 - Brief, actionable task descriptions
@@ -67,11 +66,11 @@ Example format:
 - Use existing patterns in src/lib
 ```
 
-### `PROGRESS.md` (Agent-maintained)
+### `.ralph/PROGRESS.md` (Agent-maintained)
 - Historical record of completed tasks
 - Reverse chronological (newest first)
 - Include commit hash for traceability
-- **Update when task complete:** Move task from IMPLEMENTATION_PLAN.md
+- **Update when task complete:** Move task from .ralph/IMPLEMENTATION_PLAN.md
 
 Example format:
 ```markdown
@@ -101,22 +100,22 @@ Example format:
 - `.ralph/prompts/PROMPT_implementation_plan.md` - Guidelines for creating implementation plans
 - `.ralph/prompts/PROMPT_documentation.md` - Guidelines for updating documentation
 
-### First Iteration (If IMPLEMENTATION_PLAN.md doesn't exist)
+### First Iteration (If .ralph/IMPLEMENTATION_PLAN.md doesn't exist)
 1. Read all specs in `specs/` directory
 2. Analyze existing codebase structure
 3. Read `.ralph/prompts/PROMPT_implementation_plan.md` for planning guidelines
-4. Generate prioritized task list in IMPLEMENTATION_PLAN.md following the format template
+4. Generate prioritized task list in .ralph/IMPLEMENTATION_PLAN.md following the format template
 5. Commit and exit (next iteration implements tasks)
 
 ### Subsequent Iterations
-1. **Read context:** Study specs/ and IMPLEMENTATION_PLAN.md
+1. **Read context:** Study specs/ and .ralph/IMPLEMENTATION_PLAN.md
 2. **Select task:** Choose highest priority task you can complete
 3. **Search first:** Check codebase for existing patterns (don't duplicate)
 4. **Implement:** Complete the task fully (no placeholders or TODOs)
 5. **Test:** Run tests for affected code, fix failures
 6. **Document:** 
-   - Move completed task to PROGRESS.md
-   - Remove from IMPLEMENTATION_PLAN.md
+   - Move completed task to .ralph/PROGRESS.md
+   - Remove from .ralph/IMPLEMENTATION_PLAN.md
    - Add any discovered issues to plan
    - Update specs/README.md if entire spec is now complete
 7. **Commit:** Descriptive message with changes and test status
@@ -124,7 +123,7 @@ Example format:
 
 ### Task Selection Criteria
 - Select the **highest priority** task you can complete
-- Read IMPLEMENTATION_PLAN.md carefully for dependencies
+- Read .ralph/IMPLEMENTATION_PLAN.md carefully for dependencies
 - Prefer tasks that unblock other work
 - If task unclear or too large, break it down first (update plan)
 - Document reasoning for task choice in commit message
@@ -147,7 +146,7 @@ If you fail to complete a task after attempting it:
 - **Update specs/** if you find inconsistencies or ambiguities
 - **Document bugs:** Even if unrelated to current task
 - **Search codebase:** Use existing patterns and conventions
-- **Clean IMPLEMENTATION_PLAN.md:** Periodically move completed items to PROGRESS.md
+- **Clean .ralph/IMPLEMENTATION_PLAN.md:** Periodically move completed items to .ralph/PROGRESS.md
 
 ## Completion Signals
 
@@ -162,7 +161,7 @@ A task is complete when you exit the iteration. Indicators:
 Project is complete when you create the `.ralph/PROJECT_COMPLETE` file.
 
 Decision criteria:
-- IMPLEMENTATION_PLAN.md has no remaining tasks
+- .ralph/IMPLEMENTATION_PLAN.md has no remaining tasks
 - All specs/ requirements satisfied
 - All tests passing
 - Documentation complete
@@ -179,7 +178,7 @@ The `.ralph/PROJECT_COMPLETE` file should contain:
 - Build warnings → Address them
 - Linting issues → Fix them
 
-**Action:** Document in IMPLEMENTATION_PLAN.md if can't fix immediately
+**Action:** Document in .ralph/IMPLEMENTATION_PLAN.md if can't fix immediately
 
 ### Fatal Errors (stop the loop)
 These will exit the loop, requiring human intervention:
@@ -209,6 +208,21 @@ You may update specs if:
 3. If still unclear: Mark task as [BLOCKED] and document the ambiguity
 4. Human intervention required for clarification
 
+## AGENTS.md Requirement
+
+Ralph requires a `## Specifications` section in your project's `AGENTS.md` file. This section directs agents to consult `specs/README.md` before implementing features, ensuring they work from specifications rather than assumptions.
+
+**Why this matters:**
+- Connects agents to your project's specifications
+- Prevents agents from making assumptions about requirements
+- Ensures implementation follows documented design patterns
+- Provides clear guidance on where to find requirements
+
+**Setup:**
+- When you run `.ralph/ralph init`, AGENTS.md is created automatically from the template
+- For existing projects with AGENTS.md, add the `## Specifications` section manually
+- See `.ralph/AGENTS.md.template` for the exact content needed
+
 ---
 
-**Quick start:** Run `./ralph` from project root to begin build mode loop.
+**Quick start:** Run `.ralph/ralph` from project root to begin build mode loop.

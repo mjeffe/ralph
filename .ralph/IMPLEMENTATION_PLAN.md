@@ -10,38 +10,6 @@ All other specifications have been fully implemented and tested.
 
 ### High Priority - Portability Refactoring
 
-1. **Update all path references**
-   - Update `.ralph/ralph` to reference `.ralph/loop.sh`
-   - Update `.ralph/loop.sh` paths for IMPLEMENTATION_PLAN.md, PROGRESS.md, prompts
-   - Update `.ralph/prompts/PROMPT_build.md` to use `.ralph/` prefixed paths
-   - Remove project structure assumptions from prompts
-   - Spec: specs/ralph-portable-integration.md - "Update All Path References"
-
-3. **Create .ralph/.gitignore**
-   - Ignore `logs/` directory
-   - Ignore `*.log` and `*.log.metrics` files
-   - Spec: specs/ralph-portable-integration.md - "Create .ralph/.gitignore"
-
-4. **Create placeholder state files**
-   - Create `.ralph/IMPLEMENTATION_PLAN.md` with template
-   - Create `.ralph/PROGRESS.md` with template
-   - Spec: specs/ralph-portable-integration.md - "Placeholder State Files"
-
-6. **Create .ralph/AGENTS.md.template**
-   - Include required ## Specifications section
-   - Include example project sections (customizable)
-   - Add clear comments distinguishing Ralph vs project sections
-   - Spec: specs/ralph-portable-integration.md - "AGENTS.md Template Management"
-
-
-
-10. **Update specs/ralph-overview.md**
-    - Update all file paths to use `.ralph/` prefix
-    - Remove project-specific assumptions
-    - Update examples to show `.ralph/` paths
-    - Add AGENTS.md requirement explanation
-    - Spec: specs/ralph-portable-integration.md - "Update ralph-overview.md"
-
 11. **Test installation in fresh project**
     - Create test project
     - Run install.sh

@@ -3,8 +3,21 @@
 ## Completed Tasks
 
 ### 2026-02-12
+- [x] Update specs/ralph-overview.md for portability
+  - Commit: (will be added)
+  - Updated all file path references to use `.ralph/` prefix
+  - Fixed duplicate "The Ralph Loop" section
+  - Updated all references: IMPLEMENTATION_PLAN.md → .ralph/IMPLEMENTATION_PLAN.md
+  - Updated all references: PROGRESS.md → .ralph/PROGRESS.md
+  - Added AGENTS.md requirement section explaining why it's needed
+  - Documented AGENTS.md setup process (automatic via ralph init)
+  - Clarified specs/ location as project root for high visibility
+  - All path references now consistent with portable structure
+  - Task 10 from ralph-portable-integration.md complete
+
+### 2026-02-12
 - [x] Update documentation for portability
-  - Commit: (will be added after commit)
+  - Commit: 4230da2
   - Created comprehensive documentation in `.ralph/docs/`:
     - README.md: Main Ralph documentation with key concepts and file structure
     - installation.md: Complete installation guide with AGENTS.md integration details
