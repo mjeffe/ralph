@@ -16,10 +16,15 @@
 **If IMPLEMENTATION_PLAN.md does NOT exist:**
 1. Read all specifications in `specs/` (start with `specs/README.md` for guidance)
 2. Analyze existing codebase structure in `src/`
-3. Generate a prioritized task list in `IMPLEMENTATION_PLAN.md`
-4. Commit changes with message: "ralph: create implementation plan from specifications"
-5. Push changes
-6. **EXIT** - Next iteration will begin implementing tasks
+3. **SEARCH the codebase for each spec** to determine what's already implemented:
+   - Use search_files to look for feature-related code, functions, and patterns
+   - Check files and locations explicitly mentioned in specs (e.g., line numbers, file paths)
+   - Search for key terms, feature names, and functionality described in specs
+   - Don't rely on assumptions - verify implementation status with actual code
+4. Generate a prioritized task list in `IMPLEMENTATION_PLAN.md` with ONLY unimplemented features
+5. Commit changes with message: "ralph: create implementation plan from specifications"
+6. Push changes
+7. **EXIT** - Next iteration will begin implementing tasks
 
 **If IMPLEMENTATION_PLAN.md exists:** Continue to step 1 below.
 

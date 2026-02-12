@@ -13,8 +13,9 @@
 
 IMPORTANT: Before implementing any feature, consult the specifications in specs/README.md.
 
-- Assume NOT implemented. Many specs describe planned features that may not yet exist in the codebase.
-- Check the codebase first. Before concluding something is or isn't implemented, search the actual code. Specs describe intent; code describes reality.
+- Make NO assumptions about implementation status. Many specs describe planned features that may not yet exist in the codebase.
+- Always search the codebase first. Before concluding something is or isn't implemented, thoroughly search the actual code. Specs describe intent; code describes reality.
+- Search for related functionality by feature name, file locations mentioned in specs, and logical places it would live.
 - Use specs as guidance. When implementing a feature, follow the design patterns, types, and architecture defined in the relevant spec.
 - Spec index: specs/README.md lists all specifications organized by category.
 
