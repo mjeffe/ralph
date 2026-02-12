@@ -4,7 +4,7 @@
 
 ### 2026-02-12
 - [x] Create install.sh script
-  - Commit: (will be added after commit)
+  - Commit: 5070ab5
   - Created executable install.sh script in project root
   - Checks prerequisites: git installed, in git repo, no existing .ralph/
   - Clones Ralph repository to temp directory
