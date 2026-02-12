@@ -4,7 +4,7 @@
 
 ### 2026-02-12
 - [x] Create .ralph/.ralph-version file
-  - Commit: (will be added after commit)
+  - Commit: 72ab2b1
   - Created version tracking file with RALPH_VERSION=1.0.0
   - INSTALLED_DATE set to PLACEHOLDER (will be updated by install.sh)
   - SOURCE points to GitHub repository
