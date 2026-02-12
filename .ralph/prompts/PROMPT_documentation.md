@@ -56,34 +56,6 @@ If you encountered blockers:
   - Human intervention needed
 ```
 
-### Periodic Cleanup
-When IMPLEMENTATION_PLAN.md gets large:
-- Remove tasks that are actually completed (they should be in PROGRESS.md)
-- Consolidate redundant notes
-- Keep the file focused on remaining work
-
-**Example update:**
-
-Before:
-```markdown
-## Remaining Tasks
-
-1. Implement user registration endpoint
-2. Add JWT authentication
-3. Create profile endpoints
-```
-
-After completing task 1:
-```markdown
-## Remaining Tasks
-
-1. Add JWT authentication
-2. Create profile endpoints
-3. [NEWLY DISCOVERED] Add email validation to registration
-   - Missing from initial implementation
-   - Spec: specs/user-management.md section 2.3
-```
-
 ---
 
 ## 2. Update PROGRESS.md

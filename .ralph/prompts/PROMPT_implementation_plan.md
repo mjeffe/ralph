@@ -48,7 +48,7 @@ Use this structure for IMPLEMENTATION_PLAN.md:
 
 ## Task Granularity Guidelines
 
-**Goal:** Each task should be completable in one iteration (15-45 minutes of focused work)
+**Goal:** Each task should be completable in one iteration
 
 **Appropriate Task Sizes:**
 
@@ -63,8 +63,6 @@ Use this structure for IMPLEMENTATION_PLAN.md:
 - Sequential steps within one feature can be grouped if they're quick
 - Breaking changes that must be atomic should stay together
 - Testing belongs with implementation, not as separate task
-
-**Target:** Aim for 5-15 tasks for most specs (adjust based on complexity)
 
 ---
 
