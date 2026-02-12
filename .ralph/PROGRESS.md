@@ -3,6 +3,22 @@
 ## Completed Tasks
 
 ### 2026-02-12
+- [x] Create install.sh script
+  - Commit: (will be added after commit)
+  - Created executable install.sh script in project root
+  - Checks prerequisites: git installed, in git repo, no existing .ralph/
+  - Clones Ralph repository to temp directory
+  - Copies .ralph/ directory to current project
+  - Makes ralph and loop.sh executable
+  - Updates INSTALLED_DATE in .ralph/.ralph-version
+  - Cleans up temp directory on exit (with trap)
+  - Provides clear success message with next steps
+  - Supports curl and wget installation methods
+  - Comprehensive error handling with colored output
+  - Part of ralph-portable-integration.md portability improvements
+  - Syntax validated with bash -n
+  - Ready for curl-based installation from GitHub
+
 - [x] Create .ralph/.ralph-version file
   - Commit: 72ab2b1
   - Created version tracking file with RALPH_VERSION=1.0.0

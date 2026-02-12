@@ -33,15 +33,6 @@ All other specifications have been fully implemented and tested.
    - Add clear comments distinguishing Ralph vs project sections
    - Spec: specs/ralph-portable-integration.md - "AGENTS.md Template Management"
 
-7. **Create install.sh script**
-   - Check prerequisites (git repo, no existing .ralph/)
-   - Clone Ralph repo to temp directory
-   - Copy .ralph/ to current project
-   - Remove .git from copied .ralph/
-   - Add version identifier
-   - Clean up temp directory
-   - Spec: specs/ralph-portable-integration.md - "Installation Script"
-
 8. **Implement ralph init command**
    - Add `init` subcommand to `.ralph/ralph`
    - Create `specs/` directory if missing
