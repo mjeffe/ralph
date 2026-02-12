@@ -69,43 +69,34 @@ show_usage() {
 Ralph Wiggum Loop - Iterative Development System
 
 Usage:
-  ./ralph              Build mode, unlimited iterations
-  ./ralph <N>          Build mode, max N iterations
-  ./ralph plan         Plan mode, interactive session to write specs
-  ./ralph plan <name>  Plan mode with spec name hint
+  ./ralph              Run build loop, unlimited iterations
+  ./ralph <N>          Run build loop, max N iterations
 
 Examples:
   ./ralph              Run build loop until PROJECT_COMPLETE
   ./ralph 10           Run build loop for max 10 iterations
-  ./ralph plan         Start interactive planning session
-  ./ralph plan auth    Plan mode with 'auth' as spec name hint
 
-Modes:
-  Build Mode - Autonomous loop that implements tasks from IMPLEMENTATION_PLAN.md
-               First iteration creates IMPLEMENTATION_PLAN.md if it doesn't exist
-               
-  Plan Mode  - Interactive session to write/refine specification documents
-               Helps create specs in specs/ directory with human collaboration
-               Not a loop - single session that ends when human is satisfied
+Description:
+  Ralph runs an autonomous loop that implements tasks from IMPLEMENTATION_PLAN.md
+  First iteration creates IMPLEMENTATION_PLAN.md if it doesn't exist
+  
+  Specifications should be created manually or with any tool you prefer:
+  - Manual editing in specs/
+  - cline --plan directly
+  - ChatGPT, Claude, or any AI assistant
 
 EOF
     exit 0
 }
 
 # Parse arguments
-MODE="build"
 MAX_ITERATIONS=0
-SPEC_NAME=""
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     show_usage
 fi
 
-if [ "$1" = "plan" ]; then
-    MODE="plan"
-    SPEC_NAME="${2:-}"
-elif [[ "$1" =~ ^[0-9]+$ ]]; then
-    MODE="build"
+if [[ "$1" =~ ^[0-9]+$ ]]; then
     MAX_ITERATIONS=$1
 elif [ -n "$1" ]; then
     error "Invalid argument: $1\nUse './ralph --help' for usage information"
@@ -119,11 +110,7 @@ echo ""
 info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 info "Ralph Wiggum Loop"
 info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Mode: $MODE"
-if [ "$MODE" = "plan" ] && [ -n "$SPEC_NAME" ]; then
-    echo "Spec: $SPEC_NAME"
-fi
-if [ "$MODE" = "build" ] && [ $MAX_ITERATIONS -gt 0 ]; then
+if [ $MAX_ITERATIONS -gt 0 ]; then
     echo "Max iterations: $MAX_ITERATIONS"
 fi
 echo "Branch: $(git branch --show-current)"
@@ -131,16 +118,8 @@ info "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 # Delegate to loop.sh
-if [ "$MODE" = "plan" ]; then
-    if [ -n "$SPEC_NAME" ]; then
-        exec ./.ralph/loop.sh plan "$SPEC_NAME"
-    else
-        exec ./.ralph/loop.sh plan
-    fi
+if [ $MAX_ITERATIONS -gt 0 ]; then
+    exec ./.ralph/loop.sh "$MAX_ITERATIONS"
 else
-    if [ $MAX_ITERATIONS -gt 0 ]; then
-        exec ./.ralph/loop.sh "$MAX_ITERATIONS"
-    else
-        exec ./.ralph/loop.sh
-    fi
+    exec ./.ralph/loop.sh
 fi

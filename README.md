@@ -38,10 +38,18 @@ I should probably just pay the price and go with the 800lb Gorilla
 ## Quick Start
 
 ```bash
-# First time: Create a specification
+# Create a specification (choose any method you prefer)
+
+# Option 1: Manual editing
 mkdir -p specs
 echo "# My Feature" > specs/my-feature.md
 # Edit specs/my-feature.md with your requirements
+
+# Option 2: Use cline CLI directly for spec writing
+cline --plan "Help me write a specification for my-feature"
+
+# Option 3: Use any AI assistant (ChatGPT, Claude, etc.)
+# Draft your spec and save to specs/my-feature.md
 
 # Start the build loop
 ./ralph
@@ -65,8 +73,7 @@ project-root/
 ├── .ralph/                        # Ralph tooling (hidden)
 │   ├── loop.sh                    # Core loop implementation
 │   ├── prompts/                   
-│   │   ├── PROMPT_build.md        # Build mode instructions
-│   │   └── PROMPT_plan.md         # Plan mode instructions
+│   │   └── PROMPT_build.md        # Build instructions for agents
 │   ├── logs/                      # Execution logs
 │   │   └── YYYY-MM-DD_NNN.log
 │   └── validate.sh                # Optional validation hook
@@ -87,7 +94,8 @@ Human-authored specifications that define what to build:
 - Capture the "why" not just the "what"
 - Include examples, use cases, edge cases
 - Update when requirements change
-- See `specs/ralph-system-initial-implementation.md` for the Ralph system specification
+- Create specs manually or with any tool you prefer (cline CLI, ChatGPT, Claude, etc.)
+- See `specs/ralph-system-implementation.md` for the Ralph system specification
 
 ### IMPLEMENTATION_PLAN.md - Remaining Work
 
@@ -267,7 +275,7 @@ This project supports automatic .env file configuration for cline CLI in Docker 
 
 ## Full Documentation
 
-For complete system specification, architecture details, and implementation notes, see `specs/ralph-system-initial-implementation.md`.
+For complete system specification, architecture details, and implementation notes, see `specs/ralph-system-implementation.md`.
 
 ## License
 

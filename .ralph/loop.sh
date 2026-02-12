@@ -4,8 +4,6 @@
 # Usage:
 #   ./loop.sh              # Build mode, unlimited iterations
 #   ./loop.sh 20           # Build mode, max 20 iterations
-#   ./loop.sh plan         # Plan mode, single interactive session
-#   ./loop.sh plan feature # Plan mode with spec name hint
 
 set -e
 
@@ -200,24 +198,14 @@ run_validation() {
 }
 
 # Parse arguments
-MODE="build"
 MAX_ITERATIONS=0
-SPEC_NAME=""
 
-if [ "$1" = "plan" ]; then
-    MODE="plan"
-    SPEC_NAME="${2:-}"
-elif [[ "$1" =~ ^[0-9]+$ ]]; then
-    MODE="build"
+if [[ "$1" =~ ^[0-9]+$ ]]; then
     MAX_ITERATIONS=$1
 fi
 
-# Set prompt file based on mode
-if [ "$MODE" = "plan" ]; then
-    PROMPT_FILE=".ralph/prompts/PROMPT_plan.md"
-else
-    PROMPT_FILE=".ralph/prompts/PROMPT_build.md"
-fi
+# Set prompt file
+PROMPT_FILE=".ralph/prompts/PROMPT_build.md"
 
 # Verify prompt file exists
 if [ ! -f "$PROMPT_FILE" ]; then
@@ -230,12 +218,10 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Ralph Wiggum Loop - Core"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Mode:   $MODE"
 echo "Prompt: $PROMPT_FILE"
 echo "Branch: $CURRENT_BRANCH"
 echo "Agent:  $AGENT_COMMAND"
 [ $MAX_ITERATIONS -gt 0 ] && echo "Max:    $MAX_ITERATIONS iterations"
-[ "$MODE" = "plan" ] && [ -n "$SPEC_NAME" ] && echo "Spec:   $SPEC_NAME"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
@@ -249,8 +235,8 @@ while true; do
         break
     fi
     
-    # Check for project completion (build mode only)
-    if [ "$MODE" = "build" ] && check_project_complete; then
+    # Check for project completion
+    if check_project_complete; then
         info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         info "PROJECT COMPLETE! All tasks finished."
         info "Resetting implementation plan for next cycle..."
@@ -275,164 +261,97 @@ EOF
         break
     fi
     
-    # Run health checks (build mode only)
-    if [ "$MODE" = "build" ]; then
-        debug "Running health checks..."
-        check_health
-    fi
+    # Run health checks
+    debug "Running health checks..."
+    check_health
     
-    # Create log file for this iteration (build mode only)
-    if [ "$MODE" = "build" ]; then
-        LOG_FILE=$(create_log_file)
-    fi
+    # Create log file for this iteration
+    LOG_FILE=$(create_log_file)
     
     ITERATION=$((ITERATION + 1))
     
-    # Log iteration header (build mode only)
-    if [ "$MODE" = "build" ]; then
-        {
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "Iteration: $ITERATION"
-            echo "Mode: $MODE"
-            echo "Branch: $CURRENT_BRANCH"
-            echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo ""
-        } | tee -a "$LOG_FILE"
-        
-        info "Starting iteration $ITERATION..."
-        debug "Logging to: $LOG_FILE"
-    else
-        info "Starting plan mode session..."
-    fi
+    # Log iteration header
+    {
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "Iteration: $ITERATION"
+        echo "Branch: $CURRENT_BRANCH"
+        echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+    } | tee -a "$LOG_FILE"
+    
+    info "Starting iteration $ITERATION..."
+    debug "Logging to: $LOG_FILE"
     
     # Record start time
     START_TIME=$(date +%s)
     
     # Run agent with timeout
     AGENT_EXIT_CODE=0
-    if [ "$MODE" = "plan" ]; then
-        # This is CLINE specific!!! The interactive "plan" mode expects a task description. The full
-        # plan mode prompt confused the cline UI into thinking it should switch to act mode, caused
-        # some React errors, etc.
-        # 
-        # Plan mode: interactive session, no timeout, no logging
-        # Build task prompt that references the guidance file
-        TASK_PROMPT="Study \`.ralph/prompts/PROMPT_plan.md\` for detailed guidance on your role. "
-        
-        # If spec name hint provided, include it in the task
-        if [ -n "$SPEC_NAME" ]; then
-            TASK_PROMPT="${TASK_PROMPT}The user wants to create a specification for: **${SPEC_NAME}**. "
-        fi
-        
-        TASK_PROMPT="${TASK_PROMPT}Follow the guidance to help create a well-structured specification."
-        
-        # Invoke cline in interactive plan mode (no --yolo, no --json)
-        $AGENT_COMMAND --plan "$TASK_PROMPT" || AGENT_EXIT_CODE=$?
+    
+    # Build mode: autonomous with timeout and logging
+    # Determine agent flags based on configuration
+    AGENT_FLAGS="--yolo"
+    if [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
+        AGENT_FLAGS="$AGENT_FLAGS --json"
     else
-        # Build mode: autonomous with timeout and logging
-        # Determine agent flags based on configuration
-        AGENT_FLAGS="--yolo"
-        if [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
-            AGENT_FLAGS="$AGENT_FLAGS --json"
-        else
-            AGENT_FLAGS="$AGENT_FLAGS --verbose"
-        fi
-        
-        timeout ${ITERATION_TIMEOUT}s bash -c "cat '$PROMPT_FILE' | $AGENT_COMMAND $AGENT_FLAGS" 2>&1 | tee -a "$LOG_FILE" || AGENT_EXIT_CODE=$?
-        
-        # Check if timeout occurred (exit code 124)
-        if [ $AGENT_EXIT_CODE -eq 124 ]; then
-            {
-                echo ""
-                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                echo "FATAL: Agent exceeded iteration timeout (${ITERATION_TIMEOUT}s)"
-                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            } | tee -a "$LOG_FILE"
-            fatal "Agent exceeded iteration timeout (${ITERATION_TIMEOUT}s)"
-        fi
+        AGENT_FLAGS="$AGENT_FLAGS --verbose"
     fi
     
-    # Parse metrics from agent output if JSON output is enabled (build mode only)
-    if [ "$MODE" = "build" ] && [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
+    timeout ${ITERATION_TIMEOUT}s bash -c "cat '$PROMPT_FILE' | $AGENT_COMMAND $AGENT_FLAGS" 2>&1 | tee -a "$LOG_FILE" || AGENT_EXIT_CODE=$?
+    
+    # Check if timeout occurred (exit code 124)
+    if [ $AGENT_EXIT_CODE -eq 124 ]; then
+        {
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "FATAL: Agent exceeded iteration timeout (${ITERATION_TIMEOUT}s)"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        } | tee -a "$LOG_FILE"
+        fatal "Agent exceeded iteration timeout (${ITERATION_TIMEOUT}s)"
+    fi
+    
+    # Parse metrics from agent output if JSON output is enabled
+    if [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
         debug "Parsing metrics from agent output..."
         parse_metrics "$LOG_FILE"
     fi
     
-    # Log iteration footer (build mode only)
-    if [ "$MODE" = "build" ]; then
-        # Record end time and calculate duration
-        END_TIME=$(date +%s)
-        DURATION=$((END_TIME - START_TIME))
-        DURATION_MIN=$((DURATION / 60))
-        DURATION_SEC=$((DURATION % 60))
-        
-        # Get commit hash if changes were committed
-        COMMIT_HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "none")
-        
-        {
-            echo ""
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "Completed: $(date '+%Y-%m-%d %H:%M:%S')"
-            echo "Duration: ${DURATION_MIN}m ${DURATION_SEC}s"
-            echo "Commit: $COMMIT_HASH"
-            echo "Exit Code: $AGENT_EXIT_CODE"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        } | tee -a "$LOG_FILE"
-        
-        # Check if agent exited with error
-        if [ $AGENT_EXIT_CODE -ne 0 ] && [ $AGENT_EXIT_CODE -ne 124 ]; then
-            warn "Agent exited with code $AGENT_EXIT_CODE"
-        fi
+    # Log iteration footer
+    # Record end time and calculate duration
+    END_TIME=$(date +%s)
+    DURATION=$((END_TIME - START_TIME))
+    DURATION_MIN=$((DURATION / 60))
+    DURATION_SEC=$((DURATION % 60))
+    
+    # Get commit hash if changes were committed
+    COMMIT_HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "none")
+    
+    {
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "Completed: $(date '+%Y-%m-%d %H:%M:%S')"
+        echo "Duration: ${DURATION_MIN}m ${DURATION_SEC}s"
+        echo "Commit: $COMMIT_HASH"
+        echo "Exit Code: $AGENT_EXIT_CODE"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    } | tee -a "$LOG_FILE"
+    
+    # Check if agent exited with error
+    if [ $AGENT_EXIT_CODE -ne 0 ] && [ $AGENT_EXIT_CODE -ne 124 ]; then
+        warn "Agent exited with code $AGENT_EXIT_CODE"
     fi
     
-    # Run validation hook (build mode only)
-    if [ "$MODE" = "build" ]; then
-        run_validation
-    fi
+    # Run validation hook
+    run_validation
     
-    # Push changes (build mode only)
-    if [ "$MODE" = "build" ]; then
-        # Check if there are any commits to push
-        if git log origin/"$CURRENT_BRANCH"..HEAD --oneline 2>/dev/null | grep -q .; then
-            debug "Pushing changes..."
-            push_with_retry
-        else
-            debug "No new commits to push"
-        fi
-    fi
-    
-    # Plan mode is a single session, not a loop
-    if [ "$MODE" = "plan" ]; then
-        info "Plan mode session complete"
-        
-        # Check if any changes were made to specs/
-        if git diff --quiet specs/ 2>/dev/null && \
-           git diff --cached --quiet specs/ 2>/dev/null; then
-            debug "No changes detected in specs/"
-        else
-            # Stage changes in specs/
-            git add specs/
-            
-            # Generate appropriate commit message
-            if [ -n "$SPEC_NAME" ]; then
-                COMMIT_MSG="ralph plan: Add ${SPEC_NAME} specification"
-            else
-                COMMIT_MSG="ralph plan: Update specifications"
-            fi
-            
-            git commit -m "$COMMIT_MSG"
-            info "✓ Changes committed"
-            
-            # Push to remote (warn on failure, don't fail fatally)
-            if git push origin "$CURRENT_BRANCH" 2>&1; then
-                info "✓ Push successful"
-            else
-                warn "Push failed - you may need to push manually"
-            fi
-        fi
-        
-        break
+    # Push changes
+    # Check if there are any commits to push
+    if git log origin/"$CURRENT_BRANCH"..HEAD --oneline 2>/dev/null | grep -q .; then
+        debug "Pushing changes..."
+        push_with_retry
+    else
+        debug "No new commits to push"
     fi
     
     echo ""

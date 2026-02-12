@@ -24,20 +24,16 @@ while not PROJECT_COMPLETE and not max_iterations:
     → Loop continues with fresh agent instance
 ```
 
-## Two Operating Modes
+## The Ralph Loop
 
-### Plan Mode (Interactive)
-- **Purpose:** Help humans write specification documents
-- **Behavior:** Single interactive session, ask clarifying questions
-- **Output:** A spec file in `specs/` (e.g., `specs/feature-name.md`)
-- **DO NOT:** Create IMPLEMENTATION_PLAN.md or implement functionality
-- **Exit:** Human ends session when satisfied with spec
+Ralph operates in a single mode: **Build Mode** - an autonomous loop that implements features defined in specifications.
 
-### Build Mode (Autonomous Loop)
 - **Purpose:** Implement features defined in specs
 - **First iteration:** If IMPLEMENTATION_PLAN.md doesn't exist, create it from specs/, commit, exit
 - **Subsequent iterations:** Execute tasks from IMPLEMENTATION_PLAN.md
 - **Exit conditions:** PROJECT_COMPLETE marker OR max iterations reached
+
+**Note:** Specifications should be created outside of Ralph using any tool you prefer (manual editing, cline CLI directly, ChatGPT, Claude, etc.).
 
 ## Key Files and Their Roles
 

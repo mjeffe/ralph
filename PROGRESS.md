@@ -2,6 +2,23 @@
 
 ## Completed Tasks
 
+### 2026-02-12
+- [x] Remove plan mode from Ralph system
+  - Commit: (pending)
+  - Plan mode over-complicated the system without providing advantages over using cline CLI or other agents directly
+  - Moved archived specs:
+    - specs/plan-mode-fix.md → specs/archive/plan-mode-fix.md
+    - specs/ralph-system-initial-implementation.md → specs/archive/ralph-system-initial-implementation.md
+  - Created simplified specs/ralph-system-implementation.md focusing on build-only mode
+  - Removed plan mode logic from ralph entry point script
+  - Removed plan mode logic from .ralph/loop.sh (simplified to single build mode)
+  - Updated specs/ralph-overview.md to remove mode distinction
+  - Updated README.md with spec creation guidance (manual, cline CLI, or any AI assistant)
+  - Updated specs/README.md with archive section explaining removed features
+  - Kept .ralph/prompts/PROMPT_plan.md for future use
+  - Ralph now focuses solely on autonomous build loops
+  - Specifications created outside Ralph using any preferred method
+
 ### 2026-02-05
 - [x] Fix plan mode interactive session
   - Commit: 06d4581
