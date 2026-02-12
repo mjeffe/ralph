@@ -65,9 +65,9 @@ Example format:
 
 - All tests must pass before marking task complete
 - Use existing patterns in src/lib
-
-PROJECT_COMPLETE
 ```
+
+**Note:** The `PROJECT_COMPLETE` marker should only be added when ALL tasks are finished, not when first creating the plan.
 
 ### `PROGRESS.md` (Agent-maintained)
 - Historical record of completed tasks

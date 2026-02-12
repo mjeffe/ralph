@@ -22,6 +22,8 @@
    - Search for key terms, feature names, and functionality described in specs
    - Don't rely on assumptions - verify implementation status with actual code
 4. Generate a prioritized task list in `IMPLEMENTATION_PLAN.md` with ONLY unimplemented features
+   - **IMPORTANT:** Do NOT include `PROJECT_COMPLETE` marker when first creating the plan
+   - The PROJECT_COMPLETE marker should only be added when ALL tasks are finished (see step 11)
 5. Commit changes with message: "ralph: create implementation plan from specifications"
 6. Push changes
 7. **EXIT** - Next iteration will begin implementing tasks

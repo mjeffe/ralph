@@ -263,9 +263,9 @@ echo "✓ All validation passed!"
 
 - All tests must pass before moving task to PROGRESS.md
 - Use existing patterns in src/lib for shared utilities
-
-PROJECT_COMPLETE
 ```
+
+**Note:** The `PROJECT_COMPLETE` marker should only be added when all tasks are finished.
 
 **Structure:**
 - Simple ordered list (top = highest priority)
