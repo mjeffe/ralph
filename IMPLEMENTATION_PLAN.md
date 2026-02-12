@@ -1,104 +1,140 @@
 # Implementation Plan
 
+## Overview
+
+This plan implements the remaining specification: **ralph-portable-integration.md**. This is a major architectural change to transform Ralph from a standalone project into a portable development tool that can be easily integrated into any existing or new project.
+
+All other specifications have been fully implemented and tested.
+
 ## Remaining Tasks
 
-### High Priority - Core Portability
+### High Priority - Portability Refactoring
 
-1. Move IMPLEMENTATION_PLAN.md to .ralph/IMPLEMENTATION_PLAN.md
-   - Update this file's location
-   - Update all references in loop.sh and prompts
+1. **Reorganize file structure**
+   - Move `ralph` script → `.ralph/ralph`
+   - Move `IMPLEMENTATION_PLAN.md` → `.ralph/IMPLEMENTATION_PLAN.md`
+   - Move `PROGRESS.md` → `.ralph/PROGRESS.md`
+   - Move `docs/` → `.ralph/docs/`
+   - Keep `specs/` in project root (high visibility)
+   - Remove `src/` directory (example code, no longer needed)
+   - Spec: specs/ralph-portable-integration.md - "File Structure Reorganization"
 
-3. Move PROGRESS.md to .ralph/PROGRESS.md
-   - Move existing progress log
-   - Update all references in loop.sh and prompts
+2. **Update all path references**
+   - Update `.ralph/ralph` to reference `.ralph/loop.sh`
+   - Update `.ralph/loop.sh` paths for IMPLEMENTATION_PLAN.md, PROGRESS.md, prompts
+   - Update `.ralph/prompts/PROMPT_build.md` to use `.ralph/` prefixed paths
+   - Remove project structure assumptions from prompts
+   - Spec: specs/ralph-portable-integration.md - "Update All Path References"
 
-4. Move ralph script to .ralph/ralph
-   - Move entry point script
-   - Update to reference .ralph/loop.sh correctly
-   - Add 'init' subcommand support
+3. **Create .ralph/.gitignore**
+   - Ignore `logs/` directory
+   - Ignore `*.log` and `*.log.metrics` files
+   - Spec: specs/ralph-portable-integration.md - "Create .ralph/.gitignore"
 
-5. Create placeholder state files in .ralph/
-   - Create minimal IMPLEMENTATION_PLAN.md template
-   - Create minimal PROGRESS.md template
-   - These will be in the repo for fresh installations
+4. **Create placeholder state files**
+   - Create `.ralph/IMPLEMENTATION_PLAN.md` with template
+   - Create `.ralph/PROGRESS.md` with template
+   - Spec: specs/ralph-portable-integration.md - "Placeholder State Files"
 
-6. Move documentation to .ralph/docs/
-   - Create .ralph/docs/ directory
-   - Move README.md content to .ralph/docs/README.md
-   - Move docs/* to .ralph/docs/
-   - Update all documentation for new structure
+5. **Create .ralph/.ralph-version file**
+   - Track Ralph version and installation date
+   - Include source repository URL
+   - Spec: specs/ralph-portable-integration.md - "Version Tracking"
 
-7. Remove src/ directory
-   - Delete src/lib/calculator.js
-   - Delete src/lib/calculator.test.js
-   - Remove entire src/ directory (example code no longer needed)
+6. **Create .ralph/AGENTS.md.template**
+   - Include required ## Specifications section
+   - Include example project sections (customizable)
+   - Add clear comments distinguishing Ralph vs project sections
+   - Spec: specs/ralph-portable-integration.md - "AGENTS.md Template Management"
 
-8. Update .ralph/loop.sh path references
-   - Update IMPLEMENTATION_PLAN.md path to .ralph/IMPLEMENTATION_PLAN.md
-   - Update PROGRESS.md path to .ralph/PROGRESS.md
-   - Update prompts path references
+7. **Create install.sh script**
+   - Check prerequisites (git repo, no existing .ralph/)
+   - Clone Ralph repo to temp directory
+   - Copy .ralph/ to current project
+   - Remove .git from copied .ralph/
+   - Add version identifier
+   - Clean up temp directory
+   - Spec: specs/ralph-portable-integration.md - "Installation Script"
 
-9. Update .ralph/prompts/PROMPT_build.md
-    - Update all file path references to use .ralph/ prefix
-    - Remove src/ directory assumptions
-    - Remove project-specific examples
-    - Emphasize project-agnostic approach
+8. **Implement ralph init command**
+   - Add `init` subcommand to `.ralph/ralph`
+   - Create `specs/` directory if missing
+   - Create `specs/README.md` with starter template
+   - Handle AGENTS.md intelligently (create from template or show message)
+   - Output helpful instructions
+   - Spec: specs/ralph-portable-integration.md - "Ralph Init Command"
 
-10. Create install.sh script
-    - Curl-able installation script
-    - Check prerequisites (git repo, no existing .ralph/)
-    - Clone Ralph to temp, copy .ralph/ to project
-    - Add .ralph/.ralph-version file
-    - Clean up temp directory
+9. **Update documentation**
+   - Move all docs to `.ralph/docs/`
+   - Create `.ralph/docs/README.md` (main documentation)
+   - Create `.ralph/docs/installation.md` (with AGENTS.md integration guide)
+   - Create `.ralph/docs/quickstart.md` (mention AGENTS.md setup)
+   - Create `.ralph/docs/writing-specs.md`
+   - Create `.ralph/docs/troubleshooting.md`
+   - Remove project-specific examples and assumptions
+   - Spec: specs/ralph-portable-integration.md - "Documentation Updates"
 
-11. Implement 'ralph init' command
-    - Add init subcommand to .ralph/ralph script
-    - Create specs/ directory if missing
-    - Create specs/README.md template
-    - Handle AGENTS.md intelligently (create from template or show message)
-
-12. Update specs/ralph-overview.md
-    - Update all file paths to use .ralph/ prefix
+10. **Update specs/ralph-overview.md**
+    - Update all file paths to use `.ralph/` prefix
     - Remove project-specific assumptions
-    - Add AGENTS.md requirement documentation
-    - Update examples with new structure
+    - Update examples to show `.ralph/` paths
+    - Add AGENTS.md requirement explanation
+    - Spec: specs/ralph-portable-integration.md - "Update ralph-overview.md"
 
-13. Create .ralph/docs/installation.md
-    - Document curl installation method
-    - Include AGENTS.md integration guide
-    - Explain ## Specifications section requirement
-    - Provide examples for new and existing projects
-
-14. Create .ralph/docs/quickstart.md
-    - Getting started guide
-    - Mention AGENTS.md setup during init
-    - Reference template location
-    - Simple workflow example
-
-15. Update .ralph/docs/README.md
-    - Main Ralph documentation
-    - Remove project-specific examples (calculator)
-    - Remove language-specific guidance
-    - Emphasize project-agnostic nature
-
-16. Test installation in fresh project
+11. **Test installation in fresh project**
     - Create test project
     - Run install.sh
     - Run ralph init
-    - Verify structure and functionality
-
-17. Update specs/README.md
-    - Mark ralph-portable-integration.md as Implemented
-    - Add completion date
-    - Update status tracking
+    - Create test spec
+    - Run build loop for 1 iteration
+    - Verify all paths work correctly
+    - Spec: specs/ralph-portable-integration.md - "Testing Approach"
 
 ## Notes
 
-- This is a major architectural change for portability
-- All Ralph files (except specs/) will move under .ralph/
-- Breaking change for current Ralph users (if any)
-- Focus on making Ralph a portable tool, not a project itself
-- AGENTS.md template is critical for proper agent behavior
-- Only ## Specifications section is required in AGENTS.md
-- Installation script must be curl-able from GitHub
-- All documentation must be project-agnostic
+### Current State
+- All core Ralph functionality is implemented and working
+- Docker environment is configured
+- Calculator test spec fully implemented
+- PROJECT_COMPLETE auto-reset working
+- Metrics tracking implemented
+- Signal handling (Ctrl-C) implemented
+
+### Implementation Strategy
+- This is a major refactoring that will break the current structure
+- Must be done carefully with thorough testing
+- Each task should be completed and tested before moving to next
+- Keep git history clean with descriptive commits
+- Test at each major milestone
+
+### Dependencies
+- Tasks 1-6 are foundational file reorganization
+- Task 7 (install.sh) depends on tasks 1-6 being complete
+- Task 8 (ralph init) depends on tasks 1-6 being complete
+- Task 9 (documentation) can be done in parallel with tasks 7-8
+- Task 10 (update ralph-overview.md) should be done after tasks 1-9
+- Task 11 (testing) must be done last to validate everything
+
+### Success Criteria
+- Ralph can be installed into any project via curl/wget
+- All Ralph files (except specs/) are under .ralph/
+- No assumptions about project structure
+- Installation is simple and well-documented
+- Build loop works with new paths
+- AGENTS.md integration is clear and flexible
+
+### Breaking Changes
+- This refactoring will break the current Ralph project structure
+- After implementation, the current project will need to be migrated
+- Consider creating a migration guide for existing Ralph users
+- Git history will show the transition clearly
+
+### Testing Checklist
+- [ ] File structure reorganized correctly
+- [ ] All path references updated
+- [ ] install.sh works via curl
+- [ ] ralph init creates proper structure
+- [ ] AGENTS.md template works correctly
+- [ ] Documentation is complete and accurate
+- [ ] Build loop works in fresh project
+- [ ] No project-specific assumptions remain
