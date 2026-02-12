@@ -4,7 +4,7 @@
 
 ### 2026-02-12
 - [x] Remove plan mode from Ralph system
-  - Commit: (pending)
+  - Commit: ac79c2d
   - Plan mode over-complicated the system without providing advantages over using cline CLI or other agents directly
   - Moved archived specs:
     - specs/plan-mode-fix.md → specs/archive/plan-mode-fix.md
