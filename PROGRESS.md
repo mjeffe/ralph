@@ -4,7 +4,7 @@
 
 ### 2026-02-12
 - [x] Add Ctrl-C signal handling to Ralph loop
-  - Commit: (pending)
+  - Commit: 5b2f518
   - Implemented graceful interrupt handling for SIGINT and SIGTERM signals
   - Added cleanup() function that logs interrupt details (iteration number, timestamp)
   - Added INTERRUPT_RECEIVED flag to track signal state
