@@ -38,6 +38,7 @@ The-Project/
 ├── .ralph/                          # Ralph system (committed to project)
 │   ├── ralph                        # Entry point
 │   ├── loop.sh                      # Core loop
+│   ├── AGENTS.md.template           # Template for project AGENTS.md
 │   ├── IMPLEMENTATION_PLAN.md       # Task list
 │   ├── PROGRESS.md                  # Completed work
 │   ├── .ralph-version               # Track installed version
@@ -52,6 +53,7 @@ The-Project/
 │       ├── quickstart.md
 │       └── [other docs]
 │
+├── AGENTS.md                        # Agent guidelines (created by ralph init)
 ├── specs/                           # Project specs (committed to project)
 │   ├── README.md
 │   └── [project-specific specs]
@@ -114,8 +116,18 @@ Add `init` subcommand to `.ralph/ralph` script.
 2. Create project structure:
    - Create `specs/` directory if missing
    - Create `specs/README.md` with starter template
+   - Handle `AGENTS.md` intelligently (see below)
 
-3. Output instructions:
+3. Handle AGENTS.md:
+   - **If `AGENTS.md` does NOT exist:**
+     - Create `AGENTS.md` from `.ralph/AGENTS.md.template`
+     - Output: "✓ Created AGENTS.md from template"
+   - **If `AGENTS.md` EXISTS:**
+     - Do NOT overwrite or modify
+     - Display informational message about ## Specifications section requirement
+     - Reference `.ralph/AGENTS.md.template` for details
+
+4. Output instructions:
    - Where documentation lives (`.ralph/docs/`)
    - How to run Ralph (`.ralph/ralph` or create symlink)
    - Suggestion to create convenience symlink: `ln -s .ralph/ralph ralph`
@@ -167,8 +179,8 @@ Move and update all documentation to `.ralph/docs/`:
 
 **Create/Update:**
 - `.ralph/docs/README.md` - Main Ralph documentation (updated from root README.md)
-- `.ralph/docs/installation.md` - How to install Ralph into projects
-- `.ralph/docs/quickstart.md` - Getting started guide
+- `.ralph/docs/installation.md` - How to install Ralph into projects (must include AGENTS.md integration)
+- `.ralph/docs/quickstart.md` - Getting started guide (must mention AGENTS.md setup)
 - `.ralph/docs/writing-specs.md` - How to write specifications
 - `.ralph/docs/troubleshooting.md` - Common issues
 
@@ -183,6 +195,39 @@ Move and update all documentation to `.ralph/docs/`:
 - Project structure defined in specs
 - Works with any language/framework
 - Isolated in .ralph/ directory
+
+**AGENTS.md Documentation Requirements:**
+
+In `.ralph/docs/installation.md`, include:
+- Explanation of why ## Specifications section is required in AGENTS.md
+- How AGENTS.md connects agents to specs/
+- Full example of AGENTS.md with both Ralph and project sections
+- Instructions for integrating with existing AGENTS.md files
+
+In `.ralph/docs/quickstart.md`, include:
+- Brief mention of AGENTS.md creation during `ralph init`
+- Where to find template if manual integration needed (`.ralph/AGENTS.md.template`)
+- Note that only ## Specifications section is mandatory
+
+Example for installation.md:
+```markdown
+## AGENTS.md Integration
+
+Ralph requires a `## Specifications` section in your project's AGENTS.md file. This section directs agents to consult specs/README.md before implementing features, ensuring they work from specifications rather than assumptions.
+
+### For New Projects
+When you run `ralph init`, AGENTS.md will be created automatically from the template.
+
+### For Existing Projects with AGENTS.md
+If your project already has an AGENTS.md file, add this section:
+
+[Include the ## Specifications section content here]
+
+You can view the complete template at `.ralph/AGENTS.md.template` for reference.
+
+### Customizing AGENTS.md
+The template includes example sections for commit messages and code style. These are suggestions—modify or remove them to match your project's conventions. Only the ## Specifications section is required for Ralph.
+```
 
 ### 6. Create .ralph/.gitignore
 
@@ -238,26 +283,116 @@ This allows:
 - Future `ralph update` command (future enhancement)
 - Debugging and support
 
-### 9. Update ralph-overview.md
+### 9. AGENTS.md Template Management
+
+Create `.ralph/AGENTS.md.template` to provide agent guidelines for projects.
+
+**Template structure:**
+
+```markdown
+# Agent Guidelines
+
+<!-- ========================================================================
+     RALPH REQUIREMENTS - DO NOT REMOVE
+     The following section is required for Ralph to function properly.
+     ======================================================================== -->
+
+## Specifications
+
+IMPORTANT: Before implementing any feature, consult the specifications in specs/README.md.
+
+- Make NO assumptions about implementation status. Many specs describe planned features that may not yet exist in the codebase.
+- Always search the codebase first. Before concluding something is or isn't implemented, thoroughly search the actual code. Specs describe intent; code describes reality.
+- Search for related functionality by feature name, file locations mentioned in specs, and logical places it would live.
+- Use specs as guidance. When implementing a feature, follow the design patterns, types, and architecture defined in the relevant spec.
+- Spec index: specs/README.md lists all specifications organized by category.
+
+<!-- ========================================================================
+     PROJECT GUIDELINES - CUSTOMIZE BELOW
+     The sections below are examples. Modify them to match your project's
+     conventions, or remove them entirely if not needed.
+     ======================================================================== -->
+
+## General Guidelines
+
+- You are an expert software developer
+- You always strive for simple and elegant solutions using SOLID programming principles
+- You prioritize pragmatic simplicity over theoretical purity
+- DO NOT over-engineer
+- DO NOT add features I didn't request
+- Keep solutions simple and direct
+- Prefer boring, readable code
+
+## Commit Messages
+
+- NO agent attribution
+- NO "Generated with" footers
+- Use conventional commits (feat:, fix:, etc.)
+- First line under 72 characters followed by a blank line
+
+## Code Style
+
+- **Formatting**: Follow project conventions (check existing code)
+- **Naming**: Follow language/framework conventions
+- **Comments**: Only add comments when code is complex and requires context
+```
+
+**Ralph init behavior:**
+
+When `ralph init` is run:
+
+1. **If `AGENTS.md` does NOT exist:**
+   - Create `AGENTS.md` from `.ralph/AGENTS.md.template`
+   - Output: "✓ Created AGENTS.md from template"
+
+2. **If `AGENTS.md` EXISTS:**
+   - Do NOT overwrite or modify
+   - Output informational message:
+   ```
+   ⚠ Note: Found existing AGENTS.md
+   
+   Ralph requires a "## Specifications" section in AGENTS.md for proper operation.
+   This section tells agents to consult specs/README.md before implementing features.
+   
+   Please add this section to your AGENTS.md (see .ralph/AGENTS.md.template for the exact content).
+   
+   You can review the full template at: .ralph/AGENTS.md.template
+   ```
+
+**Why this approach:**
+
+- **Minimal intrusion:** Only ## Specifications section is required
+- **Flexible:** Works with existing AGENTS.md files
+- **Clear separation:** Comments distinguish Ralph vs project sections
+- **Customizable:** Projects can modify or remove example sections
+- **Reference:** Template serves as documentation and example
+
+### 10. Update ralph-overview.md
 
 Update `specs/ralph-overview.md` to reflect new structure:
-- Update all file paths
+- Update all file paths to use `.ralph/` prefix
 - Remove project-specific assumptions
 - Update examples to show `.ralph/` paths
 - Clarify that Ralph can be used in any project
+- Mention AGENTS.md requirement (## Specifications section)
+- Explain how AGENTS.md connects agents to specs/
 
 ## Success Criteria
 
 - [ ] All Ralph files except specs/ moved under .ralph/
 - [ ] `install.sh` script works via curl/wget
 - [ ] `ralph init` command creates specs/ and template
+- [ ] `.ralph/AGENTS.md.template` created with full structure
+- [ ] `ralph init` intelligently handles existing AGENTS.md
 - [ ] All path references updated throughout codebase
 - [ ] Documentation moved to .ralph/docs/ and updated
+- [ ] `.ralph/docs/installation.md` includes AGENTS.md integration guide
+- [ ] `.ralph/docs/quickstart.md` mentions AGENTS.md setup
 - [ ] src/ directory completely removed
 - [ ] .ralph/.gitignore created
 - [ ] Placeholder IMPLEMENTATION_PLAN.md and PROGRESS.md created
 - [ ] .ralph/.ralph-version created during install
-- [ ] specs/ralph-overview.md updated with new paths
+- [ ] specs/ralph-overview.md updated with new paths and AGENTS.md requirement
 - [ ] No assumptions about project structure in any Ralph files
 - [ ] Installation tested in a fresh project
 - [ ] Build loop works with new paths
