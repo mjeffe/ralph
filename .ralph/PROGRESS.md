@@ -4,7 +4,7 @@
 
 ### 2026-02-12
 - [x] Implement ralph init command
-  - Commit: (will be added after commit)
+  - Commit: 205f114
   - Added `init` subcommand to `.ralph/ralph` script
   - Creates `specs/` directory if missing
   - Creates `specs/README.md` with starter template
