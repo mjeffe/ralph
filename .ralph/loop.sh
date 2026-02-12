@@ -13,6 +13,9 @@ AGENT_COMMAND=${RALPH_AGENT:-cline}
 MIN_DISK_SPACE_MB=1024  # 1GB minimum
 ENABLE_JSON_OUTPUT=${RALPH_JSON_OUTPUT:-true}  # Enable JSON output for metrics parsing
 
+# Flag for interrupt handling
+INTERRUPT_RECEIVED=false
+
 # Color codes for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -41,6 +44,26 @@ info() {
 debug() {
     echo -e "${BLUE}$1${NC}"
 }
+
+# Cleanup function for handling interrupts
+cleanup() {
+    echo ""
+    error "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    error "Ctrl-C received - Aborting execution"
+    error "Interrupted at iteration: $ITERATION"
+    error "Time: $(date '+%Y-%m-%d %H:%M:%S')"
+    error "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    
+    # Additional cleanup tasks can be added here as needed
+    # Examples: cleaning up temporary files, saving state, etc.
+    
+    exit 130  # Standard exit code for SIGINT
+}
+
+# Trap signals - set flag instead of calling cleanup directly
+# This allows the current iteration to complete before exiting
+trap 'INTERRUPT_RECEIVED=true' SIGINT SIGTERM
 
 # Health check functions
 check_disk_space() {
@@ -229,6 +252,11 @@ echo ""
 ITERATION=0
 
 while true; do
+    # Check if interrupt was received
+    if [ "$INTERRUPT_RECEIVED" = true ]; then
+        cleanup
+    fi
+    
     # Check max iterations
     if [ $MAX_ITERATIONS -gt 0 ] && [ $ITERATION -ge $MAX_ITERATIONS ]; then
         info "Reached max iterations: $MAX_ITERATIONS"
@@ -359,6 +387,11 @@ EOF
     info "Iteration $ITERATION complete"
     info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
+    
+    # Check again for interrupt after iteration completes
+    if [ "$INTERRUPT_RECEIVED" = true ]; then
+        cleanup
+    fi
 done
 
 info "Loop finished"

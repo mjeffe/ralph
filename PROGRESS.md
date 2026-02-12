@@ -3,6 +3,18 @@
 ## Completed Tasks
 
 ### 2026-02-12
+- [x] Add Ctrl-C signal handling to Ralph loop
+  - Commit: (pending)
+  - Implemented graceful interrupt handling for SIGINT and SIGTERM signals
+  - Added cleanup() function that logs interrupt details (iteration number, timestamp)
+  - Added INTERRUPT_RECEIVED flag to track signal state
+  - Trap sets flag instead of exiting immediately, allowing current iteration to complete
+  - Check interrupt flag at start of loop and after each iteration completes
+  - Exit with code 130 (standard for SIGINT) when interrupted
+  - Clear user feedback with red error messages showing abort status
+  - Extensible cleanup function ready for future cleanup tasks (temp files, partial commits, etc.)
+  - Ctrl-C now stops the entire script instead of just the current iteration
+
 - [x] Remove plan mode from Ralph system
   - Commit: ac79c2d
   - Plan mode over-complicated the system without providing advantages over using cline CLI or other agents directly
