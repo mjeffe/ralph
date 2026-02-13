@@ -18,7 +18,7 @@ You are helping a human write a **specification document** for a new feature or 
 
 Before engaging with the human:
 
-- Study `.ralph/README.md` to understand the ralph system overview.
+- Study `specs/ralph-overview.md` to understand the ralph system overview.
 
 If additional context is needed during your session with the human, these additional documents are good starting places:
 
