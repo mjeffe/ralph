@@ -13,7 +13,7 @@
 
 ### 0. First Iteration Check
 
-**If .ralph/IMPLEMENTATION_PLAN.md does NOT exist:**
+**If .ralph/IMPLEMENTATION_PLAN.md does NOT exist OR has no remaining tasks:**
 1. Read all specifications in `specs/` (start with `specs/README.md` for guidance)
 2. Analyze existing codebase structure
 3. **SEARCH the codebase for each spec** to determine what's already implemented:
@@ -30,7 +30,7 @@
 7. Push changes
 8. **EXIT** - Next iteration will begin implementing tasks
 
-**If .ralph/IMPLEMENTATION_PLAN.md exists:** Continue to step 1 below.
+**If .ralph/IMPLEMENTATION_PLAN.md exists AND has remaining tasks:** Continue to step 1 below.
 
 ### 1. Read Current State
 
@@ -148,9 +148,16 @@ When authoring documentation:
 1. Verify all `specs/` requirements are satisfied
 2. Ensure all tests are passing
 3. Confirm documentation is complete
-4. Create `.ralph/PROJECT_COMPLETE` file with completion summary
-5. Commit with message: "ralph: mark project complete"
-6. The presence of this file will stop the Ralph loop
+4. **EMPTY `.ralph/IMPLEMENTATION_PLAN.md` completely** - remove all remaining content to leave the file empty
+5. Create `.ralph/PROJECT_COMPLETE` file with completion summary
+6. Commit with message: "ralph: mark project complete"
+7. Push changes
+8. The presence of this file will stop the Ralph loop
+
+**CRITICAL:** When completing the last task, you MUST:
+- Empty `.ralph/IMPLEMENTATION_PLAN.md` completely (clear all notes, sections, and content)
+- Create `.ralph/PROJECT_COMPLETE` file
+- Both must happen in the same commit
 
 **Format for `.ralph/PROJECT_COMPLETE`:**
 ```
