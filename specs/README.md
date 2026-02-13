@@ -11,6 +11,12 @@
   - Verification: Tested in /tmp/ralph-test-project - all functionality working correctly
   - Tests: Build loop successfully implemented test spec, all paths correct
 
+- **ralph-path-resilient.md** - Fix symlink path resolution bug in `.ralph/ralph` entry point. Makes the script automatically resolve its location and change to the project root before any operations, allowing symlinks to work from anywhere in the repository. This fixes the documented `ln -s .ralph/ralph ralph` approach which currently fails when invoked from subdirectories.
+  - Status: **Active**
+  - Priority: **High**
+  - Dependencies: None
+  - Last Updated: 2026-02-13
+
 - **agent-output-filtering.md** - Terminal output filter for Ralph build loop. Parses JSON-formatted agent output to display human-readable activity (reasoning, tool usage, errors, summaries) while hiding verbose prompts and API payloads. Preserves complete raw logs for debugging while providing concise, actionable terminal output.
   - Status: **Active**
   - Priority: **High**
