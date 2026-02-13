@@ -10,4 +10,5 @@ This list is for humans! It is a reminder of ideas and tasks that need to be spe
     - IMPLEMENTATION_PLAN should also reference the associated spec?
 - Change RALPH_VERSION to something else.
     - Or else add semver versioning to ralphs process? but that would affect projects that use it.
+- Add a git branch check to ralph root script. If on main or master, prompt with warning and ask if we want to create a branch
 
