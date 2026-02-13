@@ -3,6 +3,27 @@
 ## Completed Tasks
 
 ### 2026-02-13
+- [x] Implement branch safety check in .ralph/ralph
+  - Commit: faef120
+  - Added `check_protected_branch()` function to detect main/master branches
+  - Added `handle_protected_branch()` function for interactive prompts with three options:
+    - Abort: Exit with error message
+    - Create new branch: Prompts for branch name and creates it with validation
+    - Continue: Proceeds on protected branch with confirmation
+  - Implemented TTY detection for interactive vs non-interactive mode
+  - Added branch name validation: alphanumeric, hyphens, underscores, forward slashes
+  - Branch creation includes automatic checkout to new branch
+  - Non-interactive mode automatically aborts on protected branches (exit code 1)
+  - Safety check inserted after prerequisite checks, before delegating to loop.sh
+  - Tested all three interactive options:
+    - Abort option exits cleanly
+    - Branch creation with valid/invalid names
+    - Continue option proceeds with confirmation
+  - Tested non-interactive mode: fails fast with clear error message
+  - Prevents accidental commits directly to main/master branches
+  - Promotes branch-based workflow for Ralph iterations
+  - All functionality from specs/branch-safety-check.md implemented
+
 - [x] Integrate filter into loop.sh
   - Commit: 9bf52a9
   - Updated .ralph/loop.sh to pipe agent output through filter script
