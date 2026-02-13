@@ -2,74 +2,82 @@
 
 ## Overview
 
-This plan implements the remaining specification: **ralph-portable-integration.md**. This is a major architectural change to transform Ralph from a standalone project into a portable development tool that can be easily integrated into any existing or new project.
+Implementing two high-priority specifications for Ralph system improvements:
+- ralph-path-resilient.md: Fix symlink path resolution bug in .ralph/ralph entry point
+- agent-output-filtering.md: Terminal output filter for human-readable agent activity
 
-All other specifications have been fully implemented and tested.
+Search findings:
+- .ralph/ralph does not use BASH_SOURCE or resolve project root
+- No .ralph/lib/filter-output.sh exists
+- .ralph/loop.sh does not pipe output through filter
+- Documentation does not reflect reliable symlink support
 
 ## Remaining Tasks
 
-No remaining tasks. All portability refactoring tasks are complete.
+### High Priority - Path Resolution
+
+1. Make .ralph/ralph script path-resilient
+   - Add BASH_SOURCE path resolution at top of script
+   - Compute PROJECT_ROOT as parent of SCRIPT_DIR
+   - Change to PROJECT_ROOT before any operations
+   - Validate .ralph/ directory exists at computed location
+   - Spec: specs/ralph-path-resilient.md - "Path Resolution" and "Implementation Details"
+
+2. Update documentation for path-resilient symlinks
+   - Update install.sh show_success() message about symlinks
+   - Update .ralph/ralph ralph_init() message about symlinks
+   - Update .ralph/docs/installation.md symlink section
+   - Update .ralph/docs/quickstart.md where symlinks mentioned
+   - Spec: specs/ralph-path-resilient.md - "Documentation Updates"
+
+### High Priority - Output Filtering
+
+3. Create output filter script
+   - Create .ralph/lib/ directory
+   - Create .ralph/lib/filter-output.sh with jq dependency check
+   - Implement filtering rules per spec (task/text/tool/api_req_started/etc)
+   - Make script executable
+   - Handle invalid JSON gracefully
+   - Spec: specs/agent-output-filtering.md - "Filter Script Location" and "Implementation Details"
+
+4. Integrate filter into loop.sh
+   - Update agent invocation in .ralph/loop.sh to pipe through filter
+   - Ensure full logs still preserved via tee
+   - Terminal gets filtered output only
+   - Spec: specs/agent-output-filtering.md - "Integration Point"
+
+### Medium Priority - Testing & Verification
+
+5. Test path-resilient implementation
+   - Test direct execution: .ralph/ralph
+   - Test symlink from root: ln -s .ralph/ralph ralph && ./ralph
+   - Test from subdirectory invocation
+   - Verify all prerequisite checks work after path resolution
+   - Spec: specs/ralph-path-resilient.md - "Use Cases" and "Success Criteria"
+
+6. Test output filter with real agent output
+   - Run build loop with JSON output enabled
+   - Verify terminal shows filtered output
+   - Verify log files contain complete raw output
+   - Test with missing jq (should fail gracefully)
+   - Spec: specs/agent-output-filtering.md - "Testing Approach"
 
 ## Notes
 
-### Current State
-- All core Ralph functionality is implemented and working
-- Docker environment is configured
-- Calculator test spec fully implemented
-- PROJECT_COMPLETE auto-reset working
-- Metrics tracking implemented
-- Signal handling (Ctrl-C) implemented
-- **Portable installation fully tested and validated**
-
 ### Implementation Strategy
-- This is a major refactoring that will break the current structure
-- Must be done carefully with thorough testing
-- Each task should be completed and tested before moving to next
-- Keep git history clean with descriptive commits
-- Test at each major milestone
+- Tasks 1 and 2 are independent and can be done first
+- Tasks 3 and 4 are dependent (filter must exist before integration)
+- Testing tasks (5-6) validate implementations
 
 ### Dependencies
-- Tasks 1-6 are foundational file reorganization ✓
-- Task 7 (install.sh) depends on tasks 1-6 being complete ✓
-- Task 8 (ralph init) depends on tasks 1-6 being complete ✓
-- Task 9 (documentation) can be done in parallel with tasks 7-8 ✓
-- Task 10 (update ralph-overview.md) should be done after tasks 1-9 ✓
-- Task 11 (testing) must be done last to validate everything ✓
+- Task 2 depends on Task 1 (docs reference the implementation)
+- Task 4 depends on Task 3 (integration requires filter script)
+- Task 5 depends on Tasks 1-2 (tests path resolution)
+- Task 6 depends on Tasks 3-4 (tests output filtering)
 
 ### Success Criteria
-- ✓ Ralph can be installed into any project via curl/wget
-- ✓ All Ralph files (except specs/) are under .ralph/
-- ✓ No assumptions about project structure
-- ✓ Installation is simple and well-documented
-- ✓ Build loop works with new paths
-- ✓ AGENTS.md integration is clear and flexible
-
-### Breaking Changes
-- This refactoring will break the current Ralph project structure
-- After implementation, the current project will need to be migrated
-- Consider creating a migration guide for existing Ralph users
-- Git history will show the transition clearly
-
-### Testing Checklist
-- [x] File structure reorganized correctly
-- [x] All path references updated
-- [x] install.sh works via curl
-- [x] ralph init creates proper structure
-- [x] AGENTS.md template works correctly
-- [x] Documentation is complete and accurate
-- [x] Build loop works in fresh project
-- [x] No project-specific assumptions remain
-
-## Validation Results
-
-Tested in /tmp/ralph-test-project:
-- ✓ Copied .ralph/ directory to test project
-- ✓ Ran `ralph init` - created specs/, specs/README.md, AGENTS.md
-- ✓ Created test specification (specs/test-hello.md)
-- ✓ Ran build loop: `.ralph/ralph 1`
-- ✓ Build loop successfully implemented hello.sh and test-hello.sh
-- ✓ All tests passing
-- ✓ Documentation updated correctly
-- ✓ All paths working as expected
-
-**Ralph portable installation is production-ready!**
+- Symlinks work from any directory within repository
+- Terminal output is human-readable, not verbose JSON
+- Full logs preserved for debugging
+- All existing functionality remains unchanged
+- Documentation accurately reflects new capabilities
