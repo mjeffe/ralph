@@ -303,7 +303,15 @@ while true; do
         AGENT_FLAGS="$AGENT_FLAGS --verbose"
     fi
     
-    timeout ${ITERATION_TIMEOUT}s bash -c "cat '$PROMPT_FILE' | $AGENT_COMMAND $AGENT_FLAGS" 2>&1 | tee -a "$LOG_FILE" || AGENT_EXIT_CODE=$?
+    # Run agent with output filtering
+    # - Full output goes to log file via tee
+    # - Terminal gets filtered output for readability
+    # - Filter only applies when JSON output is enabled
+    if [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
+        timeout ${ITERATION_TIMEOUT}s bash -c "cat '$PROMPT_FILE' | $AGENT_COMMAND $AGENT_FLAGS" 2>&1 | tee -a "$LOG_FILE" | "$(dirname "$0")/lib/filter-output.sh" || AGENT_EXIT_CODE=$?
+    else
+        timeout ${ITERATION_TIMEOUT}s bash -c "cat '$PROMPT_FILE' | $AGENT_COMMAND $AGENT_FLAGS" 2>&1 | tee -a "$LOG_FILE" || AGENT_EXIT_CODE=$?
+    fi
     
     # Check if timeout occurred (exit code 124)
     if [ $AGENT_EXIT_CODE -eq 124 ]; then

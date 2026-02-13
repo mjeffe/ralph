@@ -14,14 +14,6 @@ Search findings:
 
 ## Remaining Tasks
 
-### High Priority - Output Filtering
-
-4. Integrate filter into loop.sh
-   - Update agent invocation in .ralph/loop.sh to pipe through filter
-   - Ensure full logs still preserved via tee
-   - Terminal gets filtered output only
-   - Spec: specs/agent-output-filtering.md - "Integration Point"
-
 ### Medium Priority - Testing & Verification
 
 5. Test path-resilient implementation
