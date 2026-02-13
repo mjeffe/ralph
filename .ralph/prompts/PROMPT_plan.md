@@ -129,6 +129,6 @@ The human will end this session when satisfied, after asking you to write out th
 4. **Use examples** - Concrete examples prevent misunderstanding
 5. **Document the "why"** - Help future readers understand the reasoning
 6. **Check consistency** - Ensure alignment with existing specs
-7. **Stay in Plan Mode** - Do NOT create IMPLEMENTATION_PLAN.md or implement code
+7. **Plan Only** - Do NOT create IMPLEMENTATION_PLAN.md or implement code
 
 The quality of the specification directly impacts the success of the build phase. Take time to make it clear, complete, and correct.

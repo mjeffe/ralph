@@ -11,6 +11,12 @@
   - Verification: Tested in /tmp/ralph-test-project - all functionality working correctly
   - Tests: Build loop successfully implemented test spec, all paths correct
 
+- **agent-output-filtering.md** - Terminal output filter for Ralph build loop. Parses JSON-formatted agent output to display human-readable activity (reasoning, tool usage, errors, summaries) while hiding verbose prompts and API payloads. Preserves complete raw logs for debugging while providing concise, actionable terminal output.
+  - Status: **Active**
+  - Priority: **High**
+  - Dependencies: None
+  - Last Updated: 2026-02-13
+
 ## Feature Specifications
 
 - **test-simple-calculator.md** - Test specification to validate Ralph loop functionality. Defines a simple calculator module with basic operations, input validation, and comprehensive tests. Used to verify IMPLEMENTATION_PLAN.md creation, task execution, PROGRESS.md updates, and git integration.
