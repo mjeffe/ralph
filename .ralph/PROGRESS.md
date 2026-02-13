@@ -4,7 +4,7 @@
 
 ### 2026-02-13
 - [x] Update documentation for path-resilient symlinks
-  - Commit: (will be added after commit)
+  - Commit: 33de8e4
   - Updated install.sh show_success() message to indicate symlink works "from anywhere in your repo"
   - Updated .ralph/ralph ralph_init() message with same clarification
   - Updated .ralph/docs/installation.md symlink section with explanation that symlink works from anywhere
