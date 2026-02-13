@@ -220,8 +220,85 @@ elif [ -n "$1" ]; then
     error "Invalid argument: $1\nUse './ralph --help' for usage information"
 fi
 
+# Check for protected branch and handle appropriately
+check_protected_branch() {
+    local current_branch="$(git branch --show-current)"
+    
+    if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ]; then
+        handle_protected_branch "$current_branch"
+    fi
+}
+
+# Handle protected branch with interactive prompts or non-interactive abort
+handle_protected_branch() {
+    local branch_name="$1"
+    
+    # Check if running in interactive mode (stdin is a tty)
+    if [ -t 0 ]; then
+        # Interactive mode - show menu
+        echo ""
+        warn "⚠️  WARNING: You are on branch '$branch_name'"
+        echo ""
+        echo "Running Ralph on main/master can create many development commits."
+        echo "It's recommended to work on a feature branch instead."
+        echo ""
+        echo "Options:"
+        echo "  1. Abort (recommended)"
+        echo "  2. Create a new branch"
+        echo "  3. Continue on $branch_name (requires confirmation)"
+        echo ""
+        read -p "Choose an option [1]: " choice
+        choice=${choice:-1}
+        
+        case "$choice" in
+            1)
+                echo "Aborted. Create a feature branch and try again."
+                exit 0
+                ;;
+            2)
+                read -p "Enter new branch name: " new_branch
+                if [ -z "$new_branch" ]; then
+                    error "Branch name cannot be empty"
+                    exit 1
+                fi
+                
+                if git checkout -b "$new_branch" 2>&1; then
+                    info "✓ Created and switched to branch '$new_branch'"
+                    info "✓ Continuing on branch '$new_branch'"
+                else
+                    error "Failed to create branch '$new_branch'"
+                    echo "Git error output shown above"
+                    exit 1
+                fi
+                ;;
+            3)
+                read -p "Type 'yes' to confirm you want to continue on $branch_name: " confirmation
+                if [ "$confirmation" = "yes" ]; then
+                    info "✓ Continuing on '$branch_name' (user confirmed)"
+                else
+                    echo "Aborted. Create a feature branch and try again."
+                    exit 0
+                fi
+                ;;
+            *)
+                error "Invalid option. Please choose 1, 2, or 3."
+                exit 1
+                ;;
+        esac
+    else
+        # Non-interactive mode - abort immediately
+        error "Running on protected branch '$branch_name'"
+        error "Ralph cannot run on main/master in non-interactive mode."
+        error "Switch to a feature branch first."
+        exit 1
+    fi
+}
+
 # Run prerequisite checks
 check_prerequisites
+
+# Check for protected branch
+check_protected_branch
 
 # Display startup information
 echo ""
