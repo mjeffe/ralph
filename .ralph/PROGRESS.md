@@ -4,7 +4,7 @@
 
 ### 2026-02-13
 - [x] Integrate filter into loop.sh
-  - Commit: (will be added after commit)
+  - Commit: 9bf52a9
   - Updated .ralph/loop.sh to pipe agent output through filter script
   - Filter integration only applies when JSON output is enabled (RALPH_JSON_OUTPUT=true)
   - Conditional logic: JSON mode uses filter, verbose mode bypasses filter
