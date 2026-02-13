@@ -18,7 +18,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-RALPH_REPO="https://github.com/mjeffe/ralph.git"
+RALPH_REPO="git@github.com:mjeffe/ralph.git"
 RALPH_BRANCH="main"
 TEMP_DIR=""
 
