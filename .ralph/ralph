@@ -9,6 +9,21 @@
 
 set -e
 
+# Resolve script location and project root
+# Use readlink to resolve symlinks to the actual script location
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+# Change to project root - all operations happen from here
+cd "$PROJECT_ROOT"
+
+# Validate Ralph installation structure
+if [ ! -d "$PROJECT_ROOT/.ralph" ]; then
+    echo -e "\033[0;31mError: Invalid Ralph installation: .ralph/ directory not found\033[0m" >&2
+    exit 1
+fi
+
 # Color codes for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -222,7 +237,7 @@ echo ""
 
 # Delegate to loop.sh
 if [ $MAX_ITERATIONS -gt 0 ]; then
-    exec "$(dirname "$0")/loop.sh" "$MAX_ITERATIONS"
+    exec .ralph/loop.sh "$MAX_ITERATIONS"
 else
-    exec "$(dirname "$0")/loop.sh"
+    exec .ralph/loop.sh
 fi

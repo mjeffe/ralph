@@ -16,14 +16,7 @@ Search findings:
 
 ### High Priority - Path Resolution
 
-1. Make .ralph/ralph script path-resilient
-   - Add BASH_SOURCE path resolution at top of script
-   - Compute PROJECT_ROOT as parent of SCRIPT_DIR
-   - Change to PROJECT_ROOT before any operations
-   - Validate .ralph/ directory exists at computed location
-   - Spec: specs/ralph-path-resilient.md - "Path Resolution" and "Implementation Details"
-
-2. Update documentation for path-resilient symlinks
+1. Update documentation for path-resilient symlinks
    - Update install.sh show_success() message about symlinks
    - Update .ralph/ralph ralph_init() message about symlinks
    - Update .ralph/docs/installation.md symlink section

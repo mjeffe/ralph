@@ -2,6 +2,23 @@
 
 ## Completed Tasks
 
+### 2026-02-13
+- [x] Make .ralph/ralph script path-resilient
+  - Commit: dfd218e
+  - Added path resolution using `readlink -f` to resolve symlinks to actual script location
+  - Computes SCRIPT_DIR from resolved path, then PROJECT_ROOT as parent directory
+  - Changes to PROJECT_ROOT before any operations, ensuring all paths work correctly
+  - Added validation check for .ralph/ directory existence
+  - Updated exec calls to use relative paths from project root
+  - Tested all invocation methods successfully:
+    - Direct execution: `.ralph/ralph --help` ✓
+    - Symlink from root: `ln -s .ralph/ralph ralph && ./ralph --help` ✓
+    - From subdirectory: `cd specs && ../.ralph/ralph --help` ✓
+    - Absolute path from anywhere: `cd /tmp && /path/to/.ralph/ralph --help` ✓
+  - All prerequisite checks work correctly after path resolution
+  - No breaking changes to existing functionality
+  - Task 1 from ralph-path-resilient.md complete
+
 ### 2026-02-12
 - [x] Test installation in fresh project
   - Commit: (will be added after commit)
