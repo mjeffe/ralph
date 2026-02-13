@@ -81,7 +81,7 @@ clone_ralph() {
     TEMP_DIR=$(mktemp -d)
     
     # Clone Ralph repository
-    if ! git clone --depth 1 --branch "$RALPH_BRANCH" "$RALPH_REPO" "$TEMP_DIR" 2>&1 | grep -v "Cloning into"; then
+    if ! git clone --depth 1 --branch "$RALPH_BRANCH" "$RALPH_REPO" "$TEMP_DIR" 2>&1; then
         error "Failed to clone Ralph repository. Check your internet connection."
     fi
     
