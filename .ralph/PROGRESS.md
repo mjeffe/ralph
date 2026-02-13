@@ -3,6 +3,18 @@
 ## Completed Tasks
 
 ### 2026-02-13
+- [x] Update documentation for path-resilient symlinks
+  - Commit: (will be added after commit)
+  - Updated install.sh show_success() message to indicate symlink works "from anywhere in your repo"
+  - Updated .ralph/ralph ralph_init() message with same clarification
+  - Updated .ralph/docs/installation.md symlink section with explanation that symlink works from anywhere
+  - Updated .ralph/docs/quickstart.md symlink section with same explanation
+  - All documentation now accurately reflects that symlinks work reliably due to path resolution fix
+  - Completes documentation requirements from specs/ralph-path-resilient.md
+  - Task 2 from ralph-path-resilient.md complete
+  - All tests passing
+
+### 2026-02-13
 - [x] Make .ralph/ralph script path-resilient
   - Commit: dfd218e
   - Added path resolution using `readlink -f` to resolve symlinks to actual script location

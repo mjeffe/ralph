@@ -389,3 +389,6 @@ Now you can run:
 ./ralph 10     # Instead of .ralph/ralph 10
 ./ralph --help # Instead of .ralph/ralph --help
 ```
+
+The symlink works from anywhere inside your repository - Ralph automatically
+resolves the project root regardless of your current working directory.

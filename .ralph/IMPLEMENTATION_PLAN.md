@@ -14,15 +14,6 @@ Search findings:
 
 ## Remaining Tasks
 
-### High Priority - Path Resolution
-
-1. Update documentation for path-resilient symlinks
-   - Update install.sh show_success() message about symlinks
-   - Update .ralph/ralph ralph_init() message about symlinks
-   - Update .ralph/docs/installation.md symlink section
-   - Update .ralph/docs/quickstart.md where symlinks mentioned
-   - Spec: specs/ralph-path-resilient.md - "Documentation Updates"
-
 ### High Priority - Output Filtering
 
 3. Create output filter script

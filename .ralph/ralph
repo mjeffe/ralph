@@ -158,7 +158,7 @@ EOF
     echo ""
     echo "  1. (Optional) Create a convenience symlink:"
     echo "     ln -s .ralph/ralph ralph"
-    echo "     Then you can run: ./ralph"
+    echo "     Then you can run: ./ralph from anywhere in your repo"
     echo ""
     echo "  2. Read the documentation:"
     echo "     .ralph/docs/README.md"

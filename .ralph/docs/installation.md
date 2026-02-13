@@ -101,6 +101,9 @@ Instead of:
 .ralph/ralph
 ```
 
+The symlink works from anywhere inside your repository - Ralph automatically
+resolves the project root regardless of your current working directory.
+
 ### 3. Configure Cline
 
 Ensure cline CLI is configured with your API credentials:

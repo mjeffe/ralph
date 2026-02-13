@@ -125,7 +125,7 @@ show_success() {
     echo ""
     echo "  2. (Optional) Create a convenience symlink:"
     echo -e "     ${BLUE}ln -s .ralph/ralph ralph${NC}"
-    echo -e "     Then you can run: ${BLUE}./ralph${NC}"
+    echo -e "     Then you can run: ${BLUE}./ralph${NC} from anywhere in your repo"
     echo ""
     echo "  3. Read the documentation:"
     echo -e "     ${BLUE}.ralph/docs/README.md${NC}"
