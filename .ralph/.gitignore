@@ -2,3 +2,6 @@
 logs/
 *.log
 *.log.metrics
+
+# project complete indicator file
+PROJECT_COMPLETE
