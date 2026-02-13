@@ -3,6 +3,32 @@
 ## Completed Tasks
 
 ### 2026-02-13
+- [x] Create output filter script
+  - Commit: (will be added after commit)
+  - Created .ralph/lib/ directory for library scripts
+  - Created .ralph/lib/filter-output.sh with comprehensive JSON filtering
+  - Implemented jq dependency check with clear error message and installation instructions
+  - Implemented filtering rules per spec:
+    - task: Shows full task text with [TASK] label
+    - text: Shows agent reasoning/narrative directly
+    - tool: Parses and formats tool usage (e.g., "[TOOL] read_file: path.md")
+    - api_req_started: Shows "[API] Request started" only (hides verbose payload)
+    - completion_result: Shows completion summary with [COMPLETE] label
+    - task_progress: Shows progress updates with [PROGRESS] label
+    - ask: Shows user prompts with [ASK] label
+    - error: Shows errors prominently with [ERROR] label
+  - Invalid JSON handling: Non-JSON lines pass through unchanged (graceful degradation)
+  - Color support: Detects terminal capabilities and uses ANSI colors when available
+  - Tool formatting: Extracts tool name and relevant parameters (path, command, regex)
+  - Made script executable (chmod +x)
+  - Tested with sample JSON inputs - all filtering rules working correctly
+  - Tested invalid JSON handling - passes through non-JSON lines
+  - Tested tool formatting with various tool types (read_file, execute_command)
+  - Ready for integration into .ralph/loop.sh
+  - Task 3 from agent-output-filtering.md complete
+  - All tests passing
+
+### 2026-02-13
 - [x] Update documentation for path-resilient symlinks
   - Commit: 33de8e4
   - Updated install.sh show_success() message to indicate symlink works "from anywhere in your repo"

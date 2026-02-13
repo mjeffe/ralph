@@ -16,14 +16,6 @@ Search findings:
 
 ### High Priority - Output Filtering
 
-3. Create output filter script
-   - Create .ralph/lib/ directory
-   - Create .ralph/lib/filter-output.sh with jq dependency check
-   - Implement filtering rules per spec (task/text/tool/api_req_started/etc)
-   - Make script executable
-   - Handle invalid JSON gracefully
-   - Spec: specs/agent-output-filtering.md - "Filter Script Location" and "Implementation Details"
-
 4. Integrate filter into loop.sh
    - Update agent invocation in .ralph/loop.sh to pipe through filter
    - Ensure full logs still preserved via tee
