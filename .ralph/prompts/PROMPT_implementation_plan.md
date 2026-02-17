@@ -28,15 +28,45 @@ Use this structure for IMPLEMENTATION_PLAN.md:
 
 ## Remaining Tasks
 
-### [Priority Level] - [Category Name]
+```json
+[
+  {
+    "id": "T-001",
+    "description": "[Task description - action-oriented, brief]",
+    "spec": "specs/feature-name.md",
+    "priority": "HIGH",
+    "status": "OPEN",
+    "notes": [
+      "[Optional: Key detail or constraint]"
+    ]
+  },
+  {
+    "id": "T-002",
+    "description": "[Next task description]",
+    "spec": "",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "notes": []
+  }
+]
+```
+```
 
-1. [Task description - action-oriented, brief]
-   - [Optional: Key detail or constraint]
-   - Spec: [reference to spec file and section]
+**JSON Schema Requirements:**
 
-2. [Next task...]
+Each task object MUST contain all required fields:
+- **`id`**: Unique identifier, format "T-NNN" (e.g., "T-001", "T-002")
+- **`description`**: Brief, action-oriented task description
+- **`spec`**: Spec file path (e.g., "specs/feature-name.md") or empty string ""
+- **`priority`**: One of "HIGH", "MEDIUM", "LOW", or empty string ""
+- **`status`**: One of "OPEN", "BLOCKED", "DONE", or empty string ""
+- **`notes`**: Array of strings for details/constraints; empty array [] allowed
 
-[Additional priority sections as needed]
+**Formatting Rules:**
+- JSON block MUST be fenced with triple backticks and `json` language identifier
+- Pretty-print with 2-space indentation (human readable)
+- All fields required even if empty string "" or empty array []
+- First task in array = highest priority
 
 ## Notes
 
@@ -173,88 +203,158 @@ This helps future iterations understand:
 - Where to find detailed implementation guidance
 - How to verify the task meets specifications
 
-**Format:**
-```markdown
-1. [Task description]
-   - [Optional implementation details]
-   - Spec: specs/file-name.md - "Section Name"
+**Format (JSON):**
+```json
+{
+  "id": "T-001",
+  "description": "Implement user registration endpoint",
+  "spec": "specs/user-management.md",
+  "priority": "HIGH",
+  "status": "OPEN",
+  "notes": [
+    "POST /api/users with validation",
+    "Hash passwords with bcrypt"
+  ]
+}
 ```
 
 **Examples:**
 
 ✅ **Good - Clear spec reference:**
-```markdown
-1. Implement user registration endpoint
-   - POST /api/users with validation
-   - Hash passwords with bcrypt
-   - Spec: specs/user-management.md - "Registration"
+```json
+{
+  "id": "T-001",
+  "description": "Implement user registration endpoint",
+  "spec": "specs/user-management.md",
+  "priority": "HIGH",
+  "status": "OPEN",
+  "notes": [
+    "POST /api/users with validation",
+    "Hash passwords with bcrypt",
+    "Spec section: Registration"
+  ]
+}
 ```
 
 ✅ **Good - Multiple related tasks from same spec:**
-```markdown
-1. Add output filter script
-   - Create .ralph/lib/filter-output.sh
-   - Parse JSON-formatted agent output
-   - Spec: specs/agent-output-filtering.md - "Filter Script"
-
-2. Integrate filter into loop.sh
-   - Pipe agent output through filter
-   - Preserve raw logs for debugging
-   - Spec: specs/agent-output-filtering.md - "Integration"
+```json
+[
+  {
+    "id": "T-001",
+    "description": "Add output filter script",
+    "spec": "specs/agent-output-filtering.md",
+    "priority": "HIGH",
+    "status": "OPEN",
+    "notes": [
+      "Create .ralph/lib/filter-output.sh",
+      "Parse JSON-formatted agent output",
+      "Spec section: Filter Script"
+    ]
+  },
+  {
+    "id": "T-002",
+    "description": "Integrate filter into loop.sh",
+    "spec": "specs/agent-output-filtering.md",
+    "priority": "HIGH",
+    "status": "OPEN",
+    "notes": [
+      "Pipe agent output through filter",
+      "Preserve raw logs for debugging",
+      "Spec section: Integration"
+    ]
+  }
+]
 ```
 
 ✅ **Good - Task without spec (internal refactoring):**
-```markdown
-1. Refactor database connection pooling
-   - Extract connection logic to separate module
-   - Add connection retry logic
-   - (No spec - internal improvement)
+```json
+{
+  "id": "T-003",
+  "description": "Refactor database connection pooling",
+  "spec": "",
+  "priority": "MEDIUM",
+  "status": "OPEN",
+  "notes": [
+    "Extract connection logic to separate module",
+    "Add connection retry logic",
+    "No spec - internal improvement"
+  ]
+}
 ```
 
-❌ **Missing spec reference:**
-```markdown
-1. Implement user registration endpoint
-   - POST /api/users with validation
+❌ **Missing required fields:**
+```json
+{
+  "id": "T-001",
+  "description": "Implement user registration endpoint"
+}
 ```
-*Why bad: No way to verify requirements or find implementation details*
+*Why bad: Missing required fields (spec, priority, status, notes)*
 
 ❌ **Vague spec reference:**
-```markdown
-1. Implement user registration endpoint
-   - Spec: user-management.md
+```json
+{
+  "id": "T-001",
+  "description": "Implement user registration endpoint",
+  "spec": "user-management.md",
+  "priority": "HIGH",
+  "status": "OPEN",
+  "notes": []
+}
 ```
-*Why bad: Missing section name - which part of the spec?*
+*Why bad: Spec path should include "specs/" prefix*
 
-❌ **Wrong format:**
-```markdown
-1. Implement user registration endpoint (see specs/user-management.md section 3.2)
+❌ **Not properly formatted JSON:**
+```json
+{id: "T-001", description: "Task"}
 ```
-*Why bad: Not following standard format - harder to parse*
+*Why bad: Missing quotes around field names, missing required fields*
 
-**When to omit spec reference:**
+**When to use empty spec field:**
 - Internal refactoring not driven by a spec
 - Bug fixes discovered during implementation
 - Tooling or infrastructure improvements
-- In these cases, add a note explaining the reason
+- In these cases, add explanation in notes array
 
 ### Multi-Phase Projects
 
-For large refactors or system changes:
+For large refactors or system changes, use priority field and notes to indicate phases:
 
-```markdown
-## Remaining Tasks
-
-### Phase 1 - Foundation
-1. [Core infrastructure task]
-2. [Core infrastructure task]
-
-### Phase 2 - Implementation
-3. [Feature task]
-4. [Feature task]
-
-### Phase 3 - Integration & Testing
-5. [Integration task]
-6. [Testing task]
+```json
+[
+  {
+    "id": "T-001",
+    "description": "Core infrastructure task",
+    "spec": "specs/system-refactor.md",
+    "priority": "HIGH",
+    "status": "OPEN",
+    "notes": ["Phase 1 - Foundation"]
+  },
+  {
+    "id": "T-002",
+    "description": "Another core infrastructure task",
+    "spec": "specs/system-refactor.md",
+    "priority": "HIGH",
+    "status": "OPEN",
+    "notes": ["Phase 1 - Foundation"]
+  },
+  {
+    "id": "T-003",
+    "description": "Feature implementation task",
+    "spec": "specs/system-refactor.md",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "notes": ["Phase 2 - Implementation", "Depends on T-001, T-002"]
+  },
+  {
+    "id": "T-004",
+    "description": "Integration task",
+    "spec": "specs/system-refactor.md",
+    "priority": "LOW",
+    "status": "OPEN",
+    "notes": ["Phase 3 - Integration & Testing"]
+  }
+]
 ```
 
 ### Migration Projects
@@ -323,41 +423,82 @@ Search findings:
 
 ## Remaining Tasks
 
-### High Priority - Core Infrastructure
-
-1. Create user database schema and model
-   - Add users table migration with fields per spec section 2.1
-   - Create User model with validation
-   - Spec: specs/user-management.md - "Database Schema"
-
-2. Implement user registration endpoint
-   - POST /api/users with email, password, name
-   - Hash passwords with bcrypt
-   - Validation: email format, password min 8 chars
-   - Spec: specs/user-management.md - "Registration"
-
-### Medium Priority - Authentication
-
-3. Implement JWT authentication
-   - POST /api/auth/login endpoint
-   - Generate JWT tokens with 24hr expiry
-   - Create auth middleware for protected routes
-   - Spec: specs/user-management.md - "Authentication"
-
-4. Add user profile endpoints
-   - GET /api/users/:id (authenticated)
-   - PUT /api/users/:id (authenticated, own profile only)
-   - Spec: specs/user-management.md - "User Profile"
-
-### Testing & Documentation
-
-5. Add integration tests for all endpoints
-   - Test registration success and validation errors
-   - Test login success and failure cases
-   - Test profile access controls
-   - All tests must pass before completion
-
-6. Update specs/README.md to mark spec as Implemented
+```json
+[
+  {
+    "id": "T-001",
+    "description": "Create user database schema and model",
+    "spec": "specs/user-management.md",
+    "priority": "HIGH",
+    "status": "OPEN",
+    "notes": [
+      "Add users table migration with fields per spec section 2.1",
+      "Create User model with validation",
+      "Spec section: Database Schema"
+    ]
+  },
+  {
+    "id": "T-002",
+    "description": "Implement user registration endpoint",
+    "spec": "specs/user-management.md",
+    "priority": "HIGH",
+    "status": "OPEN",
+    "notes": [
+      "POST /api/users with email, password, name",
+      "Hash passwords with bcrypt",
+      "Validation: email format, password min 8 chars",
+      "Spec section: Registration"
+    ]
+  },
+  {
+    "id": "T-003",
+    "description": "Implement JWT authentication",
+    "spec": "specs/user-management.md",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "notes": [
+      "POST /api/auth/login endpoint",
+      "Generate JWT tokens with 24hr expiry",
+      "Create auth middleware for protected routes",
+      "Spec section: Authentication"
+    ]
+  },
+  {
+    "id": "T-004",
+    "description": "Add user profile endpoints",
+    "spec": "specs/user-management.md",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "notes": [
+      "GET /api/users/:id (authenticated)",
+      "PUT /api/users/:id (authenticated, own profile only)",
+      "Spec section: User Profile"
+    ]
+  },
+  {
+    "id": "T-005",
+    "description": "Add integration tests for all endpoints",
+    "spec": "specs/user-management.md",
+    "priority": "LOW",
+    "status": "OPEN",
+    "notes": [
+      "Test registration success and validation errors",
+      "Test login success and failure cases",
+      "Test profile access controls",
+      "All tests must pass before completion"
+    ]
+  },
+  {
+    "id": "T-006",
+    "description": "Update specs/README.md to mark spec as Implemented",
+    "spec": "",
+    "priority": "LOW",
+    "status": "OPEN",
+    "notes": []
+  }
+]
+```
+```
 
 ## Notes
 
@@ -379,26 +520,36 @@ Search findings:
 ```markdown
 # Implementation Plan
 
-## Tasks
+## Remaining Tasks
 
-1. Set up user stuff
-2. Do authentication
-3. Fix any bugs
-4. Make it work better
-5. Add tests maybe
-6. Research best practices for security
-7. TODO: Figure out database structure
-8. Consider using JWT or sessions
+```json
+[
+  {
+    "id": "1",
+    "description": "Set up user stuff",
+    "spec": "",
+    "priority": "",
+    "status": "",
+    "notes": []
+  },
+  {
+    "description": "Do authentication",
+    "spec": "user-management.md"
+  },
+  {"id": "T-003", "description": "Fix any bugs"}
+]
+```
 ```
 
 **Why this is poor:**
-- Vague task descriptions ("user stuff", "make it work better")
-- No spec references
+- Vague task descriptions ("user stuff", "do authentication")
+- Inconsistent ID format ("1" vs "T-003")
+- Missing required fields (second and third tasks)
+- No proper spec path format ("user-management.md" should be "specs/user-management.md")
 - Open-ended tasks ("fix any bugs")
-- Research as a task (should be done during planning)
-- Indecisive ("consider using")
-- No structure or priorities
-- No success criteria
+- No priorities or meaningful status
+- No structure or success criteria
+- Malformed JSON (second and third objects missing fields)
 
 ---
 
@@ -406,13 +557,21 @@ Search findings:
 
 Before committing your new IMPLEMENTATION_PLAN.md:
 
-- [ ] Format follows the template (Overview, Tasks, Notes)
-- [ ] Each task is action-oriented and specific
-- [ ] Tasks reference spec file and section
+- [ ] Format follows the template (Overview, JSON Tasks, Notes)
+- [ ] Remaining Tasks section contains fenced ```json block
+- [ ] JSON is valid and pretty-printed (2-space indentation)
+- [ ] All task objects have all required fields (id, description, spec, priority, status, notes)
+- [ ] Task IDs follow "T-NNN" format with zero-padding
+- [ ] Each task description is action-oriented and specific
+- [ ] Spec paths include "specs/" prefix or are empty string ""
+- [ ] Priority values are "HIGH", "MEDIUM", "LOW", or ""
+- [ ] Status values are "OPEN", "BLOCKED", "DONE", or ""
+- [ ] Notes are arrays (empty array [] allowed)
+- [ ] Task order reflects priority (first = highest)
 - [ ] Task granularity is appropriate (completable in one iteration)
 - [ ] Prioritization follows the criteria (prerequisites first, etc.)
-- [ ] Dependencies are documented in Notes
-- [ ] Success criteria are clear
+- [ ] Dependencies are documented in Notes section or task notes
+- [ ] Success criteria are clear in Notes section
 - [ ] You searched the codebase to verify what's actually implemented
 - [ ] No vague, open-ended, or research tasks
 - [ ] Plan is between 5-20 tasks (adjust for project complexity)

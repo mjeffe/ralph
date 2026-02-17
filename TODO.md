@@ -10,5 +10,4 @@ This list is for humans! It is a reminder of ideas and tasks that need to be spe
   would be a more appropriate programming language than bash, what should be
   modularized, etc.
 - how can we reduce token usage. These iterations are expensive
-- parsing IMPLEMENTATION_PLAN (in loop.sh) is a bit jenky (grepping unstructured data). rework to use structured json?
 - create vm to run ralph in. Review some of the other ralph projects that list these options

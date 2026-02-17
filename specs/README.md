@@ -53,10 +53,21 @@ Specifications for individual features and capabilities.
 
 Specifications for changes to existing functionality. These describe transitions from current behavior to proposed behavior.
 
+- **changes/implementation-plan-json-tasks.md** - Change IMPLEMENTATION_PLAN.md task format from numbered Markdown list to structured JSON array. Enables reliable parsing by loop.sh and other tooling with fixed schema and pretty-printed formatting.
+  - Status: **Proposed** (2026-02-17)
+  - Type: refactor
+  - Updated: .ralph/IMPLEMENTATION_PLAN.md format, .ralph/prompts/PROMPT_implementation_plan.md
+
 - **changes/logging-rework.md** - Rework Ralph's logging system to produce a single log file per invocation, embed metrics directly in the log, eliminate PROGRESS.md entirely, and include task/spec references in iteration headers.
   - Status: **Implemented** (2026-02-17)
   - Type: refactor
   - Updated: ralph-overview.md
+
+- **changes/rebuild-ralph-architecture-docs.md** - Rebuild Ralph system architecture documentation by studying current codebase and creating organized architecture specs. Uses subagents to avoid context overload. Supersedes ralph-system-implementation.md with accurate, well-organized documentation.
+  - Status: **Planned** (2026-02-17)
+  - Type: documentation refactor
+  - Priority: medium
+  - Outputs: specs/architecture/ (4 new specs), reorganized existing specs, archived ralph-system-implementation.md
 
 ## Archived / Superseded
 
