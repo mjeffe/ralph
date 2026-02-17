@@ -24,13 +24,12 @@
   - Last Updated: 2026-02-13
 
 - **branch-safety-check.md** - Pre-flight safety check for Ralph entry point. Detects when running on `main` or `master` branches and prompts user to abort, create a new branch, or explicitly confirm continuation. Prevents accidental development commits on protected branches. Includes non-interactive mode handling for CI/CD environments.
-  - Status: **Active**
-  - Priority: **Medium**
-  - Dependencies: None
-  - Last Updated: 2026-02-13
+  - Status: **Implemented** (2026-02-13)
+  - Verification: Functions check_protected_branch() and handle_protected_branch() implemented in .ralph/ralph
+  - Tests: Manual testing confirmed on main branch - interactive prompts working correctly
 
 - **logging-rework.md** - Rework Ralph's logging system to produce a single log file per invocation (containing all iterations), embed metrics directly in the log, eliminate PROGRESS.md entirely, and include task/spec references in iteration headers. Addresses log fragmentation, metrics duplication, and lack of context in iteration headers.
-  - Status: **Active**
+  - Status: **Implemented**
   - Priority: **High**
   - Dependencies: None
   - Last Updated: 2026-02-17
@@ -38,10 +37,19 @@
 ## Feature Specifications
 
 - **test-simple-calculator.md** - Test specification to validate Ralph loop functionality. Defines a simple calculator module with basic operations, input validation, and comprehensive tests. Used to verify IMPLEMENTATION_PLAN.md creation, task execution, PROGRESS.md updates, and git integration.
+  - Status: **Implemented** (2026-02-05)
+  - Verification: Calculator module created with all operations, 18 comprehensive tests passing
+  - Tests: All tests pass (commits: fa80ff8, 8ad9e70, 820ada1)
 
 - **docker-env-implementation-plan.md** - Automatic .env file configuration for cline CLI in Docker container. Eliminates manual setup by reading environment variables from .env file and automatically authenticating cline on container startup.
+  - Status: **Implemented** (2026-02-05)
+  - Verification: .env.example template created, Dockerfile startup script loads variables, cline auth automatic
+  - Tests: Container startup with automatic authentication verified
 
 - **docker-configuration-fix-plan.md** - Fixed environment file path mismatch and directory permissions. Corrected .env loading path from `/home/ralph/.env` to `/app/.env`, set proper ownership of /app directory, and established consistent WORKDIR at /app.
+  - Status: **Implemented** (2026-02-05)
+  - Verification: Path corrected to /app/.env, permissions set correctly, WORKDIR consistent
+  - Tests: Cline authentication succeeds, ralph user has proper access to /app
 
 ## Archived Specifications
 

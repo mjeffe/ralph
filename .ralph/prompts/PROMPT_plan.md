@@ -24,7 +24,6 @@ If additional context is needed during your session with the human, these additi
 
 - `specs/README.md` (if present)
 - `IMPLEMENTATION_PLAN.md` (if present)
-- `PROGRESS.md` (if present)
 
 ## Requirements Gathering
 
