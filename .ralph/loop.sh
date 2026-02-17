@@ -134,7 +134,7 @@ push_with_retry() {
     fatal "Git push failed after $max_attempts attempts"
 }
 
-# Create log file with timestamp
+# Create log file with timestamp (called once per invocation)
 create_log_file() {
     local date_stamp=$(date +%Y-%m-%d)
     local log_dir=".ralph/logs"
@@ -156,10 +156,57 @@ check_project_complete() {
     [ -f ".ralph/PROJECT_COMPLETE" ]
 }
 
-# Parse metrics from agent JSON output
+# Extract current task and spec from IMPLEMENTATION_PLAN.md
+extract_current_task() {
+    local plan_file=".ralph/IMPLEMENTATION_PLAN.md"
+    
+    # Check if plan file exists
+    if [ ! -f "$plan_file" ]; then
+        echo "TASK=(no plan file)"
+        echo "SPEC=(not specified)"
+        return
+    fi
+    
+    # Extract section between "## Remaining Tasks" and next "##" header
+    local remaining_section=$(sed -n '/## Remaining Tasks/,/^## /p' "$plan_file" | sed '$d')
+    
+    # Find first numbered task (format: "1. Task description")
+    local task_line=$(echo "$remaining_section" | grep -m 1 '^[0-9]\+\.')
+    
+    if [ -z "$task_line" ]; then
+        echo "TASK=(no remaining tasks)"
+        echo "SPEC=(not specified)"
+        return
+    fi
+    
+    # Extract task description (text after number and period)
+    local task_desc=$(echo "$task_line" | sed 's/^[0-9]\+\.\s*//')
+    
+    # Look for "Spec:" line in the lines following this task (before next numbered item)
+    local spec_line=$(echo "$remaining_section" | sed -n "/^[0-9]\+\. /,/^[0-9]\+\. /p" | grep -m 1 'Spec:' | head -1)
+    
+    # Extract spec filename (format: "specs/filename.md")
+    local spec_file=""
+    if [ -n "$spec_line" ]; then
+        spec_file=$(echo "$spec_line" | sed -n 's/.*specs\/\([^ ]*\.md\).*/\1/p')
+    fi
+    
+    # Output
+    echo "TASK=${task_desc}"
+    if [ -n "$spec_file" ]; then
+        echo "SPEC=${spec_file}"
+    else
+        echo "SPEC=(not specified)"
+    fi
+}
+
+# Parse metrics from agent JSON output and embed in log
 parse_metrics() {
     local log_file="$1"
-    local metrics_file="${log_file}.metrics"
+    local iteration="$2"
+    local duration="$3"
+    local commit_hash="$4"
+    local exit_code="$5"
     
     # Check if jq is available for JSON parsing
     if ! command -v jq > /dev/null 2>&1; then
@@ -180,24 +227,19 @@ parse_metrics() {
     model_info=$(grep -m 1 '"modelInfo"' "$log_file" 2>/dev/null | \
         jq -r '.modelInfo | "\(.providerId)/\(.modelId)"' 2>/dev/null || echo "unknown")
     
-    # Write metrics to file
+    # Append metrics summary to log file (no separate .metrics file)
     {
-        echo "# Agent Metrics"
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "Iteration $iteration Metrics"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo "API Requests: $api_requests"
         echo "Total Messages: $total_messages"
         echo "Model: $model_info"
-        echo ""
-        echo "# Note: Token counts and costs not available in current cline output"
-        echo "# Future enhancement: Parse usage data when cline provides it"
-    } > "$metrics_file"
-    
-    # Append metrics summary to log file
-    {
-        echo ""
-        echo "# Metrics Summary"
-        echo "API Requests: $api_requests"
-        echo "Total Messages: $total_messages"
-        echo "Model: $model_info"
+        echo "Duration: $duration"
+        echo "Commit: $commit_hash"
+        echo "Exit Code: $exit_code"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     } >> "$log_file"
 }
 
@@ -243,6 +285,11 @@ echo "Agent:  $AGENT_COMMAND"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
+# Create log file once at startup (before main loop)
+LOG_FILE=$(create_log_file)
+info "Logging to: $LOG_FILE"
+echo ""
+
 # Main loop
 ITERATION=0
 
@@ -270,15 +317,17 @@ while true; do
     debug "Running health checks..."
     check_health
     
-    # Create log file for this iteration
-    LOG_FILE=$(create_log_file)
-    
     ITERATION=$((ITERATION + 1))
     
-    # Log iteration header
+    # Extract current task and spec
+    eval "$(extract_current_task)"
+    
+    # Log iteration header with task/spec context
     {
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo "Iteration: $ITERATION"
+        echo "Task: $TASK"
+        echo "Spec: $SPEC"
         echo "Branch: $CURRENT_BRANCH"
         echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -286,7 +335,8 @@ while true; do
     } | tee -a "$LOG_FILE"
     
     info "Starting iteration $ITERATION..."
-    debug "Logging to: $LOG_FILE"
+    info "Task: $TASK"
+    info "Spec: $SPEC"
     
     # Record start time
     START_TIME=$(date +%s)
@@ -324,30 +374,34 @@ while true; do
         fatal "Agent exceeded iteration timeout (${ITERATION_TIMEOUT}s)"
     fi
     
-    # Parse metrics from agent output if JSON output is enabled
-    if [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
-        debug "Parsing metrics from agent output..."
-        parse_metrics "$LOG_FILE"
-    fi
-    
-    # Log iteration footer
     # Record end time and calculate duration
     END_TIME=$(date +%s)
     DURATION=$((END_TIME - START_TIME))
     DURATION_MIN=$((DURATION / 60))
     DURATION_SEC=$((DURATION % 60))
+    DURATION_STR="${DURATION_MIN}m ${DURATION_SEC}s"
     
     # Get commit hash if changes were committed
     COMMIT_HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "none")
     
+    # Parse metrics from agent output and embed in log (no separate .metrics file)
+    if [ "$ENABLE_JSON_OUTPUT" = "true" ]; then
+        debug "Parsing metrics from agent output..."
+        parse_metrics "$LOG_FILE" "$ITERATION" "$DURATION_STR" "$COMMIT_HASH" "$AGENT_EXIT_CODE"
+    fi
+    
+    # Log iteration footer
     {
         echo ""
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "Iteration $ITERATION Complete"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo "Completed: $(date '+%Y-%m-%d %H:%M:%S')"
-        echo "Duration: ${DURATION_MIN}m ${DURATION_SEC}s"
+        echo "Duration: $DURATION_STR"
         echo "Commit: $COMMIT_HASH"
         echo "Exit Code: $AGENT_EXIT_CODE"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
     } | tee -a "$LOG_FILE"
     
     # Check if agent exited with error

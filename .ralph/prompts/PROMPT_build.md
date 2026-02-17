@@ -4,7 +4,7 @@
 
 **IMPORTANT:** You start each iteration with FRESH CONTEXT.
 - You do NOT remember previous iterations
-- All state persists in: `specs/`, `.ralph/IMPLEMENTATION_PLAN.md`, `.ralph/PROGRESS.md`, and git history
+- All state persists in: `specs/`, `.ralph/IMPLEMENTATION_PLAN.md`, and git history
 - Re-read these files every iteration to understand current state
 
 ---
@@ -36,8 +36,7 @@
 
 a. Study `specs/*` with parallel subagents to understand requirements
 b. Study `.ralph/IMPLEMENTATION_PLAN.md` to see remaining tasks and priorities
-c. Study `.ralph/PROGRESS.md` to understand what has been completed
-d. Review application source code for context
+c. Review application source code for context
 
 ---
 
@@ -112,24 +111,14 @@ After completing your task:
 - Update priorities if needed
 - Document blockers with `[BLOCKED]` tag if needed
 
-### 8. Update .ralph/PROGRESS.md
-
-Add completed task entry with:
-- Current date as section header (YYYY-MM-DD)
-- Task description with `[x]` checkbox
-- Commit hash (add after committing)
-- Implementation notes explaining what and why
-- Test status
-- Keep in **reverse chronological order** (newest first)
-
-### 9. Update specs/README.md (When Applicable)
+### 8. Update specs/README.md (When Applicable)
 
 **Only when ALL tasks for a specific spec are fully implemented:**
 - Verify all tests for that spec pass
 - Update `specs/README.md` to mark the spec as "Implemented"
 - Include completion date
 
-### 10. Capture the Why
+### 9. Capture the Why
 
 When authoring documentation:
 - Capture the **why**, not just the what
@@ -142,7 +131,7 @@ When authoring documentation:
 
 ## Completion
 
-### 11. Project Completion Check
+### 10. Project Completion Check
 
 **If ALL tasks in .ralph/IMPLEMENTATION_PLAN.md are complete:**
 1. Verify all `specs/` requirements are satisfied
@@ -169,7 +158,7 @@ All specifications implemented and tested.
 [Add any relevant completion notes]
 ```
 
-### 12. Git Commit and Push
+### 11. Git Commit and Push
 
 **Commit message format:**
 ```
@@ -199,7 +188,7 @@ git commit -m "<message>"
 git push
 ```
 
-### 13. Exit
+### 12. Exit
 
 **CRITICAL:** Complete ONE task per iteration and EXIT
 - Do **not** attempt multiple tasks in a single iteration

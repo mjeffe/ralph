@@ -11,4 +11,4 @@ This list is for humans! It is a reminder of ideas and tasks that need to be spe
     - IMPLEMENTATION_PLAN should also reference the associated spec?
 - Change RALPH_VERSION to something else.
     - Or else add semver versioning to ralphs process? but that would affect projects that use it.
-
+- Simplify both plan and build prompts

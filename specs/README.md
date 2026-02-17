@@ -29,6 +29,12 @@
   - Dependencies: None
   - Last Updated: 2026-02-13
 
+- **logging-rework.md** - Rework Ralph's logging system to produce a single log file per invocation (containing all iterations), embed metrics directly in the log, eliminate PROGRESS.md entirely, and include task/spec references in iteration headers. Addresses log fragmentation, metrics duplication, and lack of context in iteration headers.
+  - Status: **Active**
+  - Priority: **High**
+  - Dependencies: None
+  - Last Updated: 2026-02-17
+
 ## Feature Specifications
 
 - **test-simple-calculator.md** - Test specification to validate Ralph loop functionality. Defines a simple calculator module with basic operations, input validation, and comprehensive tests. Used to verify IMPLEMENTATION_PLAN.md creation, task execution, PROGRESS.md updates, and git integration.
