@@ -16,19 +16,7 @@ Search findings:
 
 ### Medium Priority - Documentation Updates
 
-1. Remove PROGRESS.md section from PROMPT_documentation.md
-   - Delete entire "2. Update PROGRESS.md" section
-   - Update section numbering for remaining sections
-   - Remove PROGRESS.md from examples and validation checklist
-   - Spec: specs/logging-rework.md - "Remove PROGRESS.md"
-
-2. Update PROMPT_implementation_plan.md with spec reference guidance
-   - Add spec reference format to template section
-   - Add examples showing proper spec references in tasks
-   - Add to "Common Patterns" section with good/bad examples
-   - Spec: specs/logging-rework.md - "Update PROMPT_implementation_plan.md"
-
-3. Remove PROGRESS.md references from specs/ralph-overview.md
+1. Remove PROGRESS.md references from specs/ralph-overview.md
    - Remove .ralph/PROGRESS.md from key files section
    - Update documentation workflow descriptions
    - Update file structure examples
@@ -61,10 +49,11 @@ Search findings:
 - Tasks 1-3 were already implemented in loop.sh (verified in this iteration)
 - Task 4 completed: PROMPT_build.md updated to remove PROGRESS.md references
 
-**Phase 2 (Tasks 1-4 remaining):** Documentation cleanup
+**Phase 2 (Tasks 1-3 remaining):** Documentation cleanup
 - Can be done in any order (independent changes)
 - Each task updates one prompt/doc file
 - PROGRESS.md file itself is NOT deleted (preserves history)
+- Task 1 completed: PROMPT_documentation.md updated to remove PROGRESS.md references
 
 **Phase 3 (Tasks 9-10):** Validation and completion
 - Task 9 validates all changes work together
@@ -72,9 +61,9 @@ Search findings:
 
 ### Dependencies
 
-- Tasks 1-4 (documentation) are independent of each other
-- Task 5 depends on Tasks 1-4 being complete (tests core functionality)
-- Task 6 depends on Task 5 (can't mark complete until tested)
+- Tasks 1-3 (documentation) are independent of each other
+- Task 4 depends on Tasks 1-3 being complete (tests core functionality)
+- Task 5 depends on Task 4 (can't mark complete until tested)
 
 ### Success Criteria
 
