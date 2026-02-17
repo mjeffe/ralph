@@ -4,6 +4,14 @@
 
 ---
 
+## Spec Templates
+
+Before creating specs, review the templates in `specs/templates/`:
+- **overview-template.md** - For system overview documents
+- **architecture-template.md** - For subsystem architecture
+- **feature-template.md** - For new features
+- **change-template.md** - For refactors and reworks
+
 ## Format Template
 
 Use this structure for IMPLEMENTATION_PLAN.md:

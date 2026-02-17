@@ -134,6 +134,68 @@ push_with_retry() {
     fatal "Git push failed after $max_attempts attempts"
 }
 
+# Clean up old log files based on retention policy
+# Policy: Keep at least 30 days OR 30 files, whichever is greater
+cleanup_logs() {
+    local log_dir=".ralph/logs"
+    
+    # Check if log directory exists
+    if [ ! -d "$log_dir" ]; then
+        return 0
+    fi
+    
+    # Get all .log files sorted by modification time (oldest first)
+    local log_files=()
+    while IFS= read -r -d '' file; do
+        log_files+=("$file")
+    done < <(find "$log_dir" -name "*.log" -type f -print0 | xargs -0 ls -t -r 2>/dev/null)
+    
+    # If we have 30 or fewer files, keep all
+    local file_count=${#log_files[@]}
+    if [ $file_count -le 30 ]; then
+        return 0
+    fi
+    
+    # Calculate cutoff timestamp (30 days ago)
+    local cutoff_timestamp=$(date -d "30 days ago" +%s 2>/dev/null || date -v-30d +%s 2>/dev/null)
+    
+    # Build list of files to protect
+    local protected_files=()
+    
+    # Protect files newer than 30 days
+    for file in "${log_files[@]}"; do
+        local file_mtime=$(stat -c %Y "$file" 2>/dev/null || stat -f %m "$file" 2>/dev/null)
+        if [ "$file_mtime" -ge "$cutoff_timestamp" ]; then
+            protected_files+=("$file")
+        fi
+    done
+    
+    # Protect most recent 30 files (reverse order = newest first)
+    local recent_files=()
+    for ((i=${#log_files[@]}-1; i>=0 && ${#recent_files[@]}<30; i--)); do
+        recent_files+=("${log_files[$i]}")
+    done
+    
+    # Merge protected sets (use associative array to deduplicate)
+    declare -A protected_set
+    for file in "${protected_files[@]}" "${recent_files[@]}"; do
+        protected_set["$file"]=1
+    done
+    
+    # Delete files not in protected set
+    local deleted_count=0
+    for file in "${log_files[@]}"; do
+        if [ -z "${protected_set[$file]}" ]; then
+            rm -f "$file"
+            deleted_count=$((deleted_count + 1))
+        fi
+    done
+    
+    if [ $deleted_count -gt 0 ]; then
+        debug "Cleaned up $deleted_count old log file(s)"
+    fi
+}
+
 # Create log file with timestamp (called once per invocation)
 create_log_file() {
     local date_stamp=$(date +%Y-%m-%d)
@@ -284,6 +346,9 @@ echo "Agent:  $AGENT_COMMAND"
 [ $MAX_ITERATIONS -gt 0 ] && echo "Max:    $MAX_ITERATIONS iterations"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
+
+# Clean up old logs before creating new log file
+cleanup_logs
 
 # Create log file once at startup (before main loop)
 LOG_FILE=$(create_log_file)

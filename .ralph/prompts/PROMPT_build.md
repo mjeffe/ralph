@@ -34,9 +34,18 @@
 
 ### 1. Read Current State
 
-a. Study `specs/*` with parallel subagents to understand requirements
-b. Study `.ralph/IMPLEMENTATION_PLAN.md` to see remaining tasks and priorities
-c. Review application source code for context
+a. **Always read `specs/README.md` first** - This index shows you where to find relevant specifications
+b. **Read the overview spec** - Understand the system's current state
+c. **Read architecture specs relevant to your task** - Use README to identify which ones matter
+d. **Read feature or change specs for your specific task** - Get detailed requirements
+e. Study `.ralph/IMPLEMENTATION_PLAN.md` to see remaining tasks and priorities
+f. Review application source code for context
+
+**For change specs (refactors/reworks):**
+- If a spec is marked `spec_type: refactor` or `spec_type: rework`, it describes a transition
+- Read the "Current Behavior" section to understand what exists now
+- Search the codebase to locate the existing implementation
+- Plan migration steps before implementing
 
 ---
 

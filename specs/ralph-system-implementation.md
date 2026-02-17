@@ -563,6 +563,49 @@ Cost: $0.15
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+### Log Retention and Cleanup
+
+**Retention Policy:**
+Ralph automatically cleans up old log files on startup to prevent disk space accumulation while preserving recent history.
+
+**Policy Rules:**
+- Keep at least **30 days** of logs OR **30 log files**, whichever is greater
+- Cleanup runs at Ralph startup (before creating new log file)
+- Only `.log` files in `.ralph/logs/` are affected
+- No external dependencies (cron, logrotate, etc.) required
+
+**Examples:**
+
+*Example 1: File count protection*
+- Have 50 log files, oldest is 29 days old
+- **Result:** Keep all files (age rule protects all)
+
+*Example 2: Age protection*  
+- Have 20 log files, oldest is 31 days old
+- **Result:** Keep all files (count rule protects all, need at least 30 files)
+
+*Example 3: Cleanup triggered*
+- Have 40 log files, last 5 are older than 30 days
+- **Result:** Delete oldest 5 files (neither rule protects them)
+
+**Implementation Details:**
+- Files sorted by modification time (mtime)
+- Protection set built from:
+  - All files newer than 30 days (by mtime)
+  - Most recent 30 files (regardless of age)
+- Files not in protection set are deleted
+- Cleanup status logged to terminal when files are removed
+
+**Manual Cleanup:**
+If needed, logs can be manually removed:
+```bash
+# Remove logs older than 60 days
+find .ralph/logs -name "*.log" -type f -mtime +60 -delete
+
+# Remove all but most recent 10 logs
+ls -t .ralph/logs/*.log | tail -n +11 | xargs rm -f
+```
+
 ### Metrics Tracking
 
 **If agent provides JSON output:**
