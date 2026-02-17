@@ -179,7 +179,7 @@ while IFS= read -r line; do
         *)
             # Unknown say type - show with label if there's text
             if [ -n "$text" ]; then
-                local label=$(echo "$say_type" | tr '[:lower:]' '[:upper:]')
+                label=$(echo "$say_type" | tr '[:lower:]' '[:upper:]')
                 echo "[$label] $text"
             fi
             ;;
