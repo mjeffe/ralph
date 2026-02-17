@@ -54,9 +54,10 @@ Specifications for individual features and capabilities.
 Specifications for changes to existing functionality. These describe transitions from current behavior to proposed behavior.
 
 - **changes/implementation-plan-json-tasks.md** - Change IMPLEMENTATION_PLAN.md task format from numbered Markdown list to structured JSON array. Enables reliable parsing by loop.sh and other tooling with fixed schema and pretty-printed formatting.
-  - Status: **Proposed** (2026-02-17)
+  - Status: **Implemented** (2026-02-17)
   - Type: refactor
   - Updated: .ralph/IMPLEMENTATION_PLAN.md format, .ralph/prompts/PROMPT_implementation_plan.md
+  - Verification: All success criteria met - PROMPT_implementation_plan.md contains complete JSON schema documentation with all required fields (id, description, spec, priority, status, notes), formatting rules (pretty-print, fencing, 2-space indentation), and comprehensive examples demonstrating proper JSON structure including empty field handling. Documentation clearly states JSON is sole source of truth for tasks. All tasks completed and verified. specs/README.md updated with completion status.
 
 - **changes/logging-rework.md** - Rework Ralph's logging system to produce a single log file per invocation, embed metrics directly in the log, eliminate PROGRESS.md entirely, and include task/spec references in iteration headers.
   - Status: **Implemented** (2026-02-17)
