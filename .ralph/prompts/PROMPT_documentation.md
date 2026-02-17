@@ -6,11 +6,10 @@
 
 ## Overview
 
-Ralph uses three main documentation files to track project state:
+Ralph uses two main documentation files to track project state:
 
 1. **IMPLEMENTATION_PLAN.md** - Remaining tasks (forward-looking)
-2. **PROGRESS.md** - Completed tasks (historical record)
-3. **specs/README.md** - Specification status (feature-level tracking)
+2. **specs/README.md** - Specification status (feature-level tracking)
 
 Update these files every iteration to maintain accurate project state for future iterations.
 
@@ -58,84 +57,7 @@ If you encountered blockers:
 
 ---
 
-## 2. Update PROGRESS.md
-
-**When:** After completing your task, before committing
-
-**What to do:**
-
-### Add Completed Task Entry
-
-Use this format:
-```markdown
-### YYYY-MM-DD
-- [x] Task description from IMPLEMENTATION_PLAN.md
-  - Commit: <hash> (you'll update this after committing)
-  - Implementation notes: [brief summary of what you did]
-  - Tests: [test status - "all passing", "3 new tests added", etc.]
-  - [Any other relevant details]
-```
-
-### Keep Reverse Chronological Order
-- **Newest entries at the top**
-- Group by date
-- Multiple tasks completed on same date go under same date header
-
-### Be Specific in Notes
-Good notes capture the "why" and important details:
-
-✅ **Good:**
-```markdown
-- [x] Implement user registration endpoint
-  - Commit: abc1234
-  - Implementation notes: Added POST /api/users with email, password, name fields. Using bcrypt for password hashing with salt rounds=10. Email validation uses regex from spec.
-  - Tests: Added 5 integration tests covering success case, duplicate email, invalid email format, weak password, and missing fields. All passing.
-  - Database: Created users table migration (migration_001.sql)
-```
-
-❌ **Poor:**
-```markdown
-- [x] Add registration
-  - Commit: abc1234
-  - Done
-```
-
-### Update Commit Hash After Committing
-1. Add entry to PROGRESS.md with placeholder: `Commit: <pending>`
-2. Commit all changes
-3. Get commit hash: `git rev-parse --short HEAD`
-4. Update PROGRESS.md with actual hash
-5. Make a small follow-up commit: `git commit -am "ralph: update progress with commit hash"`
-
-### Example PROGRESS.md:
-
-```markdown
-# Progress Log
-
-## Completed Tasks
-
-### 2026-02-12
-- [x] Implement JWT authentication
-  - Commit: def5678
-  - Implementation notes: Added POST /api/auth/login endpoint. JWT tokens generated with jsonwebtoken library, 24hr expiry, signed with SECRET_KEY from env. Created auth middleware that validates token and attaches user to req.user.
-  - Tests: 4 new integration tests - successful login, invalid credentials, expired token, missing token. All passing.
-  - Security: Passwords never logged, tokens stored in httpOnly cookies
-
-- [x] Create user database schema and model
-  - Commit: abc1234
-  - Implementation notes: Created users table migration with id, email (unique), password_hash, name, created_at, updated_at. User model includes validation methods and password comparison using bcrypt.
-  - Tests: 3 unit tests for model validation. All passing.
-
-### 2026-02-11
-- [x] Set up database connection pooling
-  - Commit: xyz9876
-  - Implementation notes: Configured PostgreSQL connection pool with max 20 connections, idle timeout 30s. Connection string from DATABASE_URL env var.
-  - Tests: Connection pool test added, verified max connections respected
-```
-
----
-
-## 3. Update specs/README.md
+## 2. Update specs/README.md
 
 **When:** ONLY when ALL tasks for a specific spec are fully implemented
 
@@ -182,18 +104,24 @@ Update the spec's status from "Planned" or "In Progress" to "Implemented":
 
 ---
 
-## 4. Capture the Why
+## 3. Capture the Why
 
 **When authoring any documentation**, focus on capturing context that helps future agents (or humans) understand your decisions.
 
-### In PROGRESS.md
+### In Git Commit Messages
 Explain implementation choices:
-```markdown
-- [x] Refactor database queries to use connection pooling
-  - Commit: abc1234
-  - Implementation notes: Switched from per-request connections to pool of 20. This fixes the "too many connections" error we were hitting at 50 concurrent users. Pool reuses connections and handles timeouts gracefully.
-  - Why pooling: Previous approach opened new connection for each request, causing PostgreSQL to hit max_connections limit. Pooling maintains persistent connections and dramatically reduces connection overhead.
-  - Tests: Load test with 100 concurrent requests passes (was failing before)
+```
+ralph: implement user authentication with JWT
+
+- Added POST /api/auth/login endpoint
+- JWT tokens with 24hr expiry, signed with SECRET_KEY
+- Created auth middleware for token validation
+- Using bcrypt rounds=10 per OWASP recommendations
+- All tests passing (4 new integration tests)
+
+Why JWT: Spec requires stateless auth for microservices.
+Allows auth across multiple service instances without
+shared session store.
 ```
 
 ### In IMPLEMENTATION_PLAN.md Notes
@@ -224,41 +152,48 @@ const hash = await bcrypt.hash(password, 10);
 
 If you completed multiple small related tasks in one iteration:
 
-```markdown
-### 2026-02-12
-- [x] Update all path references for .ralph/ migration
-  - Commit: abc1234
-  - Implementation notes: Updated 15 files:
-    * loop.sh: IMPLEMENTATION_PLAN.md → .ralph/IMPLEMENTATION_PLAN.md
-    * PROMPT_build.md: All references updated
-    * ralph script: Updated path to loop.sh
-    * All documentation: Updated path examples
-  - Tests: Ran loop.sh with new paths, all working correctly
-  - Breaking change: Old paths no longer work
+```
+ralph: update all path references for .ralph/ migration
+
+- Updated 15 files with new .ralph/ paths
+- loop.sh: IMPLEMENTATION_PLAN.md → .ralph/IMPLEMENTATION_PLAN.md
+- PROMPT_build.md: All references updated
+- ralph script: Updated path to loop.sh
+- All documentation: Updated path examples
+- Tests: Ran loop.sh with new paths, all working correctly
+
+Breaking change: Old paths no longer work
 ```
 
 ### Feature with Testing Task
 
 Keep implementation and testing together:
 
-```markdown
-- [x] Implement user registration endpoint with full test coverage
-  - Commit: abc1234
-  - Implementation notes: Added POST /api/users endpoint with email, password, name validation
-  - Tests: 5 integration tests covering all edge cases - all passing
-  - Code coverage: 100% for src/routes/users.js
+```
+ralph: implement user registration endpoint with full test coverage
+
+- Added POST /api/users endpoint
+- Email, password, name validation per spec
+- 5 integration tests covering all edge cases
+- Code coverage: 100% for src/routes/users.js
+- All tests passing
 ```
 
 ### Bug Fix During Feature Work
 
 Document both the feature and the bug:
 
-```markdown
-- [x] Add profile endpoints and fix authentication middleware bug
-  - Commit: abc1234
-  - Implementation notes: Added GET/PUT /api/users/:id endpoints. Fixed bug in auth middleware where expired tokens were not properly rejected (was checking wrong claim).
-  - Tests: 6 new tests for profile endpoints, 2 new tests for expired token handling. All passing.
-  - Bug impact: Security issue - expired tokens were being accepted. Now fixed and tested.
+```
+ralph: add profile endpoints and fix auth middleware bug
+
+- Added GET/PUT /api/users/:id endpoints
+- Fixed security bug: expired tokens were being accepted
+- Auth middleware now properly rejects expired tokens
+- 6 new tests for profile endpoints
+- 2 new tests for expired token handling
+- All tests passing
+
+Bug impact: Security issue now fixed and tested
 ```
 
 ---
@@ -269,10 +204,8 @@ Before committing, verify your documentation updates:
 
 - [ ] Completed task removed from IMPLEMENTATION_PLAN.md
 - [ ] Any new tasks discovered added to IMPLEMENTATION_PLAN.md
-- [ ] Entry added to PROGRESS.md with current date
-- [ ] PROGRESS.md entry includes commit hash (or placeholder)
-- [ ] PROGRESS.md entry explains what was done and why
-- [ ] Test status documented in PROGRESS.md
+- [ ] Git commit message explains what was done and why
+- [ ] Test status documented in commit message
 - [ ] If spec is fully complete, specs/README.md updated
 - [ ] Important decisions and context captured
 - [ ] Files are in correct format (markdown, proper sections)
@@ -281,13 +214,9 @@ Before committing, verify your documentation updates:
 
 ## Anti-Patterns to Avoid
 
-❌ **Forgetting to update PROGRESS.md**
-- Future iterations have no record of what was done
-
-❌ **Vague PROGRESS.md entries**
-```markdown
-- [x] Fixed stuff
-  - Commit: abc1234
+❌ **Vague commit messages**
+```
+ralph: fixed stuff
 ```
 This tells future agents nothing useful.
 
@@ -297,11 +226,11 @@ This tells future agents nothing useful.
 ❌ **Marking specs as Implemented prematurely**
 - Misleads future iterations about project state
 
-❌ **Missing commit hashes in PROGRESS.md**
-- Can't trace back to actual changes in git history
-
 ❌ **Not documenting discovered issues**
 - Problems get lost and won't be fixed
+
+❌ **Missing context in commits**
+- Can't understand why decisions were made
 
 ---
 
@@ -310,10 +239,9 @@ This tells future agents nothing useful.
 Documentation is how you communicate with future iterations of Ralph. Since each iteration starts with fresh context:
 
 - **Be specific** - Future agents don't remember what you did
-- **Be complete** - Include all relevant details
+- **Be complete** - Include all relevant details in commit messages
 - **Be honest** - Document problems and blockers
 - **Be helpful** - Explain the "why" behind decisions
 
 Good documentation = Smooth future iterations
 Poor documentation = Wasted time re-discovering context
-

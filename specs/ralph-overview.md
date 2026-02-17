@@ -18,7 +18,7 @@ while not PROJECT_COMPLETE and not max_iterations:
     1. Agent reads specs/ and .ralph/IMPLEMENTATION_PLAN.md (fresh context)
     2. Agent picks highest priority task
     3. Agent implements the task
-    4. Agent updates .ralph/IMPLEMENTATION_PLAN.md and/or .ralph/PROGRESS.md
+    4. Agent updates .ralph/IMPLEMENTATION_PLAN.md
     5. Agent commits changes to git
     6. Agent exits (context discarded)
     → Loop continues with fresh agent instance
@@ -66,28 +66,9 @@ Example format:
 - Use existing patterns in src/lib
 ```
 
-### `.ralph/PROGRESS.md` (Agent-maintained)
-- Historical record of completed tasks
-- Reverse chronological (newest first)
-- Include commit hash for traceability
-- **Update when task complete:** Move task from .ralph/IMPLEMENTATION_PLAN.md
-
-Example format:
-```markdown
-# Progress Log
-
-## Completed Tasks
-
-### 2026-02-04
-- [x] Refactored authentication module to use JWT
-  - Commit: abc1234
-  - All auth tests passing
-```
-
 ### `specs/README.md` (Agent-maintained)
 - Index of all specifications with feature-level status
 - Update when ALL TASKS for a spec are fully implemented
-- Different from PROGRESS.md (feature status vs. task log)
 
 ### Git Commits
 - One commit per task (per iteration)
@@ -114,8 +95,7 @@ Example format:
 4. **Implement:** Complete the task fully (no placeholders or TODOs)
 5. **Test:** Run tests for affected code, fix failures
 6. **Document:** 
-   - Move completed task to .ralph/PROGRESS.md
-   - Remove from .ralph/IMPLEMENTATION_PLAN.md
+   - Remove completed task from .ralph/IMPLEMENTATION_PLAN.md
    - Add any discovered issues to plan
    - Update specs/README.md if entire spec is now complete
 7. **Commit:** Descriptive message with changes and test status
@@ -146,7 +126,7 @@ If you fail to complete a task after attempting it:
 - **Update specs/** if you find inconsistencies or ambiguities
 - **Document bugs:** Even if unrelated to current task
 - **Search codebase:** Use existing patterns and conventions
-- **Clean .ralph/IMPLEMENTATION_PLAN.md:** Periodically move completed items to .ralph/PROGRESS.md
+- **Keep plan current:** Update .ralph/IMPLEMENTATION_PLAN.md with completed tasks and new discoveries
 
 ## Completion Signals
 

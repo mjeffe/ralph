@@ -4,6 +4,14 @@
 
 ---
 
+## Spec Templates
+
+Before creating specs, review the templates in `specs/templates/`:
+- **overview-template.md** - For system overview documents
+- **architecture-template.md** - For subsystem architecture
+- **feature-template.md** - For new features
+- **change-template.md** - For refactors and reworks
+
 ## Format Template
 
 Use this structure for IMPLEMENTATION_PLAN.md:
@@ -155,6 +163,79 @@ Search findings:
 ---
 
 ## Common Patterns
+
+### Task with Spec Reference
+
+**Always include spec reference when task implements a specification.**
+
+This helps future iterations understand:
+- Which spec section defines the requirements
+- Where to find detailed implementation guidance
+- How to verify the task meets specifications
+
+**Format:**
+```markdown
+1. [Task description]
+   - [Optional implementation details]
+   - Spec: specs/file-name.md - "Section Name"
+```
+
+**Examples:**
+
+✅ **Good - Clear spec reference:**
+```markdown
+1. Implement user registration endpoint
+   - POST /api/users with validation
+   - Hash passwords with bcrypt
+   - Spec: specs/user-management.md - "Registration"
+```
+
+✅ **Good - Multiple related tasks from same spec:**
+```markdown
+1. Add output filter script
+   - Create .ralph/lib/filter-output.sh
+   - Parse JSON-formatted agent output
+   - Spec: specs/agent-output-filtering.md - "Filter Script"
+
+2. Integrate filter into loop.sh
+   - Pipe agent output through filter
+   - Preserve raw logs for debugging
+   - Spec: specs/agent-output-filtering.md - "Integration"
+```
+
+✅ **Good - Task without spec (internal refactoring):**
+```markdown
+1. Refactor database connection pooling
+   - Extract connection logic to separate module
+   - Add connection retry logic
+   - (No spec - internal improvement)
+```
+
+❌ **Missing spec reference:**
+```markdown
+1. Implement user registration endpoint
+   - POST /api/users with validation
+```
+*Why bad: No way to verify requirements or find implementation details*
+
+❌ **Vague spec reference:**
+```markdown
+1. Implement user registration endpoint
+   - Spec: user-management.md
+```
+*Why bad: Missing section name - which part of the spec?*
+
+❌ **Wrong format:**
+```markdown
+1. Implement user registration endpoint (see specs/user-management.md section 3.2)
+```
+*Why bad: Not following standard format - harder to parse*
+
+**When to omit spec reference:**
+- Internal refactoring not driven by a spec
+- Bug fixes discovered during implementation
+- Tooling or infrastructure improvements
+- In these cases, add a note explaining the reason
 
 ### Multi-Phase Projects
 
