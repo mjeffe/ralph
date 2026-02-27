@@ -1,6 +1,7 @@
 # Ralph Wiggum Loop
 
 **THIS PROJECT HAS BEEN ARCHIVED.** It was my early exploration of [Geoffrey Huntley's Ralph Wiggum Loop](https://ghuntley.com/ralph/).
+With a better understanding of what NOT to do, I moved on to [ralph-loop](https://github.com/mjeffe/ralph-loop).
 
 > [!CAUTION]
 > **This is my sandbox for learning the Ralph Wiggum approach to using an LLM coding agent. It is a research project. DO NOT USE.**
